@@ -68,7 +68,7 @@ export default function Home() {
         }}
       >
         <div style={styles.heroGlow} />
-        <h1 style={styles.heroTitle}>Welcome to Gameland 🎮</h1>
+        <h1 style={styles.heroTitle}>Welcome to Gamenethub 🎮</h1>
         <p style={styles.heroSub}>Play amazing online games — fully free!</p>
       </section>
 
