@@ -129,7 +129,7 @@ app.use(
 
 
 // Ensure preflight OPTIONS are handled
-app.options("*", cors());
+// app.options("*", cors());
 
 
 /********************************************
