@@ -30,9 +30,13 @@ export default function Footer() {
 
           <div style={styles.linksGroup}>
             <div style={styles.groupTitle}>Company</div>
-            <a href="#" style={styles.link}>About</a>
+            {/* <a href="#" style={styles.link}>About</a>
             <a href="#" style={styles.link}>Contact</a>
-            <a href="#" style={styles.link}>Games</a>
+            <a href="#" style={styles.link}>Games</a> */}
+            <Link to="/about" style={styles.link}>About</Link>
+            <Link to="/terms" style={styles.link}>Terms & Conditions</Link>
+            <Link to="/privacy" style={styles.link}>Privacy Policy</Link>
+
           </div>
         </div>
 
