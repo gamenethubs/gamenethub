@@ -235,7 +235,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import { absoluteUrl, apiBaseURL } from "../services/api";
+// import { absoluteUrl, apiBaseURL } from "../services/api";
+import API, { absoluteUrl } from "../services/api";
 
 export default function ManageGames() {
   const { user, token } = useAuth();
@@ -250,7 +251,8 @@ export default function ManageGames() {
   const fetchGames = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${apiBaseURL}/games`);
+      // const res = await axios.get(`${apiBaseURL}/games`);
+       const res = await API.get("/games"); 
       setGames(res.data.games);
     } catch (err) {
       setError("Failed to load games");
@@ -276,7 +278,8 @@ export default function ManageGames() {
     try {
       setDeleting(id);
 
-      await axios.delete(`${apiBaseURL}/games/${id}`, {
+      // await axios.delete(`${apiBaseURL}/games/${id}`
+      await API.delete(`/games/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
