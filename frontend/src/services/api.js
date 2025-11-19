@@ -63,8 +63,12 @@
 // src/services/api.js
 import axios from "axios";
 
+
+
 // Use environment variable when available; fallback to Render URL
 const API_BASE = (process.env.REACT_APP_API_BASE || "https://gamenethub.onrender.com").replace(/\/+$/, "");
+export const apiBaseURL = API_BASE;
+
 const API = axios.create({
   baseURL: `${API_BASE}/api`,
   withCredentials: true, // backend allows credentials; optional but usually safe
