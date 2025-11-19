@@ -119,24 +119,14 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
-// app.use(
-//   cors({
-//     origin: allowedOrigins,
-//     credentials: true,
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//   })
-// );
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow same-origin or server-to-server requests
-    if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
-    return callback(new Error("CORS policy: Origin not allowed"), false);
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
-  optionsSuccessStatus: 200
-}));
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
+
 
 // Ensure preflight OPTIONS are handled
 app.options("*", cors());
