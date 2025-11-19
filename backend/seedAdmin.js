@@ -13,7 +13,7 @@
 // // ADMIN DETAILS (tum yahan change kar sakte ho)
 // const adminData = {
 //   name: "Super Admin",
-//   email: "admin@gameland.com",
+//   email: "admin@Gamenethub.com",
 //   password: "Admin@123", // default password
 //   role: "admin",
 // };
