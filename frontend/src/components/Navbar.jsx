@@ -932,11 +932,24 @@ export default function Navbar() {
                       </Link>
 
                       <button
-                        onClick={handleLogout}
-                        style={{ ...styles.dropdownItem, border: "none", width: "100%" }}
-                      >
-                        Logout
-                      </button>
+  onClick={handleLogout}
+  style={{
+    ...styles.dropdownItem,
+    ...styles.logoutText,
+    background: "transparent",
+    border: "none",
+    outline: "none",
+    boxShadow: "none",
+    width: "100%",
+    cursor: "pointer",
+    textAlign: "left",
+    padding: "8px 10px"
+  }}
+>
+  Logout
+</button>
+
+
                     </div>
                   </div>
                 </>
@@ -1048,13 +1061,13 @@ export default function Navbar() {
 
             {user && (
               <>
-                <Link
+                {/* <Link
                   to="/profile"
                   onClick={() => setOpen(false)}
                   style={styles.mobileLink}
                 >
                   Profile
-                </Link>
+                </Link> */}
                 <Link
                   to="/settings"
                   onClick={() => setOpen(false)}
@@ -1063,19 +1076,22 @@ export default function Navbar() {
                   Settings
                 </Link>
                 <button
-                  onClick={() => {
-                    setOpen(false);
-                    handleLogout();
-                  }}
-                  style={{
-                    ...styles.mobileLink,
-                    border: "none",
-                    textAlign: "left",
-                    background: "transparent",
-                  }}
-                >
-                  Logout
-                </button>
+  onClick={() => { setOpen(false); handleLogout(); }}
+  style={{
+    ...styles.mobileLink,
+    ...styles.logoutText,
+    background: "transparent",
+    border: "none",
+    outline: "none",
+    boxShadow: "none",
+    textAlign: "left",
+    cursor: "pointer"
+  }}
+>
+  Logout
+</button>
+
+
               </>
             )}
           </div>
@@ -1336,4 +1352,14 @@ const styles = {
     background: "linear-gradient(90deg, rgba(59,130,246,0.12), rgba(59,130,246,0.06))",
     color: "#fff",
   },
+  logoutText: {
+  fontSize: 14,
+  fontWeight: 700,
+  color: "#e6f0ff",
+  border: "none",
+  outline: "none",
+  boxShadow: "none",
+}
+
+
 };
