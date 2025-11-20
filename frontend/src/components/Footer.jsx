@@ -150,6 +150,8 @@ export default function Footer() {
             <Link to="/about" style={styles.link}>About</Link>
             <Link to="/terms" style={styles.link}>Terms & Conditions</Link>
             <Link to="/privacy" style={styles.link}>Privacy Policy</Link>
+            {/* ⭐ Contact Page Link */}
+            <Link to="/contact" style={styles.link}>Contact</Link>
 
           </div>
         </div>
