@@ -1379,7 +1379,7 @@ import SearchBar from "../components/SearchBar"; // <-- imported
 
 const BREAKPOINT = 900;
 
-export default function Navbar() {
+export default function Navbar({ onSearch }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -1402,6 +1402,14 @@ export default function Navbar() {
   }, [searchTerm]);
 
   useEffect(() => setOpen(false), [location.pathname]);
+
+  useEffect(() => {
+  const clearSearch = () => setSearchTerm("");
+
+  window.addEventListener("clear-search", clearSearch);
+  return () => window.removeEventListener("clear-search", clearSearch);
+}, []);
+
 
   useEffect(() => {
     const onResize = () => {
@@ -1538,6 +1546,8 @@ export default function Navbar() {
           </Link>
         </div>
 
+
+
         {/* CENTER: nav links + search (desktop) */}
         <div
           style={{
@@ -1564,7 +1574,12 @@ export default function Navbar() {
 
           {/* Search placed between nav links and profile (Option A) */}
           <div style={{ minWidth: 260, maxWidth: 520, width: 360 }}>
-            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+            <SearchBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              onSearch={(value) => onSearch && onSearch(value)}
+            />
+
           </div>
         </div>
 

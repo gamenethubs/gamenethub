@@ -32,21 +32,49 @@
 //   },
 // };
 // src/components/SearchBar.jsx
+
+
+
+
+// import React from "react";
+
+// export default function SearchBar({ searchTerm, setSearchTerm }) {
+//   return (
+//     <div style={styles.container}>
+//       <input
+//         type="text"
+//         placeholder="Search games..."
+//         value={searchTerm}
+//         onChange={(e) => setSearchTerm(e.target.value)}
+//         style={styles.input}
+//       />
+//     </div>
+//   );
+// }
+
 import React from "react";
 
-export default function SearchBar({ searchTerm, setSearchTerm }) {
+export default function SearchBar({ searchTerm, setSearchTerm, onSearch }) {
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (onSearch) onSearch(value); // ⭐ PASS VALUE TO NAVBAR
+  };
+
   return (
     <div style={styles.container}>
       <input
         type="text"
         placeholder="Search games..."
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={handleChange}
         style={styles.input}
       />
     </div>
   );
 }
+
 
 const styles = {
   container: {
