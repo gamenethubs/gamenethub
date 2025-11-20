@@ -86,6 +86,8 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import contactRoutes from "./routes/contactRoutes.js";
+
 
 dotenv.config();
 
@@ -149,6 +151,8 @@ import { protect, adminOnly } from "./middleware/authMiddleware.js";
 app.use("/api/auth", authRoutes);
 app.use("/api/games", gameRoutes);
 app.use("/api/favorites", favoriteRoutes);
+app.use("/api/contact", contactRoutes);
+
 
 /********************************************
  * 5️⃣ PROTECTED TEST ENDPOINTS
