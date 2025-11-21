@@ -256,7 +256,7 @@ export default function Home() {
   const trending = useMemo(() => {
     return [...filteredGames]
       .sort((a, b) => (b.trendingScore || 0) - (a.trendingScore || 0))
-      .slice(0, 7);
+      .slice(0, 10);
   }, [filteredGames]);
 
   // POPULAR (from filtered)
@@ -391,7 +391,7 @@ const styles = {
     margin: "20px 0 30px",
     opacity: 0.6,
   },
-  section: { marginBottom: "50px" },
+  section: { marginBottom: "30px" },
   sectionTitleGlow: {
     fontSize: "26px",
     fontWeight: 700,
@@ -405,11 +405,22 @@ const styles = {
     paddingBottom: "10px",
   },
   horizontalItem: {
-    minWidth: "230px",
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))",
-    gap: "24px",
-  },
+  minWidth: "130px",
+},
+
+grid: {
+  display: "grid",
+  gap: "10px",
+  width: "100%",
+  gridTemplateColumns: "repeat(auto-fit, minmax(139px, 1fr))",
+  justifyItems: "center",
+},
+
+
+
+
+
+
+
+
 };

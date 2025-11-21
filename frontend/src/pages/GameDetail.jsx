@@ -871,6 +871,9 @@ export default function GameDetail() {
   const [animate, setAnimate] = useState(false);
   const playIncrementedRef = useRef(false);
 
+  // ⭐ NEW loading state
+  const [loading, setLoading] = useState(true);
+
   /* LOAD GAME + LIST */
   useEffect(() => {
     async function load() {
@@ -894,7 +897,7 @@ export default function GameDetail() {
 
         if (!rating && user?.ratedGames) {
           const fromUser = user.ratedGames.find(
-            (x) => String(x.game) === String(found._id)
+            (x) => String(x.game) === String(found?._id)
           );
           if (fromUser) rating = fromUser.stars;
         }
@@ -904,7 +907,9 @@ export default function GameDetail() {
         console.log("Error:", err);
       }
     }
-    load();
+
+    // ⭐ ensure loading ends after fetch
+    load().finally(() => setLoading(false));
   }, [slug, isAuthenticated, user]);
 
   useEffect(() => {
@@ -955,6 +960,10 @@ export default function GameDetail() {
     } catch {}
   };
 
+  // ⭐ FIXED — when loading → return nothing
+  if (loading) return null;
+
+  // ⭐ Only show "Not Found" when API returned nothing
   if (!game) {
     return (
       <div style={{ padding: 20, color: "#fff" }}>
@@ -965,6 +974,8 @@ export default function GameDetail() {
       </div>
     );
   }
+
+
 
   const bannerImg = absoluteUrl(game.thumbnail);
   const related = allGames.filter(

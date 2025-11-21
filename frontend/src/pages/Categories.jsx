@@ -71,30 +71,35 @@ export default function Categories() {
     if (genreFilter !== "All") {
       list = list.filter((g) => g.genre === genreFilter);
     }
+// 🔄 Sorting System (FIXED)
+switch (sortType) {
+  case "rating_desc":
+    list.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+    break;
 
-    // 🔄 Sorting System
-    switch (sortType) {
-      case "rating_desc":
-        list.sort((a, b) => b.rating - a.rating);
-        break;
-      case "rating_asc":
-        list.sort((a, b) => a.rating - b.rating);
-        break;
-      case "plays_desc":
-        list.sort((a, b) => b.playCount - a.playCount);
-        break;
-      case "plays_asc":
-        list.sort((a, b) => a.playCount - b.playCount);
-        break;
-      case "trending_desc":
-        list.sort((a, b) => (b.trendingScore || 0) - (a.trendingScore || 0));
-        break;
-      case "popular_desc":
-        list.sort((a, b) => (b.popularScore || 0) - (a.popularScore || 0));
-        break;
-      default:
-        break;
-    }
+  case "rating_asc":
+    list.sort((a, b) => (a.averageRating || 0) - (b.averageRating || 0));
+    break;
+
+  case "plays_desc":
+    list.sort((a, b) => (b.playCount || 0) - (a.playCount || 0));
+    break;
+
+  case "plays_asc":
+    list.sort((a, b) => (a.playCount || 0) - (b.playCount || 0));
+    break;
+
+  case "trending_desc":
+    list.sort((a, b) => (b.trendingScore || 0) - (a.trendingScore || 0));
+    break;
+
+  case "popular_desc":
+    list.sort((a, b) => (b.popularScore || 0) - (a.popularScore || 0));
+    break;
+
+  default:
+    break;
+}
 
     return list;
   }, [games, searchTerm, genreFilter, sortType]);
@@ -287,12 +292,27 @@ const styles = {
     boxShadow: "0 6px 20px rgba(124,58,237,0.35)",
   },
 
+  // grid: {
+  //   display: "grid",
+  //   gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+  //   gap: "22px",
+  //   justifyItems: "center",
+    
+  // },
   grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-    gap: "22px",
-    justifyItems: "center",
-  },
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fill, minmax(135px, 1fr))",
+  gap: "10px",
+  justifyItems: "center",
+}
+,
+"@media (max-width: 600px)": {
+  grid: {
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: "10px",
+  }
+},
+
 
   noResult: {
     gridColumn: "1/-1",
