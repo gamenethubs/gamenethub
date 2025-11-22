@@ -12,6 +12,8 @@ export default function Contact() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [responseMsg, setResponseMsg] = useState("");
+  const [copied, setCopied] = useState(false);
+
 
  const apiBaseURL = process.env.REACT_APP_API_BASE;
     // const apiBaseURL = "http://localhost:5000";
@@ -44,6 +46,12 @@ export default function Contact() {
 
     setLoading(false);
   };
+  const handleCopyEmail = () => {
+  navigator.clipboard.writeText("gamenethubs@gmail.com");
+  setCopied(true);
+  setTimeout(() => setCopied(false), 1200);
+};
+
 
 
 
@@ -116,6 +124,38 @@ export default function Contact() {
     </p>
   )}
 </form>
+{/* ✅ ADDED TEXT HERE */}
+        <p style={styles.reachText}>
+          You can reach out to us anytime through the email below:
+        </p>
+
+       <div style={styles.emailWrapper}>
+  <div
+    style={{
+      ...styles.emailBox,
+      boxShadow: copied
+        ? "0 0 18px rgba(0,255,255,0.55)"
+        : "0 0 10px rgba(0,255,255,0.28)",
+      transform: copied ? "scale(1.05)" : "scale(1)",
+    }}
+    onClick={handleCopyEmail}
+  >
+    <p style={styles.emailText}>
+      {copied ? "✔ Copied!" : "gamenethubs@gmail.com"}
+    </p>
+  </div>
+</div>
+
+
+
+
+
+
+        <p style={styles.noteText}>
+          We usually respond within 24–48 hours.
+          <br />
+          Thank you for being a part of <b>GamenetHub!</b>
+        </p>
 
       </div>
 
@@ -279,6 +319,49 @@ const styles = {
       "linear-gradient(to bottom, transparent, rgba(255,255,255,0.03), transparent)",
     animation: "scan 3s linear infinite",
     pointerEvents: "none",
+  },
+  /* ✅ NEW STYLES */
+  reachText: {
+    textAlign: "center",
+    marginTop: 28,
+    marginBottom: 10,
+    color: "#cbd5e1",
+    fontSize: "14px",
+  },
+
+ emailBox: {
+  display: "inline-block",
+  background: "rgba(0,80,120,0.28)",
+  padding: "12px 22px",
+  borderRadius: 14,
+  border: "1px solid rgba(0,255,255,0.18)",
+  textAlign: "center",
+  transition: "0.3s ease",
+  cursor: "pointer",
+  margin: "0 auto", // keeps it centered
+}
+,
+emailText: {
+  fontSize: "17px",
+  fontWeight: 700,
+  color: "#67e8f9",
+  letterSpacing: 0.5,
+  whiteSpace: "nowrap", // prevents breaking into 2 lines
+},
+emailWrapper: {
+  width: "100%",
+  display: "flex",
+  justifyContent: "center",
+  marginTop: 18,
+},
+
+
+  noteText: {
+    textAlign: "center",
+    marginTop: 18,
+    color: "#cbd5e1",
+    fontSize: "14px",
+    lineHeight: 1.5,
   },
 };
 

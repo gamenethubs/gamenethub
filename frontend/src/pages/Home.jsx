@@ -698,7 +698,7 @@ const styles = {
     position: "relative",
     textAlign: "center",
     padding: "20px",
-    marginBottom: "60px",
+    // marginBottom: "0px",
     borderRadius: "22px",
     background: "linear-gradient(135deg, #0f172a, #1e293b)",
   },
