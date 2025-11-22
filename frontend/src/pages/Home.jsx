@@ -749,7 +749,7 @@ const styles = {
   /* ------- Horizontal Scroll Modern ------- */
   horizontalScroll: {
     display: "flex",
-    gap: "18px",
+    gap: "2px",
     overflowX: "auto",
     padding: "10px 4px 14px",
     scrollSnapType: "x mandatory",
@@ -793,13 +793,15 @@ const styles = {
     opacity: 1,
   },
 
-  grid: {
+ grid: {
   display: "grid",
-  gap: "10px",
-  width: "100%",
-  gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+  gap: "20px",
+  gridTemplateColumns: "repeat(auto-fill, 130px)", // ✅ FIXED width columns
+  justifyContent: "center",                        // ✅ centers the row
   justifyItems: "center",
+  width: "100%",
 },
+
 
 "@media (max-width: 600px)": {
   grid: {
