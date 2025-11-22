@@ -184,5 +184,6 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
   console.log("🌍 Allowed Origins:", allowedOrigins);
   console.log("📁 Serving uploads from:", process.env.UPLOAD_PATH);
+  console.log("Server listening on port", PORT);
 });
 
