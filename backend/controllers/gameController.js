@@ -375,26 +375,22 @@ import path from "path";
 import slugify from "slugify";
 
 /********************************************************
- * ⭐ RENDER PERSISTENT DISK PATHS FIX
- * Use Environment Variables (set in Render Dashboard)
+ * ⭐ RENDER PERSISTENT DISK PATHS
  * UPLOAD_PATH: /var/data/uploads 
  * GAME_PATH: /var/data/uploads/games 
  ********************************************************/
 const UPLOADS_ROOT = process.env.UPLOAD_PATH; 
 const GAME_EXTRACT_ROOT = process.env.GAME_PATH; 
 
-// ⭐ REMOVE: Folder creation logic is handled in uploadMiddleware.js on the correct path.
-// Removing old ROOT_DIR and folder creation here to avoid issues on Render.
-// If the server starts before uploadMiddleware, these paths might be undefined, so we check.
+// Initial Check (Safety)
 if (!UPLOADS_ROOT || !GAME_EXTRACT_ROOT) {
-    console.error("❌ ERROR: UPLOAD_PATH or GAME_PATH is missing from environment variables.");
-    // In a real application, you might want to exit the process here or ensure these are set.
+    console.error("❌ ERROR: UPLOAD_PATH or GAME_PATH is missing from environment variables.");
 }
 
 
 /*******************************************
- * SCORE CALCULATIONS (Correct)
- *******************************************/
+ * SCORE CALCULATIONS (Correct)
+ *******************************************/
 const calculateTrendingScore = (game) => {
   const days =
     (Date.now() - new Date(game.createdAt).getTime()) /
@@ -412,8 +408,8 @@ const calculatePopularScore = (game) => {
 };
 
 /*******************************************
- * GET ALL GAMES (Correct)
- *******************************************/
+ * GET ALL GAMES (Correct)
+ *******************************************/
 export const getAllGames = async (req, res) => {
   try {
     const games = await Game.find()
@@ -435,8 +431,8 @@ export const getAllGames = async (req, res) => {
 };
 
 /*******************************************
- * GET GAME BY ID (Correct)
- *******************************************/
+ * GET GAME BY ID (Correct)
+ *******************************************/
 export const getGameById = async (req, res) => {
   try {
     const g = await Game.findById(req.params.id)
@@ -460,8 +456,8 @@ export const getGameById = async (req, res) => {
 };
 
 /*******************************************
- * GET GAME BY SLUG (Correct)
- *******************************************/
+ * GET GAME BY SLUG (Correct)
+ *******************************************/
 export const getGameBySlug = async (req, res) => {
   try {
     const g = await Game.findOne({ slug: req.params.slug })
@@ -485,8 +481,8 @@ export const getGameBySlug = async (req, res) => {
 };
 
 /*******************************************
- * CREATE GAME — Fully Render / Persistent Disk Safe
- *******************************************/
+ * CREATE GAME — Fully Render / Persistent Disk Safe
+ *******************************************/
 export const createGame = async (req, res) => {
   try {
     const { title, genre, description } = req.body;
@@ -515,7 +511,6 @@ export const createGame = async (req, res) => {
 
     // Extract ZIP file to Persistent Disk
     try {
-      // zipFile.path points to the file saved on the Persistent Disk by multer
       await extract(zipFile.path, { dir: extractDir });
     } catch (err) {
       console.error("ZIP EXTRACT ERROR:", err);
@@ -537,13 +532,10 @@ export const createGame = async (req, res) => {
       return res.status(400).json({ message: "index.html NOT found in ZIP" });
     }
 
-    // ⭐ FIX: Generate Play URL using the static route prefix /games
-    // 1. indexPath is like: /var/data/uploads/games/game-slug/index.html
-    // 2. We replace the base persistent path (UPLOADS_ROOT: /var/data/uploads)
-    // 3. We prepend the static route prefix /games/
-    const gamePathPrefix = `/games/`;
-    const relativePath = indexPath.replace(UPLOADS_ROOT, "").replace(/\\/g, "/");
-    const playUrl = `${gamePathPrefix}${relativePath}`.replace(/\/\//g, '/'); // Remove any double slashes
+    // ⭐ FINAL FIX APPLIED HERE: Removing the double /games/ issue.
+    // We replace the GAME_EXTRACT_ROOT part with the static URL path '/games'
+    const pathAfterExtractRoot = indexPath.replace(GAME_EXTRACT_ROOT, "").replace(/\\/g, "/");
+    const playUrl = `/games${pathAfterExtractRoot}`;
 
 
     const game = await Game.create({
@@ -577,8 +569,8 @@ export const createGame = async (req, res) => {
 };
 
 /*******************************************
- * UPDATE GAME
- *******************************************/
+ * UPDATE GAME
+ *******************************************/
 export const updateGame = async (req, res) => {
   try {
     const game = await Game.findById(req.params.id);
@@ -628,10 +620,9 @@ export const updateGame = async (req, res) => {
       if (!indexPath)
         return res.status(400).json({ message: "index.html not found" });
 
-      // ⭐ FIX: Play URL generation (same logic as createGame)
-      const gamePathPrefix = `/games/`;
-      const relativePath = indexPath.replace(UPLOADS_ROOT, "").replace(/\\/g, "/");
-      playUrl = `${gamePathPrefix}${relativePath}`.replace(/\/\//g, '/');
+      // ⭐ FINAL FIX APPLIED HERE: Removing the double /games/ issue.
+      const pathAfterExtractRoot = indexPath.replace(GAME_EXTRACT_ROOT, "").replace(/\\/g, "/");
+      playUrl = `/games${pathAfterExtractRoot}`;
     }
 
     // Apply updates
@@ -661,8 +652,8 @@ export const updateGame = async (req, res) => {
 };
 
 /*******************************************
- * DELETE GAME
- *******************************************/
+ * DELETE GAME (Correct)
+ *******************************************/
 export const deleteGame = async (req, res) => {
   try {
     const g = await Game.findByIdAndDelete(req.params.id);
@@ -683,8 +674,8 @@ export const deleteGame = async (req, res) => {
 };
 
 /*******************************************
- * INCREASE PLAY COUNT (Correct)
- *******************************************/
+ * INCREASE PLAY COUNT (Correct)
+ *******************************************/
 export const increasePlayCount = async (req, res) => {
   try {
     const game = await Game.findById(req.params.id);
@@ -704,10 +695,11 @@ export const increasePlayCount = async (req, res) => {
 };
 
 /*******************************************
- * USER RATING SYSTEM (Correct)
- *******************************************/
+ * USER RATING SYSTEM (Correct)
+ *******************************************/
 export const rateGame = async (req, res) => {
   try {
+    // ... (Rest of the function is correct)
     const userId = req.user?._id?.toString();
     if (!userId) {
       return res.status(401).json({ message: "Login required" });
