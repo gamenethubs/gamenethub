@@ -498,7 +498,7 @@
 // styleTag.innerHTML = css;
 // document.head.appendChild(styleTag);
 
-
+/////////////page/Home.jsx////////////////////////
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { getAllGames } from "../services/api";
@@ -653,7 +653,10 @@ export default function Home() {
                 transition: `all .55s ease ${i * 0.07}s`,
               }}
             >
-              <GameCard game={game} onPlay={() => setSelectedGame(game)} />
+             
+  <GameCard game={game} onPlay={() => setSelectedGame(game)} />
+
+
             </div>
           ))}
         </div>
@@ -673,7 +676,10 @@ export default function Home() {
                 transition: `all .6s ease ${i * 0.09}s`,
               }}
             >
-              <GameCard game={game} onPlay={() => setSelectedGame(game)} />
+              
+  <GameCard game={game} onPlay={() => setSelectedGame(game)} />
+
+
             </div>
           ))}
         </div>
@@ -788,12 +794,25 @@ const styles = {
   },
 
   grid: {
-    display: "grid",
-    gap: "10px",
-    width: "100%",
-    gridTemplateColumns: "repeat(auto-fit, minmax(139px, 1fr))",
-    justifyItems: "center",
-  },
+  display: "grid",
+  gap: "10px",
+  width: "100%",
+  gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+  justifyItems: "center",
+},
+
+"@media (max-width: 600px)": {
+  grid: {
+    gridTemplateColumns: "repeat(2, 1fr)",
+    gap: "12px",
+  }
+},
+
+
+
+
+
+  
 };
 
 /* Hide scrollbar (Chrome / Safari / Edge) */
