@@ -498,7 +498,7 @@
 // styleTag.innerHTML = css;
 // document.head.appendChild(styleTag);
 
-
+/////////////page/Home.jsx////////////////////////
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { getAllGames } from "../services/api";
@@ -653,7 +653,10 @@ export default function Home() {
                 transition: `all .55s ease ${i * 0.07}s`,
               }}
             >
-              <GameCard game={game} onPlay={() => setSelectedGame(game)} />
+             
+  <GameCard game={game} onPlay={() => setSelectedGame(game)} />
+
+
             </div>
           ))}
         </div>
@@ -673,7 +676,10 @@ export default function Home() {
                 transition: `all .6s ease ${i * 0.09}s`,
               }}
             >
-              <GameCard game={game} onPlay={() => setSelectedGame(game)} />
+              
+  <GameCard game={game} onPlay={() => setSelectedGame(game)} />
+
+
             </div>
           ))}
         </div>
@@ -743,7 +749,7 @@ const styles = {
   /* ------- Horizontal Scroll Modern ------- */
   horizontalScroll: {
     display: "flex",
-    gap: "18px",
+    gap: "2px",
     overflowX: "auto",
     padding: "10px 4px 14px",
     scrollSnapType: "x mandatory",
@@ -787,13 +793,28 @@ const styles = {
     opacity: 1,
   },
 
+ grid: {
+  display: "grid",
+  gap: "20px",
+  gridTemplateColumns: "repeat(auto-fill, 130px)", // ✅ FIXED width columns
+  justifyContent: "center",                        // ✅ centers the row
+  justifyItems: "center",
+  width: "100%",
+},
+
+
+"@media (max-width: 600px)": {
   grid: {
-    display: "grid",
-    gap: "10px",
-    width: "100%",
-    gridTemplateColumns: "repeat(auto-fit, minmax(139px, 1fr))",
-    justifyItems: "center",
-  },
+    gridTemplateColumns: "repeat(2, 1fr)",
+    gap: "12px",
+  }
+},
+
+
+
+
+
+  
 };
 
 /* Hide scrollbar (Chrome / Safari / Edge) */
