@@ -544,9 +544,9 @@ export default function Profile() {
   const [favLoading, setFavLoading] = useState(false);
 
   const socialLinks = [
-    { id: "instagram", label: "Instagram", href: "https://www.instagram.com/", icon: "📸" },
-    { id: "twitter", label: "Twitter", href: "https://twitter.com/", icon: "🐦" },
-    { id: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/", icon: "🔗" },
+    { id: "instagram", label: "Instagram", href: "https://www.instagram.com/gamenethubs/", icon: "📸" },
+    { id: "twitter", label: "Twitter", href: "https://x.com/gamenethub", icon: "🐦" },
+    { id: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/company/gamenethub", icon: "🔗" },
   ];
 
   useEffect(() => {
