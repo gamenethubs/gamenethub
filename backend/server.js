@@ -88,6 +88,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import contactRoutes from "./routes/contactRoutes.js";
 
+// ⭐ ADDED
+import subscriberRoutes from "./routes/subscriberRoutes.js";
 
 dotenv.config();
 
@@ -111,12 +113,12 @@ const PORT = process.env.PORT || 5000;
 })();
 
 /********************************************
- * 2️⃣ CORS CONFIG (LOCAL + PRODUCTION SAFELY)
+ * 2️⃣ CORS CONFIG
  ********************************************/
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  "https://gamenethub.netlify.app",     // ← ADD THIS EXACTLY
+  "https://gamenethub.netlify.app",
   process.env.CLIENT_URL,
   process.env.FRONTEND_URL,
 ].filter(Boolean);
@@ -129,13 +131,8 @@ app.use(
   })
 );
 
-
-// Ensure preflight OPTIONS are handled
-// app.options("*", cors());
-
-
 /********************************************
- * 3️⃣ JSON + FORM PARSER (LARGE FILES)
+ * 3️⃣ JSON + FORM PARSER
  ********************************************/
 app.use(express.json({ limit: "200mb" }));
 app.use(express.urlencoded({ limit: "200mb", extended: true }));
@@ -153,6 +150,8 @@ app.use("/api/games", gameRoutes);
 app.use("/api/favorites", favoriteRoutes);
 app.use("/api/contact", contactRoutes);
 
+// ⭐ Newsletter subscribe route
+app.use("/api/subscribe", subscriberRoutes);
 
 /********************************************
  * 5️⃣ PROTECTED TEST ENDPOINTS
@@ -166,14 +165,10 @@ app.get("/api/admin/check", protect, adminOnly, (req, res) => {
 });
 
 /********************************************
- * 6️⃣ STATIC FILES (RENDER PERSISTENT DISK SAFE)
+ * 6️⃣ STATIC FILES — UPDATED FOR PERSISTENT DISK
  ********************************************/
-
-// 100% correct → uploads survives after restart
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Serve extracted games (ZIP extractions)
-app.use("/games", express.static(path.join(__dirname, "uploads/games")));
+app.use("/uploads", express.static(process.env.UPLOAD_PATH));
+app.use("/games", express.static(process.env.GAME_PATH));
 
 /********************************************
  * 7️⃣ BASIC TEST
@@ -188,5 +183,6 @@ app.get("/test", (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
   console.log("🌍 Allowed Origins:", allowedOrigins);
-  console.log("📁 Serving uploads from:", path.join(__dirname, "uploads"));
+  console.log("📁 Serving uploads from:", process.env.UPLOAD_PATH);
 });
+
