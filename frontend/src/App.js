@@ -197,6 +197,7 @@ import EditGame from "./pages/EditGame";
 
 // cartoon
 import Cartoon from "./components/Cartoon";  
+import AnalyticsTracker from "./components/AnalyticsTracker";
 
 function RequireAuth({ children }) {
   const { isAuthenticated } = useAuth();
@@ -211,7 +212,7 @@ function App() {
 
   return (
     <div style={styles.appWrapper}>
-
+      <AnalyticsTracker /> 
       {!isAdminRoute && (
         <Navbar 
           onSearch={(value) => setShowCartoon(value.toLowerCase() === "ding dong")}
