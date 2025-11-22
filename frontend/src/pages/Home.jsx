@@ -797,7 +797,7 @@ const styles = {
   display: "grid",
   gap: "20px",
   gridTemplateColumns: "repeat(auto-fill, 130px)", // ✅ FIXED width columns
-  justifyContent: "center",                        // ✅ centers the row
+  // justifyContent: "center",                        // ✅ centers the row
   justifyItems: "center",
   width: "100%",
 },
