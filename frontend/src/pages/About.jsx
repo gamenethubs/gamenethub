@@ -3,7 +3,9 @@ import React from "react";
 
 export default function About() {
   return (
-    <div style={styles.page}>
+    <div style={styles.wrapper}>
+      <div style={styles.grid}></div>
+
       <div style={styles.card}>
         <h1 style={styles.title}>About GamenetHub</h1>
 
@@ -50,59 +52,85 @@ export default function About() {
 
         <p style={{ ...styles.text, marginTop: 10 }}>
           <b>Email ID:</b> <a style={styles.a} href="mailto:gamenethubs@gmail.com">gamenethubs@gmail.com</a>
-
         </p>
       </div>
+
+      <div style={styles.neonOrb1}></div>
+      <div style={styles.neonOrb2}></div>
+      <div style={styles.scanline}></div>
     </div>
   );
 }
 
 const styles = {
-  page: {
+  wrapper: {
+    width: "100%",
     minHeight: "100vh",
-    background: "#0f172a",
+    background: "#030616",
+    position: "relative",
+    overflow: "hidden",
     padding: "40px 16px",
     display: "flex",
     justifyContent: "center",
   },
+
+  grid: {
+    position: "absolute",
+    inset: 0,
+    backgroundImage:
+      "linear-gradient(#00f2ff22 1px, transparent 1px), linear-gradient(90deg, #00f2ff22 1px, transparent 1px)",
+    backgroundSize: "40px 40px",
+    animation: "gridMove 12s linear infinite",
+  },
+
   card: {
     width: "100%",
     maxWidth: 900,
-    background: "rgba(255,255,255,0.06)",
-    borderRadius: 16,
-    padding: "24px",
-    border: "1px solid rgba(255,255,255,0.08)",
+    background: "rgba(10,15,25,0.55)",
+    padding: "28px",
+    borderRadius: 20,
+    border: "2px solid rgba(0,255,255,0.18)",
+    backdropFilter: "blur(10px)",
+    position: "relative",
+    zIndex: 5,
     color: "#e6f0ff",
-    boxSizing: "border-box",
-  },
-  title: {
-    fontSize: "28px",
-    fontWeight: 800,
-    marginBottom: 18,
-  },
-  subtitle: {
-    fontSize: "20px",
-    fontWeight: 700,
-    marginTop: 20,
-    marginBottom: 10,
-    color: "#fff",
-  },
-  text: {
-    color: "#cdd7f5",
-    lineHeight: 1.7,
-    marginBottom: 14,
-    fontSize: "15px",
-  },
-  a:{
-    color: "#ffffffff",
-    fontWeight: "bold",
   },
 
-  // Mobile responsive
-  "@media (max-width: 480px)": {
-    title: { fontSize: "22px" },
-    subtitle: { fontSize: "18px" },
-    card: { padding: "18px" },
-    text: { fontSize: "14px" },
+  title: { fontSize: 28, fontWeight: 800, marginBottom: 18, color: "#67e8f9" },
+  subtitle: { fontSize: 20, fontWeight: 700, marginTop: 20, marginBottom: 10 },
+  text: { color: "#cdd7f5", lineHeight: 1.7, marginBottom: 14, fontSize: 15 },
+  a: { color: "#67e8f9", fontWeight: "bold" },
+
+  neonOrb1: {
+    position: "absolute",
+    width: 140,
+    height: 140,
+    background: "radial-gradient(circle, #00eaff, #0066ff77, transparent)",
+    borderRadius: "50%",
+    top: "8%",
+    left: "10%",
+    filter: "blur(22px)",
+    animation: "floatOrb 6s ease-in-out infinite",
+  },
+
+  neonOrb2: {
+    position: "absolute",
+    width: 180,
+    height: 180,
+    background: "radial-gradient(circle, #ff00ff, #9900ff77, transparent)",
+    borderRadius: "50%",
+    bottom: "10%",
+    right: "8%",
+    filter: "blur(26px)",
+    animation: "floatOrb 8s ease-in-out infinite reverse",
+  },
+
+  scanline: {
+    position: "absolute",
+    inset: 0,
+    background:
+      "linear-gradient(to bottom, transparent, rgba(255,255,255,0.04), transparent)",
+    animation: "scan 3s linear infinite",
+    pointerEvents: "none",
   },
 };
