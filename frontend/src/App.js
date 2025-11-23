@@ -246,6 +246,19 @@ function App() {
   }}
 />
 
+{showCartoon && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      zIndex: 2000,
+      pointerEvents: "all",
+      background: "transparent",
+    }}
+  ></div>
+)}
+ 
+
 {showGreeting && (
   <GreetingCartoon onFinish={() => {
     setShowGreeting(false);

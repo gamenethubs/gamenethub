@@ -558,11 +558,29 @@ export default function Home() {
     return () => scroller.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // const filteredGames = useMemo(() => {
+  //   if (!searchTerm.trim()) return games;
+  //   const t = searchTerm.toLowerCase();
+  //   return games.filter((g) => (g.title || "").toLowerCase().includes(t));
+  // }, [games, searchTerm]);
+
   const filteredGames = useMemo(() => {
-    if (!searchTerm.trim()) return games;
-    const t = searchTerm.toLowerCase();
-    return games.filter((g) => (g.title || "").toLowerCase().includes(t));
-  }, [games, searchTerm]);
+  const term = searchTerm.toLowerCase().trim();
+
+  // ⭐ Do NOT filter on special trigger words
+  const noFilterWords = ["ding dong", "hello ding dong"];
+
+      if (noFilterWords.includes(term)) {
+        return games; // ⬅ Keep games intact
+      }
+
+      if (!term) return games;
+
+      return games.filter((g) =>
+        (g.title || "").toLowerCase().includes(term)
+      );
+    }, [games, searchTerm]); 
+
 
   const trending = useMemo(() => {
     return [...filteredGames]
