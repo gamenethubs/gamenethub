@@ -506,6 +506,7 @@ import GameCard from "../components/GameCard";
 import GameModal from "../components/GameModal";
 
 export default function Home() {
+  
   const [games, setGames] = useState([]);
   const [selectedGame, setSelectedGame] = useState(null);
   const [animate, setAnimate] = useState(false);
@@ -602,13 +603,35 @@ export default function Home() {
     <div style={styles.wrapper}>
       {/* HERO */}
       <section
-        style={{
-          ...styles.hero,
-          opacity: animate ? 1 : 0,
-          transform: animate ? "translateY(0)" : "translateY(25px)",
-        }}
-      >
+  data-hero-box     // ✅ ADD THIS
+  style={{
+    ...styles.hero,
+    opacity: animate ? 1 : 0,
+    transform: animate ? "translateY(0)" : "translateY(25px)",
+  }}
+>
+
+
         <div style={styles.heroGlow} />
+        <div
+  id="footstep-track"
+  style={{
+    position: "absolute",
+    inset: 0,
+    pointerEvents: "none",
+    overflow: "visible",
+    zIndex: 3,
+  }}
+></div>
+        <div id="dragon-portal" style={styles.portal}></div>
+
+        <img src="/dragon.png" alt="dragon" style={styles.dragon} />
+
+
+        
+
+
+
         <h1 style={styles.heroTitle}>Welcome to Gamenethub 🎮</h1>
         <p style={styles.heroSub}>Play amazing online games — fully free!</p>
       </section>
@@ -827,6 +850,81 @@ const styles = {
     gap: "12px",
   }
 },
+dragon: {
+  position: "absolute",
+  top: "-45px",         // ✅ Sits perfectly ON TOP of the box
+  left: "-120px",       // ✅ Starts outside the screen
+  width: "70px",
+  height: "70px",
+  zIndex: 50,
+   animation: "dragonWalk 4.2s ease-out forwards 0.6s, dragonBob 0.6s infinite ease-in-out 0.6s",
+  pointerEvents: "none",
+},
+ footstep: {
+  position: "absolute",
+  width: "14px",
+  height: "14px",
+  borderRadius: "50%",
+  background: "rgba(0,255,255,0.8)",
+  boxShadow: "0 0 12px rgba(0,255,255,0.9), 0 0 22px rgba(0,180,255,0.8)",
+  filter: "brightness(1.5)",
+  opacity: 0,
+  animation: "stepFade 1s ease-out forwards",
+  pointerEvents: "none",
+  zIndex: 2,
+},
+
+pixelBurst: {
+  position: "absolute",
+  width: "6px",
+  height: "6px",
+  background: "rgb(255, 0, 140)",
+  borderRadius: "2px",
+  opacity: 1,
+  animation: "pixelPop .6s ease-out forwards",
+  pointerEvents: "none",
+  zIndex: 3,
+},
+burnTrail: {
+  position: "absolute",
+  width: "22px",
+  height: "22px",
+  borderRadius: "50%",
+  background: "radial-gradient(rgba(255,120,0,0.9), transparent)",
+  filter: "blur(6px)",
+  boxShadow: "0 0 18px rgba(255,90,0,0.9), 0 0 32px rgba(255,40,0,0.8)",
+  opacity: 0,
+  animation: "burnFade 1.8s ease-out forwards",
+  pointerEvents: "none",
+  zIndex: 2,
+},
+
+crackPiece: {
+  position: "absolute",
+  width: "2px",
+  height: "18px",
+  background: "rgba(255,255,255,0.35)",
+  transformOrigin: "bottom",
+  opacity: 1,
+  animation: "crackShatter 1.3s ease-out forwards",
+  pointerEvents: "none",
+  zIndex: 3,
+},
+portal: {
+  position: "absolute",
+  top: "-38px",
+  left: "-90px",
+  width: "90px",
+  height: "90px",
+  borderRadius: "50%",
+  
+  filter: "blur(12px)",
+  opacity: 0,
+  transform: "scale(0.2)",
+  zIndex: 40,
+  pointerEvents: "none",
+  animation: "portalOpen 1.2s ease-out forwards",
+},
 
 
 
@@ -834,14 +932,159 @@ const styles = {
 
   
 };
-
-/* Hide scrollbar (Chrome / Safari / Edge) */
-const css = `
-  .modern-scroll::-webkit-scrollbar {
-    display: none;
+const dragonCSS = `
+@keyframes dragonWalk {
+  0% {
+    left: -120px;
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
   }
+  30% {
+    left: 25%;
+    transform: scale(1.03) rotate(2deg);
+  }
+  60% {
+    left: 70%;
+    transform: scale(0.97) rotate(-3deg);
+  }
+  85% {
+    left: 95%;
+    opacity: 1;
+    transform: scale(0.9) rotate(-6deg);
+  }
+  100% {
+    left: 130%;
+    opacity: 0;         /* ✅ disappears smoothly */
+    transform: scale(0.75) rotate(-10deg);
+  }
+}
+
+/* ✅ subtle realistic body bounce — NOT cartoonish */
+@keyframes dragonBob {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
+}
+
+/* ✅ MOBILE PERFECT — smaller, faster exit */
+@media (max-width: 600px) {
+  @keyframes dragonWalk {
+    0% { left: -100px; opacity: 1; transform: scale(0.7); }
+    60% { left: 80%; opacity: 1; transform: scale(0.7); }
+    100% { left: 130%; opacity: 0; transform: scale(0.6); }
+  }
+}
 `;
-const styleTag = document.createElement("style");
-styleTag.innerHTML = css;
-document.head.appendChild(styleTag);
-        
+
+
+const dragonStyle = document.createElement("style");
+dragonStyle.innerHTML = dragonCSS;
+document.head.appendChild(dragonStyle);
+setTimeout(() => {
+  const dragonEl = document.querySelector('img[alt="dragon"]');
+  const track = document.querySelector('#footstep-track');
+  const hero = document.querySelector('[data-hero-box]');
+
+  if (!dragonEl || !track || !hero) return;
+
+  const drop = setInterval(() => {
+    const rect = dragonEl.getBoundingClientRect();
+    const parentRect = track.parentElement.getBoundingClientRect();
+
+    const x = rect.left - parentRect.left + 20;
+    const y = rect.bottom - parentRect.top - 6;
+
+    // 🔥 BURNING TRAIL
+    const burn = document.createElement("div");
+    Object.assign(burn.style, styles.burnTrail, {
+      top: y + "px",
+      left: x + "px",
+    });
+    track.appendChild(burn);
+    setTimeout(() => burn.remove(), 1800);
+
+    // 🪨 CRACK EFFECT
+    const crack = document.createElement("div");
+    Object.assign(crack.style, styles.crackPiece, {
+      top: rect.bottom - hero.getBoundingClientRect().top - 10 + "px",
+      left: rect.left - hero.getBoundingClientRect().left + 25 + "px",
+    });
+    hero.appendChild(crack);
+    setTimeout(() => crack.remove(), 1300);
+
+  }, 240);
+
+  setTimeout(() => clearInterval(drop), 4200);
+}, 200);
+
+
+const fx = `
+@keyframes stepFade {
+  0% { transform: scale(0.4); opacity: 1; }
+  60% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(0.8); opacity: 0; }
+}
+
+@keyframes pixelPop {
+  0% { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { 
+    transform: translate(
+      ${Math.random() * 40 - 20}px, 
+      ${Math.random() * 40 - 20}px
+    ) scale(0); 
+    opacity: 0; 
+  }
+}
+`;
+
+const fxTag = document.createElement("style");
+fxTag.innerHTML = fx;
+document.head.appendChild(fxTag);
+
+const chaosFX = `
+@keyframes burnFade {
+  0% { transform: scale(0.4); opacity: 1; }
+  40% { transform: scale(1.3); opacity: 0.9; }
+  100% { transform: scale(0.8); opacity: 0; }
+}
+
+@keyframes crackShatter {
+  0% { transform: rotate(0deg) scaleY(1); opacity: 1; }
+  100% {
+    transform: rotate(${Math.random()*50 - 25}deg) scaleY(0);
+    opacity: 0;
+  }
+}
+`;
+
+const chaosTag = document.createElement("style");
+chaosTag.innerHTML = chaosFX;
+document.head.appendChild(chaosTag);
+
+
+const portalFX = `
+@keyframes portalOpen {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+    filter: blur(18px);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: blur(6px);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+}
+`;
+
+const portalTag = document.createElement("style");
+portalTag.innerHTML = portalFX;
+document.head.appendChild(portalTag);
