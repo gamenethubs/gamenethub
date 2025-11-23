@@ -1549,7 +1549,7 @@ export default function Navbar({ onSearch }) {
 
 
         {/* CENTER: nav links + search (desktop) */}
-        <div
+        <div 
           style={{
             ...styles.center,
             display: isMobile ? "none" : "flex",
@@ -1707,8 +1707,12 @@ export default function Navbar({ onSearch }) {
           <div style={styles.mobileInner}>
             {/* Search on mobile top */}
             <div style={{ marginBottom: 8 }}>
-              <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-            </div>
+              <SearchBar 
+                searchTerm={searchTerm} 
+                setSearchTerm={setSearchTerm} 
+                onSearch={(value) => onSearch && onSearch(value)}
+                />
+            </div> 
 
             {user && (
               <div style={styles.mobileProfileRow}>
@@ -2032,3 +2036,4 @@ const styles = {
   },
 };
 
+ 

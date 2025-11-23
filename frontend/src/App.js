@@ -196,7 +196,10 @@ import ManageGames from "./pages/ManageGames";
 import EditGame from "./pages/EditGame";
 
 // cartoon
-import Cartoon from "./components/Cartoon";  
+import Cartoon from "./components/Cartoon"; 
+import GreetingCartoon from "./components/Greeting"; 
+
+//Google Analytics
 import AnalyticsTracker from "./components/AnalyticsTracker";
 
 function RequireAuth({ children }) {
@@ -208,15 +211,28 @@ function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
-  const [showCartoon, setShowCartoon] = React.useState(false);
+  const [showCartoon, setShowCartoon] = React.useState(false); 
+  const [showGreeting, setShowGreeting] = React.useState(false);
+
 
   return (
     <div style={styles.appWrapper}>
       <AnalyticsTracker /> 
       {!isAdminRoute && (
-        <Navbar 
-          onSearch={(value) => setShowCartoon(value.toLowerCase() === "ding dong")}
-        />
+        // <Navbar 
+        //   onSearch={(value) => setShowCartoon(value.toLowerCase() === "ding dong")} 
+        // />
+        <Navbar
+            onSearch={(value) => {
+              const v = value.toLowerCase();
+
+              // cartoon chase
+              setShowCartoon(v === "ding dong");
+
+              // greeting mode
+              setShowGreeting(v === "hello ding dong");
+            }}
+          />
       )}
 
       {/* Cartoon system */}
@@ -229,6 +245,28 @@ function App() {
     window.dispatchEvent(new Event("clear-search"));
   }}
 />
+
+{showCartoon && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      zIndex: 2000,
+      pointerEvents: "all",
+      background: "transparent",
+    }}
+  ></div>
+)}
+ 
+
+{showGreeting && (
+  <GreetingCartoon onFinish={() => {
+    setShowGreeting(false);
+    window.dispatchEvent(new Event("clear-search"));
+  }} 
+  />
+)}
+
 
 
       <main style={styles.container}>
@@ -272,7 +310,7 @@ const styles = {
     overflowX: "hidden",
     display: "flex",
     flexDirection: "column",
-  },
+  },  
   container: {
     padding: "20px",
     flex: 1,
