@@ -804,10 +804,13 @@ const styles = {
   },
 
   description: {
-    fontSize: 15,
-    lineHeight: 1.6,
-    color: "#e2e8f0",
-  },
+  fontSize: 15,
+  lineHeight: 1.6,
+  color: "#e2e8f0",
+  whiteSpace: "pre-line",   // ⭐ '\n' ko actual new line bana dega
+  wordBreak: "break-word",  // ⭐ mobile pe long words bhi wrap ho jayenge
+},
+
 
   relatedSection: {
     marginTop: 10,
