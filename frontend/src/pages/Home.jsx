@@ -874,42 +874,30 @@ dragon: {
   zIndex: 2,
 },
 
-pixelBurst: {
-  position: "absolute",
-  width: "6px",
-  height: "6px",
-  background: "rgb(255, 0, 140)",
-  borderRadius: "2px",
-  opacity: 1,
-  animation: "pixelPop .6s ease-out forwards",
-  pointerEvents: "none",
-  zIndex: 3,
-},
+
 burnTrail: {
   position: "absolute",
-  width: "22px",
-  height: "22px",
-  borderRadius: "50%",
-  background: "radial-gradient(rgba(255,120,0,0.9), transparent)",
-  filter: "blur(6px)",
-  boxShadow: "0 0 18px rgba(255,90,0,0.9), 0 0 32px rgba(255,40,0,0.8)",
-  opacity: 0,
-  animation: "burnFade 1.8s ease-out forwards",
-  pointerEvents: "none",
-  zIndex: 2,
-},
-
-crackPiece: {
-  position: "absolute",
-  width: "2px",
+  width: "55px",
   height: "18px",
-  background: "rgba(255,255,255,0.35)",
-  transformOrigin: "bottom",
-  opacity: 1,
-  animation: "crackShatter 1.3s ease-out forwards",
+  borderRadius: "60px",
+  background:
+    "radial-gradient(rgba(255,150,0,1), rgba(255,70,0,0.6), rgba(80,0,0,0))",
+  filter: "blur(3px)",
+  boxShadow: `
+    0 0 14px rgba(255,120,0,1),
+    0 0 32px rgba(255,60,0,0.9),
+    0 0 60px rgba(255,40,0,0.6)
+  `,
+  opacity: 0,
+  transform: "rotate(-12deg)",
+  animation: "burnFade 1.1s ease-out forwards, heatWave 0.35s infinite",
   pointerEvents: "none",
   zIndex: 3,
 },
+
+
+
+
 portal: {
   position: "absolute",
   top: "-38px",
@@ -927,11 +915,12 @@ portal: {
 },
 
 
-
-
-
   
 };
+
+
+
+
 const dragonCSS = `
 @keyframes dragonWalk {
   0% {
@@ -1003,14 +992,13 @@ setTimeout(() => {
     track.appendChild(burn);
     setTimeout(() => burn.remove(), 1800);
 
-    // 🪨 CRACK EFFECT
-    const crack = document.createElement("div");
-    Object.assign(crack.style, styles.crackPiece, {
-      top: rect.bottom - hero.getBoundingClientRect().top - 10 + "px",
-      left: rect.left - hero.getBoundingClientRect().left + 25 + "px",
-    });
-    hero.appendChild(crack);
-    setTimeout(() => crack.remove(), 1300);
+    
+
+
+
+
+
+
 
   }, 240);
 
@@ -1025,15 +1013,7 @@ const fx = `
   100% { transform: scale(0.8); opacity: 0; }
 }
 
-@keyframes pixelPop {
-  0% { transform: translate(0,0) scale(1); opacity: 1; }
-  100% { 
-    transform: translate(
-      ${Math.random() * 40 - 20}px, 
-      ${Math.random() * 40 - 20}px
-    ) scale(0); 
-    opacity: 0; 
-  }
+
 }
 `;
 
@@ -1048,13 +1028,15 @@ const chaosFX = `
   100% { transform: scale(0.8); opacity: 0; }
 }
 
-@keyframes crackShatter {
-  0% { transform: rotate(0deg) scaleY(1); opacity: 1; }
-  100% {
-    transform: rotate(${Math.random()*50 - 25}deg) scaleY(0);
-    opacity: 0;
-  }
+    @keyframes heatWave {
+  0% { filter: blur(3px) brightness(1); }
+  50% { filter: blur(5px) brightness(1.4); }
+  100% { filter: blur(3px) brightness(1); }
 }
+}
+
+}
+
 `;
 
 const chaosTag = document.createElement("style");
@@ -1082,7 +1064,11 @@ const portalFX = `
     opacity: 0.4;
     transform: scale(0.9);
   }
+ 
+
+
 }
+
 `;
 
 const portalTag = document.createElement("style");
