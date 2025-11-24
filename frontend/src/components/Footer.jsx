@@ -422,11 +422,12 @@ const handleSubscribe = async (e) => {
         {/* LINKS */}
         <div style={styles.linksCol}>
           <div style={styles.linksGroup}>
-            <div style={styles.groupTitle}>Explore</div>
-            <Link to="/" style={styles.link}>Home</Link>
-            <Link to="/categories" style={styles.link}>Categories</Link>
-            <Link to="/games" style={styles.link}>Games</Link>
-          </div>
+  <div style={styles.groupTitle}>Explore</div>
+  <Link to="/" style={styles.link}>Home</Link>
+  <Link to="/categories" style={styles.link}>Categories</Link>
+  <Link to="/" style={styles.link}>Games</Link>   
+</div>
+
 
           <div style={styles.linksGroup}>
             <div style={styles.groupTitle}>Company</div>

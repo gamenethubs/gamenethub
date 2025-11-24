@@ -1653,9 +1653,9 @@ export default function Navbar({ onSearch }) {
                         View profile
                       </Link>
 
-                      <Link to="/settings" onClick={() => setMenuOpen(false)} style={styles.dropdownItem}>
+                      {/* <Link to="/settings" onClick={() => setMenuOpen(false)} style={styles.dropdownItem}>
                         Settings
-                      </Link>
+                      </Link> */}
 
                       <button
                         onClick={handleLogout}
@@ -1767,9 +1767,9 @@ export default function Navbar({ onSearch }) {
 
             {user && (
               <>
-                <Link to="/settings" onClick={() => setOpen(false)} style={styles.mobileLink}>
+                {/* <Link to="/settings" onClick={() => setOpen(false)} style={styles.mobileLink}>
                   Settings
-                </Link>
+                </Link> */}
                 <button
                   onClick={() => {
                     setOpen(false);

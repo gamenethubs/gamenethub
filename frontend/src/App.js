@@ -223,16 +223,21 @@ function App() {
         //   onSearch={(value) => setShowCartoon(value.toLowerCase() === "ding dong")} 
         // />
         <Navbar
-            onSearch={(value) => {
-              const v = value.toLowerCase();
+  onSearch={(value) => {
+    const term = value.toLowerCase().trim().replace(/\s+/g, " ");
 
-              // cartoon chase
-              setShowCartoon(v === "ding dong");
+    setShowCartoon(false);
+    setShowGreeting(false);
 
-              // greeting mode
-              setShowGreeting(v === "hello ding dong");
-            }}
-          />
+    if (term === "ding dong") {
+      setShowCartoon(true);   
+    }
+
+    if (term === "hello ding dong") {
+      setShowGreeting(true); 
+    }
+  }}
+/>
       )}
 
       {/* Cartoon system */}
