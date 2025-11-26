@@ -262,6 +262,8 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { absoluteUrl } from "../services/api";
+import sorryGif from "../assets/sorry.gif";
+
 
 /* GLOBAL CSS */
 (function injectCSS() {
@@ -356,10 +358,14 @@ export default function GamePlayer({
 
   /* RELOAD */
   const handleReload = () => {
-    setLoading(true);
-    setFailed(false);
-    iframeRef.current.src = finalSrc;
-  };
+  if (compatibilityBlocked) return; // ❌ Stop if not compatible
+  if (!iframeRef.current) return;  // ❌ Prevent crash
+
+  setLoading(true);
+  setFailed(false);
+  iframeRef.current.src = finalSrc;
+};
+
 
   // ⭐ DYNAMIC STYLES FOR MOBILE FULLSCREEN
   const containerStyle = mobileFullScreen
@@ -384,23 +390,26 @@ export default function GamePlayer({
      ⭐ COMPATIBILITY BLOCK — Show custom messages
   ====================================================== */
   const renderCompatibilityBlock = () => {
-    if (!compatibilityBlocked) return null;
+  if (!compatibilityBlocked) return null;
 
-    const isDesk = compatibilityBlocked === "desktop";
-    const msg = isDesk
-      ? "This game is available only on Desktop."
-      : "This game is available only on Mobile.";
+  const isDesk = compatibilityBlocked === "desktop";
+  const msg = isDesk
+    ? "This game is available only on Desktop."
+    : "This game is available only on Mobile.";
 
-    const sub = "We’re working to bring it to this device soon.";
+  const sub = "We’re working to bring it to this device soon.";
 
-    return (
-      <div style={styles.compatBlock}>
-        <h2 style={styles.compatTitle}>⚠️ Not Compatible</h2>
-        <p style={styles.compatMsg}>{msg}</p>
-        <p style={styles.compatSub}>{sub}</p>
-      </div>
-    );
-  };
+  return (
+    <div style={styles.compatBlock}>
+      <img src={sorryGif} alt="sorry" style={styles.compatGif} />
+
+      <h2 style={styles.compatTitle}>⚠️ Not Compatible</h2>
+      <p style={styles.compatMsg}>{msg}</p>
+      <p style={styles.compatSub}>{sub}</p>
+    </div>
+  );
+};
+
 
   return (
     <div style={containerStyle}>
@@ -415,17 +424,15 @@ export default function GamePlayer({
           </button>
 
           {/* Reload & Expand only when NOT mobile full screen */}
-          {!mobileFullScreen && (
-            <>
-              <button style={styles.btn} onClick={handleReload}>
-                🔄 Reload
-              </button>
+          {!mobileFullScreen && !compatibilityBlocked && (
+  <>
+    <button style={styles.btn} onClick={handleReload}>🔄 Reload</button>
+    <button style={styles.btn} onClick={() => setExpanded(!expanded)}>
+      {expanded ? "Shrink ↓" : "Expand ↑"}
+    </button>
+  </>
+)}
 
-              <button style={styles.btn} onClick={() => setExpanded(!expanded)}>
-                {expanded ? "Shrink ↓" : "Expand ↑"}
-              </button>
-            </>
-          )}
         </div>
       </div>
 
@@ -564,6 +571,13 @@ const styles = {
     borderTopColor: "#38bdf8",
     animation: "spinAnim 1s linear infinite",
   },
+
+  compatGif: {
+  width: 140,
+  marginBottom: 14,
+  opacity: 0.95,
+},
+
 
   loadingText: {
     marginTop: 12,

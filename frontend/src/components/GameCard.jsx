@@ -567,6 +567,11 @@ import { absoluteUrl } from "../services/api";
 
 import cuteLikeGif from "../assets/cute-like.gif";
 
+
+// ⭐ NEW ICON IMPORTS
+import mobileIcon from "../assets/mobileIcon.png";
+import desktopIcon from "../assets/desktopIcon.png";
+
 export default function GameCard({ game }) {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -581,13 +586,13 @@ export default function GameCard({ game }) {
   // ⭐ NEW: device compatibility badge logic
   const compatibility = game.deviceCompatibility || "all";
 
-  const getBadgeText = () => {
-    if (compatibility === "desktop") return "Only Desktop";
-    if (compatibility === "mobile") return "Only Mobile";
-    return null; // all -> show nothing
+  const getIcon = () => {
+    if (compatibility === "mobile") return mobileIcon;
+    if (compatibility === "desktop") return desktopIcon;
+    return null;
   };
 
-  const badgeText = getBadgeText();
+  const badgeIcon = getIcon();
 
   const canPlay = () => {
     const last = localStorage.getItem(`play_${game._id}`);
@@ -687,6 +692,12 @@ export default function GameCard({ game }) {
           {fav ? "❤️" : "🤍"}
         </div>
 
+        {/* ⭐ DEVICE ICON (HOVER ONLY) */}
+        {hover && badgeIcon && (
+          <img src={badgeIcon} alt="device-icon" style={styles.deviceIcon} />
+        )}
+
+
         {/* IMAGE */}
         <img src={imageSrc} alt={game.title} style={styles.image} />
 
@@ -704,13 +715,6 @@ export default function GameCard({ game }) {
                 <RatingStars rating={game.averageRating || 4.0} size={18} />
               </div>
             </div>
-
-            {/* ⭐ NEW — small compatibility badge (only if not 'all') */}
-            {badgeText && (
-              <div style={styles.badgeSmall}>
-                {badgeText}
-              </div>
-            )}
           </div>
         )}
       </div>
@@ -772,6 +776,19 @@ const styles = {
     boxShadow:
       "0 0 10px rgba(255,255,255,0.35), 0 0 18px rgba(255,0,150,0.45)",
   },
+  deviceIcon: {
+  position: "absolute",
+  top: 4,        // ⭐ more top
+  left: 4,       // ⭐ more left
+  width: 44,     // ⭐ slightly bigger
+  height: 44,
+  zIndex: 20,
+  opacity: 0.98,
+  objectFit: "contain",
+  pointerEvents: "none",
+},
+
+
 
   gifPopup: {
     position: "absolute",
@@ -840,20 +857,6 @@ const styles = {
     gap: 4,
   },
 
-  /* ⭐ NEW SMALL BADGE STYLE */
-  badgeSmall: {
-    position: "absolute",
-    bottom: 6,
-    left: "50%",
-    transform: "translateX(-50%)",
-    padding: "2px 6px",
-    background: "rgba(0,0,0,0.65)",
-    color: "white",
-    fontSize: "0.58rem",
-    borderRadius: 4,
-    fontWeight: 600,
-    opacity: 0.9,
-  },
 
   /* ⭐ MOBILE FIX */
   "@media (max-width: 600px)": {
@@ -880,3 +883,4 @@ const keyframes = `
 const style = document.createElement("style");
 style.innerHTML = keyframes;
 document.head.appendChild(style);
+
