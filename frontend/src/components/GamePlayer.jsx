@@ -333,19 +333,25 @@ export default function GamePlayer({ gameUrl, embedUrl, onPlay, autoPlay, mobile
       <div style={styles.topBar}>
         <span style={styles.title}>🎮 Game Player</span>
 
+        {/* changes new */}
         <div style={styles.rightBtns}>
-          <button style={styles.btn} onClick={handleReload}>🔄 Reload</button>
-          
-          {/* ⭐ On Mobile Fullscreen, we hide the sizing buttons because it's already maxed out */}
-          {!mobileFullScreen && (
-            <>
-              <button style={styles.btn} onClick={handleFullscreen}>⛶ Fullscreen</button>
-              <button style={styles.btn} onClick={() => setExpanded(!expanded)}>
-                {expanded ? "Shrink ↓" : "Expand ↑"}
-              </button>
-            </>
-          )}
-        </div>
+
+  {/* ⭐ Fullscreen ALWAYS visible */}
+  <button style={styles.btn} onClick={handleFullscreen}>⛶ Fullscreen</button>
+
+  {/* Reload & Expand only when NOT mobile full screen */}
+  {!mobileFullScreen && (
+    <>
+      <button style={styles.btn} onClick={handleReload}>🔄 Reload</button>
+
+      <button style={styles.btn} onClick={() => setExpanded(!expanded)}>
+        {expanded ? "Shrink ↓" : "Expand ↑"}
+      </button>
+    </>
+  )}
+
+</div>
+{/* changes end */}
       </div>
 
       {/* PLAYER */}
