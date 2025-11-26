@@ -594,6 +594,7 @@ export default function GameDetail() {
             autoPlay={autoPlay}
             onPlay={handlePlayerPlay}
             mobileFullScreen={isMobile} // ⭐ Pass the trigger
+            gameData={game} 
           />
         </div>
 
