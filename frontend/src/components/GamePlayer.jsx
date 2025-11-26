@@ -20,7 +20,7 @@
 // /* ================================
 //    GAME PLAYER
 // ================================ */
-// export default function GamePlayer({ gameUrl, embedUrl, onPlay, autoPlay }) {
+// export default function GamePlayer({ gameUrl, embedUrl, onPlay, autoPlay, mobileFullScreen }) {
 //   const finalSrc = absoluteUrl(embedUrl || gameUrl);
 //   const iframeRef = useRef(null);
 
@@ -70,24 +70,50 @@
 //     iframeRef.current.src = finalSrc;
 //   };
 
-//   return (
-//     <div
-//       style={{
+//   // ⭐ DYNAMIC STYLES FOR MOBILE FULLSCREEN
+//   const containerStyle = mobileFullScreen
+//     ? {
+//         ...styles.container,
+//         position: "fixed", // Forces it out of the document flow
+//         top: 0,
+//         left: 0,
+//         width: "100vw",
+//         height: "100vh", // Takes full viewport height
+//         zIndex: 99999,   // HIGHER than Navbar/Footer
+//         borderRadius: 0, // Remove curves
+//         border: "none",
+//         margin: 0,
+//       }
+//     : {
 //         ...styles.container,
 //         height: expanded ? "90vh" : "75vh",
-//       }}
-//     >
+//       };
+
+//   return (
+//     <div style={containerStyle}>
 //       {/* TOP BAR */}
 //       <div style={styles.topBar}>
 //         <span style={styles.title}>🎮 Game Player</span>
 
+//         {/* changes new */}
 //         <div style={styles.rightBtns}>
-//           <button style={styles.btn} onClick={handleReload}>🔄 Reload</button>
-//           <button style={styles.btn} onClick={handleFullscreen}>⛶ Fullscreen</button>
-//           <button style={styles.btn} onClick={() => setExpanded(!expanded)}>
-//             {expanded ? "Shrink ↓" : "Expand ↑"}
-//           </button>
-//         </div>
+
+//   {/* ⭐ Fullscreen ALWAYS visible */}
+//   <button style={styles.btn} onClick={handleFullscreen}>⛶ Fullscreen</button>
+
+//   {/* Reload & Expand only when NOT mobile full screen */}
+//   {!mobileFullScreen && (
+//     <>
+//       <button style={styles.btn} onClick={handleReload}>🔄 Reload</button>
+
+//       <button style={styles.btn} onClick={() => setExpanded(!expanded)}>
+//         {expanded ? "Shrink ↓" : "Expand ↑"}
+//       </button>
+//     </>
+//   )}
+
+// </div>
+// {/* changes end */}
 //       </div>
 
 //       {/* PLAYER */}
@@ -182,15 +208,13 @@
 //     fontSize: 12,
 //   },
 
-//   /* ⬇ FIXED WRAPPER — FULL FIT GAME */
 //   frameWrapper: {
 //     width: "100%",
-//     height: "100%",      // FULL HEIGHT
+//     height: "100%",      
 //     background: "#000",
-//     position: "relative",
+//     position: "relative", 
 //   },
 
-//   /* ⬇ IFRAME 100% WIDTH & HEIGHT (NO ASPECT) */
 //   iframe: {
 //     width: "100%",
 //     height: "100%",
@@ -236,8 +260,6 @@
 //   },
 // };
 
-
-
 import React, { useEffect, useRef, useState } from "react";
 import { absoluteUrl } from "../services/api";
 
@@ -258,7 +280,15 @@ import { absoluteUrl } from "../services/api";
 /* ================================
    GAME PLAYER
 ================================ */
-export default function GamePlayer({ gameUrl, embedUrl, onPlay, autoPlay, mobileFullScreen }) {
+export default function GamePlayer({
+  gameUrl,
+  embedUrl,
+  onPlay,
+  autoPlay,
+  mobileFullScreen,
+  gameData, // ⭐ NEW → entire game object needed for compatibility checking
+}) {
+
   const finalSrc = absoluteUrl(embedUrl || gameUrl);
   const iframeRef = useRef(null);
 
@@ -267,6 +297,29 @@ export default function GamePlayer({ gameUrl, embedUrl, onPlay, autoPlay, mobile
   const [expanded, setExpanded] = useState(false);
 
   const timeoutRef = useRef(null);
+
+  /* ==========================================
+     ⭐ DEVICE TYPE DETECTION (Perfect)
+  ========================================== */
+  const [isMobile, setIsMobile] = useState(false);
+  const [compatibilityBlocked, setCompatibilityBlocked] = useState(false);
+
+  useEffect(() => {
+    const width = window.innerWidth;
+
+    // <1024px = Mobile/Tablet
+    setIsMobile(width < 1024);
+
+    const compat = gameData?.deviceCompatibility || "all";
+
+    if (compat === "desktop" && width < 1024) {
+      setCompatibilityBlocked("desktop");
+    } else if (compat === "mobile" && width >= 1024) {
+      setCompatibilityBlocked("mobile");
+    } else {
+      setCompatibilityBlocked(false);
+    }
+  }, [gameData]);
 
   /* TIMEOUT */
   useEffect(() => {
@@ -312,13 +365,13 @@ export default function GamePlayer({ gameUrl, embedUrl, onPlay, autoPlay, mobile
   const containerStyle = mobileFullScreen
     ? {
         ...styles.container,
-        position: "fixed", // Forces it out of the document flow
+        position: "fixed",
         top: 0,
         left: 0,
         width: "100vw",
-        height: "100vh", // Takes full viewport height
-        zIndex: 99999,   // HIGHER than Navbar/Footer
-        borderRadius: 0, // Remove curves
+        height: "100vh",
+        zIndex: 99999,
+        borderRadius: 0,
         border: "none",
         margin: 0,
       }
@@ -327,69 +380,100 @@ export default function GamePlayer({ gameUrl, embedUrl, onPlay, autoPlay, mobile
         height: expanded ? "90vh" : "75vh",
       };
 
+  /* ======================================================
+     ⭐ COMPATIBILITY BLOCK — Show custom messages
+  ====================================================== */
+  const renderCompatibilityBlock = () => {
+    if (!compatibilityBlocked) return null;
+
+    const isDesk = compatibilityBlocked === "desktop";
+    const msg = isDesk
+      ? "This game is available only on Desktop."
+      : "This game is available only on Mobile.";
+
+    const sub = "We’re working to bring it to this device soon.";
+
+    return (
+      <div style={styles.compatBlock}>
+        <h2 style={styles.compatTitle}>⚠️ Not Compatible</h2>
+        <p style={styles.compatMsg}>{msg}</p>
+        <p style={styles.compatSub}>{sub}</p>
+      </div>
+    );
+  };
+
   return (
     <div style={containerStyle}>
       {/* TOP BAR */}
       <div style={styles.topBar}>
         <span style={styles.title}>🎮 Game Player</span>
 
-        {/* changes new */}
         <div style={styles.rightBtns}>
+          {/* ⭐ Fullscreen ALWAYS visible */}
+          <button style={styles.btn} onClick={handleFullscreen}>
+            ⛶ Fullscreen
+          </button>
 
-  {/* ⭐ Fullscreen ALWAYS visible */}
-  <button style={styles.btn} onClick={handleFullscreen}>⛶ Fullscreen</button>
+          {/* Reload & Expand only when NOT mobile full screen */}
+          {!mobileFullScreen && (
+            <>
+              <button style={styles.btn} onClick={handleReload}>
+                🔄 Reload
+              </button>
 
-  {/* Reload & Expand only when NOT mobile full screen */}
-  {!mobileFullScreen && (
-    <>
-      <button style={styles.btn} onClick={handleReload}>🔄 Reload</button>
-
-      <button style={styles.btn} onClick={() => setExpanded(!expanded)}>
-        {expanded ? "Shrink ↓" : "Expand ↑"}
-      </button>
-    </>
-  )}
-
-</div>
-{/* changes end */}
+              <button style={styles.btn} onClick={() => setExpanded(!expanded)}>
+                {expanded ? "Shrink ↓" : "Expand ↑"}
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* PLAYER */}
       <div style={styles.frameWrapper}>
-        {loading && (
-          <div style={styles.loadingOverlay}>
-            <div style={styles.loaderCircle}></div>
-            <p style={styles.loadingText}>Loading game…</p>
-          </div>
-        )}
+        {/* ⭐ Compatibility block — BEFORE game loads */}
+        {compatibilityBlocked && renderCompatibilityBlock()}
 
-        {failed && (
-          <div style={styles.errorOverlay}>
-            <h3 style={{ color: "#fff", marginBottom: 6 }}>Game failed to load</h3>
-            <p style={{ color: "#94a3b8" }}>ZIP must contain index.html</p>
-          </div>
-        )}
+        {!compatibilityBlocked && (
+          <>
+            {loading && (
+              <div style={styles.loadingOverlay}>
+                <div style={styles.loaderCircle}></div>
+                <p style={styles.loadingText}>Loading game…</p>
+              </div>
+            )}
 
-        {!failed && (
-          <iframe
-            ref={iframeRef}
-            title="game-player"
-            src={finalSrc}
-            onLoad={handleLoad}
-            style={{
-              ...styles.iframe,
-              opacity: loading ? 0 : 1,
-            }}
-            allow="fullscreen; autoplay; encrypted-media"
-            sandbox="
-              allow-scripts
-              allow-same-origin
-              allow-pointer-lock
-              allow-orientation-lock
-              allow-popups
-              allow-downloads
-            "
-          ></iframe>
+            {failed && (
+              <div style={styles.errorOverlay}>
+                <h3 style={{ color: "#fff", marginBottom: 6 }}>
+                  Game failed to load
+                </h3>
+                <p style={{ color: "#94a3b8" }}>ZIP must contain index.html</p>
+              </div>
+            )}
+
+            {!failed && (
+              <iframe
+                ref={iframeRef}
+                title="game-player"
+                src={finalSrc}
+                onLoad={handleLoad}
+                style={{
+                  ...styles.iframe,
+                  opacity: loading ? 0 : 1,
+                }}
+                allow="fullscreen; autoplay; encrypted-media"
+                sandbox="
+                  allow-scripts
+                  allow-same-origin
+                  allow-pointer-lock
+                  allow-orientation-lock
+                  allow-popups
+                  allow-downloads
+                "
+              ></iframe>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -448,9 +532,9 @@ const styles = {
 
   frameWrapper: {
     width: "100%",
-    height: "100%",      
+    height: "100%",
     background: "#000",
-    position: "relative", 
+    position: "relative",
   },
 
   iframe: {
@@ -495,5 +579,37 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     zIndex: 20,
+  },
+
+  /* ⭐ NEW COMPATIBILITY BLOCK */
+  compatBlock: {
+    position: "absolute",
+    inset: 0,
+    background: "rgba(0,0,0,0.75)",
+    backdropFilter: "blur(6px)",
+    zIndex: 50,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "20px",
+    textAlign: "center",
+  },
+
+  compatTitle: {
+    color: "#fff",
+    fontSize: "1.4rem",
+    marginBottom: "10px",
+  },
+
+  compatMsg: {
+    color: "#f8fafc",
+    fontSize: "1rem",
+    marginBottom: "6px",
+  },
+
+  compatSub: {
+    color: "#94a3b8",
+    fontSize: "0.85rem",
   },
 };
