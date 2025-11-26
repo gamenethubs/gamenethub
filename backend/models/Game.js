@@ -1,3 +1,4 @@
+
 // // backend/models/Game.js
 // import mongoose from "mongoose";
 // import slugify from "slugify";
@@ -19,6 +20,7 @@
 //       lowercase: true,
 //       trim: true,
 //       required: true,
+//       index: true,
 //     },
 
 //     genre: {
@@ -31,16 +33,31 @@
 //     thumbnail: {
 //       type: String,
 //       required: true,
+//       trim: true,
 //     },
 
+//     /************************************
+//      * ZIP FILE (Stored in uploads/zips)
+//      ************************************/
+//     gameZip: {
+//       type: String,
+//       required: true,   // important for deployment
+//       trim: true,
+//     },
+
+//     /************************************
+//      * HTML PLAY FILE URL (Extracted folder)
+//      ************************************/
 //     playUrl: {
 //       type: String,
 //       required: true,
+//       trim: true,
 //     },
 
 //     description: {
 //       type: String,
 //       default: "",
+//       trim: true,
 //     },
 
 //     /************************************
@@ -53,7 +70,6 @@
 //       },
 //     ],
 
-//     // ⭐ AVERAGE RATING (calculated in controller)
 //     averageRating: {
 //       type: Number,
 //       default: 4.0,
@@ -76,26 +92,28 @@
 
 //     playedIPs: [
 //       {
-//         ip: { type: String },
-//         time: { type: Number },
+//         ip: String,
+//         time: Number, // timestamp
 //       },
 //     ],
 
 //     /************************************
-//      * ⭐ ANALYTICS
+//      * ⭐ ANALYTICS — BEST SORTING FIELDS
 //      ************************************/
 //     trendingScore: {
 //       type: Number,
 //       default: 0,
+//       index: true,
 //     },
 
 //     popularScore: {
 //       type: Number,
 //       default: 0,
+//       index: true,
 //     },
 
 //     /************************************
-//      * FLAGS
+//      * FLAGS — FEATURED / NEW
 //      ************************************/
 //     isFeatured: {
 //       type: Boolean,
@@ -118,23 +136,25 @@
 // );
 
 // /************************************
-//  * AUTO SLUG
+//  * AUTO-CREATE SLUG (SAFE FOR PROD)
 //  ************************************/
 // gameSchema.pre("validate", function (next) {
-//   if (!this.slug) {
+//   if (!this.slug && this.title) {
 //     this.slug = slugify(this.title, { lower: true, strict: true });
 //   }
 //   next();
 // });
 
 // /************************************
-//  * INDEXES
+//  * HANDLE DUPLICATE SLUG ISSUES
 //  ************************************/
-// gameSchema.index({ title: 1 });
-// gameSchema.index({ slug: 1 });
-// gameSchema.index({ genre: 1 });
-// gameSchema.index({ trendingScore: -1 });
-// gameSchema.index({ popularScore: -1 });
+// gameSchema.post("save", function (error, doc, next) {
+//   if (error.name === "MongoServerError" && error.code === 11000) {
+//     next(new Error("Game with this title/slug already exists"));
+//   } else {
+//     next(error);
+//   }
+// });
 
 // export default mongoose.model("Game", gameSchema);
 
@@ -198,6 +218,16 @@ const gameSchema = new mongoose.Schema(
       type: String,
       default: "",
       trim: true,
+    },
+
+    /************************************
+     * ⭐ DEVICE COMPATIBILITY FIELD (NEW)
+     ************************************/
+    deviceCompatibility: {
+      type: String,
+      enum: ["all", "desktop", "mobile"],
+      default: "all",
+      index: true,
     },
 
     /************************************
