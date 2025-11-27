@@ -699,7 +699,16 @@ export default function GameCard({ game }) {
 
 
         {/* IMAGE */}
-        <img src={imageSrc} alt={game.title} style={styles.image} />
+        {/* <img src={imageSrc} alt={game.title} style={styles.image} /> */}
+        {/* changes */}
+        <img
+  src={imageSrc}
+  alt={game.title}
+  style={styles.image}
+  loading="lazy"
+  decoding="async"
+/>
+{/* changes end */}
 
         {/* HOVER OVERLAY */}
         {hover && (
