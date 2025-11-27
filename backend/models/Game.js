@@ -230,6 +230,15 @@ const gameSchema = new mongoose.Schema(
       index: true,
     },
 
+        /************************************
+     * ⭐ ORIENTATION SETTINGS (NEW)
+     ************************************/
+    orientation: {
+      type: String,
+      enum: ["all", "landscape"],   // portrait allowed under "all"
+      default: "all",
+    },
+
     /************************************
      * ⭐ USER-BASED RATING SYSTEM
      ************************************/
