@@ -768,10 +768,10 @@ export default function Home() {
 
       {/* FRIENDS MULTIPLAYER BANNER */}
       <section style={styles.friendsSection}>
-        <div style={styles.friendsWrapper}>
+        <div style={styles.friendsWrapper} className="friends-wrapper">
 
           {/* LEFT Illustration */}
-          <div style={styles.friendsLeft}>
+          <div style={styles.friendsLeft} className="friends-left">
             {/* 🔹 Friends GIF on top */}
             <img
               src={friendsGif}
@@ -785,6 +785,7 @@ export default function Home() {
           {/* LOCAL MULTIPLAYER CARD */}
           <div
   style={styles.friendsCard}
+  className="friends-card"
   onMouseEnter={(e) => {
     setHoverCard("local");
     e.currentTarget.querySelector("video").play().catch(()=>{});
@@ -860,6 +861,7 @@ export default function Home() {
           {/* ONLINE MULTIPLAYER CARD */}
           <div
   style={styles.friendsCard}
+  className="friends-card"
   onMouseEnter={(e) => {
     setHoverCard("online");
     e.currentTarget.querySelector("video").play().catch(()=>{});
@@ -928,6 +930,35 @@ export default function Home() {
               </button>
             </div>
           </div>
+          <style>
+{`
+/* Fix for tablets (iPad + small laptops) */
+@media (max-width: 900px) {
+  .friends-wrapper {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .friends-card {
+    width: 100% !important;
+    max-width: 420px !important;
+  }
+}
+
+/* Fix for mobile screens */
+@media (max-width: 500px) {
+  .friends-card {
+    width: 100% !important;
+    max-width: 350px !important;
+  }
+
+  .friends-left img {
+    width: 140px !important;
+    height: 140px !important;
+  }
+}
+`}
+</style>
         </div>
       </section>
 
@@ -1453,6 +1484,11 @@ const portalFX = `
 
 }
 `;
+
+
+
+
+
 
 const portalTag = document.createElement("style");
 portalTag.innerHTML = portalFX;
