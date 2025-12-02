@@ -198,6 +198,8 @@ import EditGame from "./pages/EditGame";
 // cartoon
 import Cartoon from "./components/Cartoon"; 
 import GreetingCartoon from "./components/Greeting"; 
+import Train from "./components/Train";
+
 
 //Google Analytics
 import AnalyticsTracker from "./components/AnalyticsTracker";
@@ -213,6 +215,8 @@ function App() {
 
   const [showCartoon, setShowCartoon] = React.useState(false); 
   const [showGreeting, setShowGreeting] = React.useState(false);
+  const [showTrain, setShowTrain] = React.useState(false);
+
 
 
   return (
@@ -228,6 +232,7 @@ function App() {
 
     setShowCartoon(false);
     setShowGreeting(false);
+    setShowTrain(false); 
 
     if (term === "ding dong") {
       setShowCartoon(true);   
@@ -235,6 +240,10 @@ function App() {
 
     if (term === "hello ding dong") {
       setShowGreeting(true); 
+    }
+
+    if (term === "hello kid") {
+      setShowTrain(true);
     }
   }}
 />
@@ -271,6 +280,14 @@ function App() {
   }} 
   />
 )}
+
+{showTrain && (
+  <Train 
+    onFinish={() => setShowTrain(false)}
+  />
+)}
+
+
 
 
 
