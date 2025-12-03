@@ -196,6 +196,8 @@ import About from "./pages/About";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Contact from "./pages/Contact";
+import NotFound from "./pages/NotFound";
+
 // admin
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -322,6 +324,7 @@ function App() {
 
           {/* ⭐ NEW: Live Game Tracker Route */}
           <Route path="/admin/live-tracker" element={<AdminLiveTracker />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 
