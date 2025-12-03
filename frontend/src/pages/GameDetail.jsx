@@ -1,5 +1,4 @@
 
-// // src/pages/GameDetail.jsx
 // import React, { useEffect, useState, useRef } from "react";
 // import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 // import { getAllGames, getGameBySlug } from "../services/api";
@@ -22,9 +21,16 @@
 //   const [userRating, setUserRating] = useState(null);
 //   const [animate, setAnimate] = useState(false);
 //   const playIncrementedRef = useRef(false);
-
-//   // ⭐ NEW loading state
 //   const [loading, setLoading] = useState(true);
+
+//   // ⭐ 1. Mobile Detection
+//   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+//   useEffect(() => {
+//     const handleResize = () => setIsMobile(window.innerWidth < 768);
+//     window.addEventListener("resize", handleResize);
+//     return () => window.removeEventListener("resize", handleResize);
+//   }, []);
 
 //   /* LOAD GAME + LIST */
 //   useEffect(() => {
@@ -59,8 +65,6 @@
 //         console.log("Error:", err);
 //       }
 //     }
-
-//     // ⭐ ensure loading ends after fetch
 //     load().finally(() => setLoading(false));
 //   }, [slug, isAuthenticated, user]);
 
@@ -74,11 +78,8 @@
 //     try {
 //       await increasePlay(game._id);
 //       playIncrementedRef.current = true;
-
 //       setGame((prev) =>
-//         prev
-//           ? { ...prev, playCount: (prev.playCount || 0) + 1 }
-//           : prev
+//         prev ? { ...prev, playCount: (prev.playCount || 0) + 1 } : prev
 //       );
 //     } catch {}
 //   };
@@ -86,11 +87,9 @@
 //   /* RATING HANDLER */
 //   const handleRating = async (stars) => {
 //     if (!isAuthenticated) return alert("Please login to rate!");
-
 //     try {
 //       const res = await rateGame(game._id, stars);
 //       setUserRating(stars);
-
 //       updateUser({
 //         ratedGames: [
 //           ...(user.ratedGames || []).filter(
@@ -99,7 +98,6 @@
 //           { game: game._id, stars },
 //         ],
 //       });
-
 //       setGame((prev) =>
 //         prev
 //           ? {
@@ -112,10 +110,8 @@
 //     } catch {}
 //   };
 
-//   // ⭐ FIXED — when loading → return nothing
 //   if (loading) return null;
 
-//   // ⭐ Only show "Not Found" when API returned nothing
 //   if (!game) {
 //     return (
 //       <div style={{ padding: 20, color: "#fff" }}>
@@ -127,8 +123,6 @@
 //     );
 //   }
 
-
-
 //   const bannerImg = absoluteUrl(game.thumbnail);
 //   const related = allGames.filter(
 //     (g) => g.genre === game.genre && g._id !== game._id
@@ -138,12 +132,14 @@
 
 //   return (
 //     <div style={styles.pageFrame}>
-//       {/* BACK BUTTON — NAVBAR SE CHIPKA */}
-//       <button style={styles.backBtn} onClick={() => navigate(-1)}>
-//         ← Back
-//       </button>
+      
+//       {/* ⭐ HIDE BACK BUTTON ON MOBILE */}
+//       {!isMobile && (
+//         <button style={styles.backBtn} onClick={() => navigate(-1)}>
+//           ← Back
+//         </button>
+//       )}
 
-//       {/* CONTENT WRAPPER */}
 //       <div
 //         style={{
 //           ...styles.pageWrapper,
@@ -151,91 +147,94 @@
 //           transition: "0.5s ease",
 //         }}
 //       >
-//         {/* ===== GAME PLAYER (centered) ===== */}
-//         <div style={styles.playerWrapper}>
+//         {/* ===== GAME PLAYER ===== */}
+//         {/* ⭐ Logic: If isMobile, we allow GamePlayer to use Fixed Positioning 
+//            to cover the existing Navbar and Footer using z-index 99999.
+//         */}
+//         <div style={isMobile ? {} : styles.playerWrapper}>
 //           <GamePlayer
 //             embedUrl={embedUrl}
 //             gameUrl={game.playUrl}
 //             title={game.title}
 //             autoPlay={autoPlay}
 //             onPlay={handlePlayerPlay}
+//             mobileFullScreen={isMobile} // ⭐ Pass the trigger
+//             gameData={game} 
 //           />
 //         </div>
 
-//         {/* ===== BANNER ===== */}
-//         <div style={styles.bannerWrapper}>
-//           <img src={bannerImg} style={styles.bannerImg} alt={game.title} />
-
-//           <div style={styles.bannerGradient}></div>
-
-//           {/* TRANSPARENT GLASS CARD */}
-//           <div style={styles.bannerContent}>
-//             <h1 style={styles.gameTitle}>{game.title}</h1>
-//             <p style={styles.genre}>{game.genre}</p>
-
-//             <RatingStars
-//               rating={game.averageRating}
-//               userRating={userRating}
-//               onRate={handleRating}
-//               size={26}
-//               editable={true}
-//               showUserTag={true}
-//             />
-//           </div>
-//         </div>
-
-//         {/* ===== STATS ===== */}
-//         <div style={styles.statsRow}>
-//           <div style={styles.statBox}>
-//             <span style={styles.statValue}>{game.playCount || 0}</span>
-//             <span style={styles.statLabel}>Plays</span>
-//           </div>
-
-//           <div style={styles.statBox}>
-//             <span style={styles.statValue}>
-//               {(game.averageRating || 0).toFixed(1)}
-//             </span>
-//             <span style={styles.statLabel}>Rating</span>
-//           </div>
-
-//           <div style={styles.statBox}>
-//             <span style={styles.statValue}>
-//               {game.updatedAt
-//                 ? new Date(game.updatedAt).getFullYear()
-//                 : ""}
-//             </span>
-//             <span style={styles.statLabel}>Updated</span>
-//           </div>
-//         </div>
-
-//         {/* ===== DESCRIPTION ===== */}
-//         <div style={styles.descriptionBox}>
-//           <h3 style={styles.aboutTitle}>About This Game</h3>
-//           <p style={styles.description}>{game.description}</p>
-//         </div>
-
-//         {/* ===== RELATED ===== */}
-//         {related.length > 0 && (
-//           <div style={styles.relatedSection}>
-//             <h3 style={styles.relatedTitle}>You Might Also Like</h3>
-
-//             <div style={styles.slider}>
-//               {related.map((g) => (
-//                 <div
-//                   key={g._id}
-//                   style={styles.sliderCard}
-//                   onClick={() => navigate(`/game/${g.slug}`)}
-//                 >
-//                   <img
-//                     src={absoluteUrl(g.thumbnail)}
-//                     style={styles.sliderImg}
-//                     alt={g.title}
-//                   />
-//                   <p style={styles.sliderName}>{g.title}</p>
-//                 </div>
-//               ))}
+//         {/* ⭐ IF MOBILE, DO NOT RENDER ANYTHING ELSE BELOW */}
+//         {!isMobile && (
+//           <>
+//             {/* ===== BANNER ===== */}
+//             <div style={styles.bannerWrapper}>
+//               <img src={bannerImg} style={styles.bannerImg} alt={game.title} />
+//               <div style={styles.bannerGradient}></div>
+//               <div style={styles.bannerContent}>
+//                 <h1 style={styles.gameTitle}>{game.title}</h1>
+//                 <p style={styles.genre}>{game.genre}</p>
+//                 <RatingStars
+//                   rating={game.averageRating}
+//                   userRating={userRating}
+//                   onRate={handleRating}
+//                   size={26}
+//                   editable={true}
+//                   showUserTag={true}
+//                 />
+//               </div>
 //             </div>
-//           </div>
+
+//             {/* ===== STATS ===== */}
+//             <div style={styles.statsRow}>
+//               <div style={styles.statBox}>
+//                 <span style={styles.statValue}>{game.playCount || 0}</span>
+//                 <span style={styles.statLabel}>Plays</span>
+//               </div>
+//               <div style={styles.statBox}>
+//                 <span style={styles.statValue}>
+//                   {(game.averageRating || 0).toFixed(1)}
+//                 </span>
+//                 <span style={styles.statLabel}>Rating</span>
+//               </div>
+//               <div style={styles.statBox}>
+//                 <span style={styles.statValue}>
+//                   {game.updatedAt
+//                     ? new Date(game.updatedAt).getFullYear()
+//                     : ""}
+//                 </span>
+//                 <span style={styles.statLabel}>Updated</span>
+//               </div>
+//             </div>
+
+//             {/* ===== DESCRIPTION ===== */}
+//             <div style={styles.descriptionBox}>
+//               <h3 style={styles.aboutTitle}>About This Game</h3>
+//               <p style={styles.description}>{game.description}</p>
+//             </div>
+
+//             {/* ===== RELATED ===== */}
+//             {related.length > 0 && (
+//               <div style={styles.relatedSection}>
+//                 <h3 style={styles.relatedTitle}>You Might Also Like</h3>
+//                 <div style={styles.slider}>
+//                   {related.map((g) => (
+//                     <div
+//                       key={g._id}
+//                       style={styles.sliderCard}
+//                       onClick={() => navigate(`/game/${g.slug}`)}
+//                     >
+//                       <img
+//                         src={absoluteUrl(g.thumbnail)}
+//                         style={styles.sliderImg}
+//                         alt={g.title}
+//                       />
+//                       <p style={styles.sliderName}>{g.title}</p>
+//                     </div>
+//                   ))}
+//                 </div>
+//               </div>
+//             )}
+//           </>
 //         )}
 //       </div>
 //     </div>
@@ -252,23 +251,18 @@
 //     color: "#fff",
 //   },
 
-//   /* BACK BUTTON TOP */
 //   backBtn: {
-//   padding: "7px 14px",
-//   background: "#2563eb",
-//   borderRadius: 8,
-//   border: "none",
-//   color: "#fff",
-//   fontWeight: 600,
-//   cursor: "pointer",
-
-//   /* ⭐ Navbar se chipka hua, sabse upar */
-//   marginTop: "-6px",
-//   marginBottom: "12px",
-
-//   boxShadow: "0 6px 14px rgba(37,99,235,0.25)",
-// },
-
+//     padding: "7px 14px",
+//     background: "#2563eb",
+//     borderRadius: 8,
+//     border: "none",
+//     color: "#fff",
+//     fontWeight: 600,
+//     cursor: "pointer",
+//     marginTop: "-6px",
+//     marginBottom: "12px",
+//     boxShadow: "0 6px 14px rgba(37,99,235,0.25)",
+//   },
 
 //   pageWrapper: {
 //     display: "flex",
@@ -276,7 +270,6 @@
 //     gap: "28px",
 //   },
 
-//   /* GAME PLAYER — CENTER */
 //   playerWrapper: {
 //     width: "100%",
 //     maxWidth: "1150px",
@@ -290,43 +283,32 @@
 //     boxShadow: "0 18px 40px rgba(0,0,0,0.55)",
 //   },
 
-//   /* BANNER (original size preserved) */
 //   bannerWrapper: {
-//   position: "relative",
-//   borderRadius: "16px",
-//   overflow: "hidden",
-
-//   /* ⭐ Desktop */
-//   height: "240px",
-
-//   /* ⭐ Mobile responsive */
-//   width: "100%",
-//   maxHeight: "45vh",
-//   minHeight: "160px",
-// },
-
+//     position: "relative",
+//     borderRadius: "16px",
+//     overflow: "hidden",
+//     height: "240px",
+//     width: "100%",
+//     maxHeight: "45vh",
+//     minHeight: "160px",
+//   },
 
 //   bannerImg: {
-//   width: "100%",
-//   height: "100%",
-//   objectFit: "cover",
-//   objectPosition: "center",
-
-//   /* ⭐ Mobile par image crop correct hoti hai */
-//   '@media (max-width: 520px)': {
+//     width: "100%",
+//     height: "100%",
 //     objectFit: "cover",
+//     objectPosition: "center",
+//     "@media (max-width: 520px)": {
+//       objectFit: "cover",
+//     },
 //   },
-// },
-
 
 //   bannerGradient: {
 //     position: "absolute",
 //     inset: 0,
-//     background:
-//       "linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.65))",
+//     background: "linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.65))",
 //   },
 
-//   /* TRANSPARENT GLASS CARD */
 //   bannerContent: {
 //     position: "absolute",
 //     bottom: 18,
@@ -350,7 +332,6 @@
 //     marginBottom: 6,
 //   },
 
-//   /* STATS */
 //   statsRow: {
 //     display: "flex",
 //     justifyContent: "center",
@@ -376,7 +357,6 @@
 //     color: "#94a3b8",
 //   },
 
-//   /* DESCRIPTION */
 //   descriptionBox: {
 //     background: "rgba(255,255,255,0.03)",
 //     padding: "20px",
@@ -390,12 +370,14 @@
 //   },
 
 //   description: {
-//     fontSize: 15,
-//     lineHeight: 1.6,
-//     color: "#e2e8f0",
-//   },
+//   fontSize: 15,
+//   lineHeight: 1.6,
+//   color: "#e2e8f0",
+//   whiteSpace: "pre-line",   // ⭐ '\n' ko actual new line bana dega
+//   wordBreak: "break-word",  // ⭐ mobile pe long words bhi wrap ho jayenge
+// },
 
-//   /* RELATED GAMES */
+
 //   relatedSection: {
 //     marginTop: 10,
 //   },
@@ -563,7 +545,9 @@ export default function GameDetail() {
     (g) => g.genre === game.genre && g._id !== game._id
   );
 
-  const embedUrl = game.embedUrl || game.playUrl || `/play/${game.slug}`;
+  // ⭐⭐⭐ NEW → PASS UID + GID to iframe for tracking
+  const embedUrl =
+    `${game.embedUrl || game.playUrl || `/play/${game.slug}`}?uid=${user?._id || ""}&gid=${game._id}`;
 
   return (
     <div style={styles.pageFrame}>
@@ -583,18 +567,15 @@ export default function GameDetail() {
         }}
       >
         {/* ===== GAME PLAYER ===== */}
-        {/* ⭐ Logic: If isMobile, we allow GamePlayer to use Fixed Positioning 
-           to cover the existing Navbar and Footer using z-index 99999.
-        */}
         <div style={isMobile ? {} : styles.playerWrapper}>
           <GamePlayer
-            embedUrl={embedUrl}
+            embedUrl={embedUrl}    // ⭐⭐ UPDATED
             gameUrl={game.playUrl}
             title={game.title}
             autoPlay={autoPlay}
             onPlay={handlePlayerPlay}
-            mobileFullScreen={isMobile} // ⭐ Pass the trigger
-            gameData={game} 
+            mobileFullScreen={isMobile}
+            gameData={game}
           />
         </div>
 
@@ -805,13 +786,12 @@ const styles = {
   },
 
   description: {
-  fontSize: 15,
-  lineHeight: 1.6,
-  color: "#e2e8f0",
-  whiteSpace: "pre-line",   // ⭐ '\n' ko actual new line bana dega
-  wordBreak: "break-word",  // ⭐ mobile pe long words bhi wrap ho jayenge
-},
-
+    fontSize: 15,
+    lineHeight: 1.6,
+    color: "#e2e8f0",
+    whiteSpace: "pre-line",
+    wordBreak: "break-word",
+  },
 
   relatedSection: {
     marginTop: 10,
