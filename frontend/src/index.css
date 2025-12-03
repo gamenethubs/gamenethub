@@ -77,3 +77,1347 @@ button:active { transform: scale(0.98); }
 
 /* Final safety: prevent weird outlines or borders from user agent */
 body, html { outline: none; border: none; }
+
+/* ============================================
+   CYBER ARENA - FUTURISTIC GAMING UI
+   Add this to your global CSS or create a new file
+   ============================================ */
+
+/* ==================== BASE WRAPPER ==================== */
+.cyber-arena-wrapper {
+  position: relative;
+  min-height: 100vh;
+  padding: 40px 20px;
+  overflow: hidden;
+  background: #0a0e27;
+  background: radial-gradient(ellipse at top, #1a1f3a 0%, #0a0e27 50%);
+}
+
+/* ==================== ANIMATED BACKGROUND LAYERS ==================== */
+.cyber-bg-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cyber-bg-layer.layer-1 {
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+  animation: float 20s ease-in-out infinite;
+}
+
+.cyber-bg-layer.layer-2 {
+  background: 
+    radial-gradient(circle at 70% 30%, rgba(139, 92, 246, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 30% 70%, rgba(236, 72, 153, 0.06) 0%, transparent 40%);
+  animation: float 25s ease-in-out infinite reverse;
+}
+
+.cyber-bg-layer.layer-3 {
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(16, 185, 129, 0.03) 2px, rgba(16, 185, 129, 0.03) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(59, 130, 246, 0.03) 2px, rgba(59, 130, 246, 0.03) 4px);
+  animation: gridMove 30s linear infinite;
+}
+
+/* ==================== SCAN BEAM EFFECT ==================== */
+.scan-beam {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(16, 185, 129, 0.3) 20%, 
+    rgba(16, 185, 129, 0.8) 50%, 
+    rgba(16, 185, 129, 0.3) 80%, 
+    transparent 100%);
+  box-shadow: 
+    0 0 20px rgba(16, 185, 129, 0.5),
+    0 0 40px rgba(16, 185, 129, 0.3);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.scan-beam.online-beam {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(99, 102, 241, 0.3) 20%, 
+    rgba(99, 102, 241, 0.8) 50%, 
+    rgba(99, 102, 241, 0.3) 80%, 
+    transparent 100%);
+  box-shadow: 
+    0 0 20px rgba(99, 102, 241, 0.5),
+    0 0 40px rgba(99, 102, 241, 0.3);
+}
+
+/* ==================== GRID OVERLAY ==================== */
+.grid-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 1;
+  animation: gridPulse 4s ease-in-out infinite;
+}
+
+/* ==================== NETWORK GRID (ONLINE ONLY) ==================== */
+.network-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.1) 0%, transparent 30%),
+    radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.1) 0%, transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 1;
+  animation: networkPulse 6s ease-in-out infinite;
+}
+
+/* ==================== MAIN CONTENT ==================== */
+.arena-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.arena-content.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ==================== HOLOGRAPHIC HEADER ==================== */
+.holo-header {
+  position: relative;
+  padding: 40px;
+  margin-bottom: 30px;
+  background: rgba(10, 14, 39, 0.6);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 0 40px rgba(16, 185, 129, 0.1),
+    inset 0 0 60px rgba(16, 185, 129, 0.03);
+  overflow: hidden;
+}
+
+.holo-header.online-header {
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 
+    0 0 40px rgba(99, 102, 241, 0.1),
+    inset 0 0 60px rgba(99, 102, 241, 0.03);
+}
+
+/* Corner Frames */
+.corner-frame {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(16, 185, 129, 0.6);
+}
+
+.corner-frame.tl {
+  top: 10px;
+  left: 10px;
+  border-right: none;
+  border-bottom: none;
+  animation: cornerGlow 2s ease-in-out infinite;
+}
+
+.corner-frame.tr {
+  top: 10px;
+  right: 10px;
+  border-left: none;
+  border-bottom: none;
+  animation: cornerGlow 2s ease-in-out infinite 0.5s;
+}
+
+.corner-frame.bl {
+  bottom: 10px;
+  left: 10px;
+  border-right: none;
+  border-top: none;
+  animation: cornerGlow 2s ease-in-out infinite 1s;
+}
+
+.corner-frame.br {
+  bottom: 10px;
+  right: 10px;
+  border-left: none;
+  border-top: none;
+  animation: cornerGlow 2s ease-in-out infinite 1.5s;
+}
+
+.online-header .corner-frame {
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
+/* Status Indicator */
+.status-indicator {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 12px;
+  height: 12px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 10px rgba(16, 185, 129, 0.8),
+    0 0 20px rgba(16, 185, 129, 0.4);
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+.status-indicator.online-status {
+  background: #6366f1;
+  box-shadow: 
+    0 0 10px rgba(99, 102, 241, 0.8),
+    0 0 20px rgba(99, 102, 241, 0.4);
+}
+
+/* Header Content */
+.header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #10b981;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  animation: badgePulse 3s ease-in-out infinite;
+}
+
+.mode-badge.online-badge {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #6366f1;
+}
+
+.badge-icon {
+  font-size: 14px;
+  animation: iconSpin 3s linear infinite;
+}
+
+/* Cyber Title with Glitch */
+.cyber-title {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 900;
+  margin: 0 0 20px 0;
+  line-height: 1.1;
+  position: relative;
+}
+
+.glitch-text {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: titleShimmer 3s ease-in-out infinite;
+}
+
+.glitch-text.online-glitch {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+}
+
+.glitch-text::before {
+  animation: glitch1 2.5s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+
+.glitch-text::after {
+  animation: glitch2 2.5s infinite;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+
+/* Sub Header */
+.sub-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.connection-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.connection-dots .dot {
+  width: 6px;
+  height: 6px;
+  background: #10b981;
+  border-radius: 50%;
+  animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+.connection-dots .dot:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.connection-dots .dot:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.subtitle-text {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: rgba(148, 163, 184, 0.8);
+  text-transform: uppercase;
+}
+
+.player-count {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 8px;
+}
+
+.player-count.online-count {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.count-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: rgba(148, 163, 184, 0.7);
+  text-transform: uppercase;
+}
+
+.count-number {
+  font-size: 18px;
+  font-weight: 900;
+  color: #10b981;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.online-count .count-number {
+  color: #6366f1;
+  text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+/* Connection Status (Online Only) */
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.signal-bar {
+  width: 3px;
+  height: 10px;
+  background: rgba(100, 116, 139, 0.3);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.signal-bar:nth-child(2) {
+  height: 14px;
+}
+
+.signal-bar:nth-child(3) {
+  height: 18px;
+}
+
+.signal-bar.active {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+.signal-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #10b981;
+  margin-left: 4px;
+}
+
+/* HUD Rings */
+.hud-ring {
+  position: absolute;
+  top: 50%;
+  right: -80px;
+  width: 200px;
+  height: 200px;
+  border: 2px solid rgba(16, 185, 129, 0.2);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.hud-ring.online-ring {
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.hud-ring-2 {
+  position: absolute;
+  top: 50%;
+  right: -100px;
+  width: 240px;
+  height: 240px;
+  border: 1px dashed rgba(16, 185, 129, 0.15);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.hud-ring-2.online-ring-2 {
+  border-color: rgba(99, 102, 241, 0.15);
+}
+
+.rotating {
+  animation: rotate 20s linear infinite;
+}
+
+.rotating-reverse {
+  animation: rotate 30s linear infinite reverse;
+}
+
+/* Network Nodes (Online Only) */
+.network-nodes {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.network-nodes .node {
+  width: 8px;
+  height: 8px;
+  background: #6366f1;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+  animation: nodePulse 2s ease-in-out infinite;
+}
+
+.network-nodes .node:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.network-nodes .node:nth-child(3) {
+  animation-delay: 0.8s;
+}
+
+/* ==================== MATCHMAKING BAR ==================== */
+.matchmaking-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  margin-bottom: 30px;
+  background: rgba(10, 14, 39, 0.4);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.matchmaking-bar.online-matchmaking {
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.status-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    #10b981 50%, 
+    transparent 100%);
+  animation: statusScan 3s ease-in-out infinite;
+}
+
+.status-line.online-line {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    #6366f1 50%, 
+    transparent 100%);
+}
+
+.status-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: rgba(148, 163, 184, 0.9);
+  text-transform: uppercase;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+  animation: dotExpand 1.5s ease-in-out infinite;
+}
+
+.pulse-dot.online-pulse {
+  background: #6366f1;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+}
+
+.energy-bars {
+  display: flex;
+  gap: 4px;
+}
+
+.energy-bars .bar {
+  width: 3px;
+  height: 20px;
+  background: linear-gradient(to top, #10b981, transparent);
+  border-radius: 2px;
+  animation: barPulse 1.5s ease-in-out infinite;
+}
+
+.energy-bars .bar:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.energy-bars .bar:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.energy-bars .bar:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+/* ==================== GAME ARENA GRID ==================== */
+.game-arena-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0px;
+  padding: 20px 0;
+}
+
+/* Game Slot */
+.game-slot {
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+  animation: slotAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.game-slot.online-slot {
+  animation: slotAppearOnline 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Slot Frame */
+.slot-frame {
+  position: absolute;
+  inset: -8px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.slot-frame.online-frame {
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.game-slot:hover .slot-frame {
+  opacity: 1;
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 
+    0 0 20px rgba(16, 185, 129, 0.2),
+    inset 0 0 20px rgba(16, 185, 129, 0.05);
+}
+
+.game-slot.online-slot:hover .slot-frame {
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow: 
+    0 0 20px rgba(99, 102, 241, 0.2),
+    inset 0 0 20px rgba(99, 102, 241, 0.05);
+}
+
+.frame-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(16, 185, 129, 0.6);
+}
+
+.frame-corner:nth-child(1) {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.frame-corner:nth-child(2) {
+  top: -1px;
+  right: -1px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.frame-corner:nth-child(3) {
+  bottom: -1px;
+  left: -1px;
+  border-right: none;
+  border-top: none;
+}
+
+.frame-corner:nth-child(4) {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+.online-frame .frame-corner {
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
+/* Holographic Glow */
+.holo-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle at 50% 50%, 
+    rgba(16, 185, 129, 0.1) 0%, 
+    transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.holo-glow.online-glow {
+  background: radial-gradient(circle at 50% 50%, 
+    rgba(99, 102, 241, 0.1) 0%, 
+    transparent 70%);
+}
+
+.game-slot:hover .holo-glow {
+  opacity: 1;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* Connection Indicator (Online Only) */
+.connection-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+  opacity: 0;
+  z-index: 3;
+}
+
+.online-slot .connection-indicator {
+  background: #6366f1;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
+}
+
+.game-slot:hover .connection-indicator {
+  opacity: 1;
+  animation: indicatorPulse 1.5s ease-in-out infinite;
+}
+
+/* ==================== NO GAMES PANEL ==================== */
+.no-games-panel {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  background: rgba(10, 14, 39, 0.4);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.no-games-panel.online-error {
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.error-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: iconBounce 2s ease-in-out infinite;
+}
+
+.error-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #e2e8f0;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.error-subtitle {
+  font-size: 14px;
+  color: rgba(148, 163, 184, 0.7);
+  margin-bottom: 30px;
+}
+
+.loading-bar {
+  width: 200px;
+  height: 4px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #3b82f6);
+  border-radius: 2px;
+  animation: loadingSlide 2s ease-in-out infinite;
+}
+
+.loading-progress.online-progress {
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+}
+
+/* ==================== FLOATING DATA PANELS ==================== */
+/* .data-panel {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(10, 14, 39, 0.8);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 6px;
+  backdrop-filter: blur(10px);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #10b981;
+  z-index: 10;
+} */
+
+/* .data-panel.left-panel {
+  bottom: 30px;
+  left: 30px;
+}
+
+.data-panel.right-panel {
+  bottom: 30px;
+  right: 30px;
+} */
+/* 
+.data-panel.online-panel {
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #6366f1;
+}
+
+.panel-line {
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #10b981);
+  animation: lineScan 2s ease-in-out infinite;
+}
+
+.online-panel .panel-line {
+  background: linear-gradient(90deg, transparent, #6366f1);
+}
+
+.panel-text {
+  text-transform: uppercase;
+} */
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(20px, 20px);
+  }
+}
+
+@keyframes gridMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+@keyframes gridPulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes networkPulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes cornerGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+  }
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  }
+}
+
+@keyframes iconSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes titleShimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes glitch1 {
+  0%, 90%, 100% {
+    opacity: 0;
+    transform: translate(0);
+  }
+  92% {
+    opacity: 0.8;
+    transform: translate(-2px, 2px);
+  }
+}
+
+@keyframes glitch2 {
+  0%, 90%, 100% {
+    opacity: 0;
+    transform: translate(0);
+  }
+  94% {
+    opacity: 0.8;
+    transform: translate(2px, -2px);
+  }
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+@keyframes nodePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+}
+
+@keyframes statusScan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes dotExpand {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+  }
+  50% {
+    transform: scale(1.5);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
+  }
+}
+
+@keyframes barPulse {
+  0%, 100% {
+    transform: scaleY(0.6);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slotAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9) rotateX(20deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0);
+  }
+}
+
+@keyframes slotAppearOnline {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9) rotateY(10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateY(0);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes indicatorPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+  }
+  50% {
+    transform: scale(1.3);
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.8);
+  }
+}
+
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes loadingSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+@keyframes lineScan {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scaleX(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.5);
+  }
+}
+
+@keyframes fadePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 1200px) {
+  .hud-ring {
+    right: -120px;
+    width: 160px;
+    height: 160px;
+  }
+  
+  .hud-ring-2 {
+    right: -140px;
+    width: 200px;
+    height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cyber-arena-wrapper {
+    padding: 20px 15px;
+  }
+  
+  .holo-header {
+    padding: 30px 20px;
+  }
+  
+  .cyber-title {
+    font-size: clamp(28px, 8vw, 48px);
+  }
+  
+  .sub-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .hud-ring,
+  .hud-ring-2 {
+    display: none;
+  }
+  
+  .game-arena-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+  }
+  
+  .matchmaking-bar {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .energy-bars {
+    align-self: flex-end;
+  }
+  
+  .data-panel.left-panel,
+  .data-panel.right-panel {
+    bottom: 20px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+  
+  .data-panel.right-panel {
+    bottom: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-arena-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  
+  .mode-badge {
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+  
+  .subtitle-text {
+    font-size: 11px;
+  }
+  
+  .corner-frame {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .player-count {
+    padding: 4px 10px;
+  }
+  
+  .count-number {
+    font-size: 16px;
+  }
+}
+
+/* ==================== ENHANCED HOVER EFFECTS ==================== */
+.game-slot {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.game-slot:hover {
+  transform: translateY(-5px) scale(1.02);
+  z-index: 10;
+}
+
+.game-slot::before {
+  content: '';
+  position: absolute;
+  inset: -15px;
+  background: radial-gradient(circle at 50% 50%, 
+    rgba(16, 185, 129, 0.15) 0%, 
+    transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.game-slot.online-slot::before {
+  background: radial-gradient(circle at 50% 50%, 
+    rgba(99, 102, 241, 0.15) 0%, 
+    transparent 70%);
+}
+
+.game-slot:hover::before {
+  opacity: 1;
+  animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* ==================== ADDITIONAL FUTURISTIC ELEMENTS ==================== */
+
+/* Cyber Circuit Lines */
+.cyber-arena-wrapper::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.05) 50%, transparent 100%),
+    linear-gradient(0deg, transparent 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%);
+  background-size: 200px 200px;
+  pointer-events: none;
+  z-index: 1;
+  animation: circuitFlow 20s linear infinite;
+}
+
+.cyber-arena-wrapper.online-variant::before {
+  background-image: 
+    linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.05) 50%, transparent 100%),
+    linear-gradient(0deg, transparent 0%, rgba(168, 85, 247, 0.05) 50%, transparent 100%);
+}
+
+@keyframes circuitFlow {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 200px 0, 0 200px;
+  }
+}
+
+/* Particle Effect */
+.cyber-arena-wrapper::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle, rgba(16, 185, 129, 0.4) 1px, transparent 1px),
+    radial-gradient(circle, rgba(59, 130, 246, 0.3) 1px, transparent 1px);
+  background-size: 50px 50px, 80px 80px;
+  background-position: 0 0, 40px 40px;
+  pointer-events: none;
+  z-index: 1;
+  animation: particleFloat 60s linear infinite;
+  opacity: 0.3;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(100px, 100px);
+  }
+}
+
+/* Magnetic Card Effect Enhancement */
+.game-slot {
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.game-slot:hover {
+  filter: brightness(1.15) saturate(1.2);
+}
+
+/* Energy Field Effect */
+.slot-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    rgba(16, 185, 129, 0.1) 50%, 
+    transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: energySweep 3s ease-in-out infinite;
+}
+
+.online-frame::before {
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    rgba(99, 102, 241, 0.1) 50%, 
+    transparent 100%);
+}
+
+.game-slot:hover .slot-frame::before {
+  opacity: 1;
+}
+
+@keyframes energySweep {
+  0% {
+    transform: translateX(-100%) translateY(-100%);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%);
+  }
+}
+
+/* Holographic Scan Lines */
+.holo-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(16, 185, 129, 0.03) 2px,
+    rgba(16, 185, 129, 0.03) 4px
+  );
+  pointer-events: none;
+  animation: scanLines 10s linear infinite;
+}
+
+.online-header::after {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(99, 102, 241, 0.03) 2px,
+    rgba(99, 102, 241, 0.03) 4px
+  );
+}
+
+@keyframes scanLines {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
