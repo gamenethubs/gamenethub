@@ -733,6 +733,53 @@ export default function GamePlayer({
   /* ⭐⭐⭐ END AUTO ROTATION CODE ⭐⭐⭐ */
 
 
+  useEffect(() => {
+  function handleMessage(e) {
+    if (!e?.data) return;
+
+    if (e.data.type === "gnh_event") {
+      const payload = e.data.payload;
+
+      fetch("https://gamenethub.onrender.com/api/game/event", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }).catch(() => {});
+    }
+  }
+
+  window.addEventListener("message", handleMessage);
+  return () => window.removeEventListener("message", handleMessage);
+}, []);
+
+/* ================================================
+   ⭐ SEND INITIAL DATA TO GAME IFRAME (user + game)
+================================================ */
+useEffect(() => {
+  if (!gameData) return;
+
+  const iframe = iframeRef.current;
+  if (!iframe) return;
+
+  const userRaw = localStorage.getItem("user");
+  const userObj = userRaw ? JSON.parse(userRaw) : null;
+
+  // Wait 300ms for iframe JS to initialize
+  const timer = setTimeout(() => {
+    iframe.contentWindow?.postMessage(
+      {
+        type: "gnh_init",
+        userId: userObj?._id || userObj?.id || null,
+        gameId: gameData._id,
+      },
+      "*"
+    );
+  }, 300);
+
+  return () => clearTimeout(timer);
+}, [gameData]);
+
+
   /* TIMEOUT */
   useEffect(() => {
     setLoading(true);
