@@ -13,7 +13,7 @@ export default function LocalMultiplayer() {
       try {
         const res = await getAllGames();
         const all = res.data.games || [];
-        const filtered = all.filter((g) => g.isLocal === true);
+        const filtered = all.filter((g) => !!g.isLocal);
         setGames(filtered);
       } catch (err) {
         console.log("Error:", err);
