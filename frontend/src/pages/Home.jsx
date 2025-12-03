@@ -214,7 +214,7 @@ export default function Home() {
               alt="friends"
               style={styles.friendsGif}
             />
-            <h2 style={styles.friendsTitle}>Play with friends!</h2>
+            <h2 className="main-title" style={styles.friendsTitle}>Play with friends!</h2>
             <p style={styles.friendsSub}>Choose how you want to play</p>
           </div>
 
@@ -256,7 +256,7 @@ export default function Home() {
 
             {/* Text + Button overlay */}
             <div style={styles.cardContent}>
-              <h3
+              <h3 
                 style={{
                   ...styles.cardTitle,
                   opacity: hoverCard === "local" ? 0 : 1,
@@ -265,7 +265,7 @@ export default function Home() {
                 Local Multiplayer
               </h3>
 
-              <p
+              <p  className="friends-card-desc"
                 style={{
                   ...styles.cardDesc,
                   opacity: hoverCard === "local" ? 0 : 1,
@@ -275,7 +275,7 @@ export default function Home() {
               </p>
 
               {/* Button ALWAYS visible */}
-              <button
+              <button className="friends-card-btn"
                 style={styles.cardButton}
                 onClick={() => (window.location.href = "/local-multiplayer")}
                 onMouseEnter={(e) => {
@@ -330,7 +330,7 @@ export default function Home() {
             <div style={styles.cardGradient} />
 
             <div style={styles.cardContent}>
-              <h3
+              <h3 
                 style={{
                   ...styles.cardTitle,
                   opacity: hoverCard === "online" ? 0 : 1,
@@ -366,35 +366,9 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <style>
-{`
-/* Fix for tablets (iPad + small laptops) */
-@media (max-width: 900px) {
-  .friends-wrapper {
-    flex-direction: column !important;
-    align-items: center !important;
-  }
+          
 
-  .friends-card {
-    width: 100% !important;
-    max-width: 420px !important;
-  }
-}
 
-/* Fix for mobile screens */
-@media (max-width: 500px) {
-  .friends-card {
-    width: 100% !important;
-    max-width: 350px !important;
-  }
-
-  .friends-left img {
-    width: 140px !important;
-    height: 140px !important;
-  }
-}
-`}
-</style>
         </div>
       </section>
 
@@ -402,7 +376,7 @@ export default function Home() {
       <section style={styles.section}>
         <h2 style={styles.sectionTitleGlow}>⭐ Popular Games</h2>
 
-        <div style={styles.grid}>
+        <div style={styles.grid} className="game-grid-fix">
           {popular.map((game, i) => (
             <div
               key={game._id}
@@ -422,7 +396,7 @@ export default function Home() {
       <section style={styles.section}>
         <h2 style={styles.sectionTitleGlow}>🎮 All Games</h2>
 
-        <div style={styles.grid}>
+        <div style={styles.grid} className="game-grid-fix">
           {newReleases.map((game, i) => (
             <div
               key={game._id}
@@ -436,6 +410,122 @@ export default function Home() {
             </div>
           ))}
         </div>
+        <style>
+{`
+  @media (max-width: 500px) {
+    .game-grid-fix {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      justify-content: center !important;   /* center full grid */
+      justify-items: center !important;     /* center grid items */
+      width: 100% !important;
+      gap: 14px !important;
+    }
+
+    .game-grid-fix > div {
+      width: 100% !important;
+      margin: 0 auto !important
+    }
+
+    
+  }
+`}
+</style>
+
+<style>
+{`
+/* Fix for tablets (iPad + small laptops) */
+@media (max-width: 900px) {
+  .friends-wrapper {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .friends-card {
+    width: 100% !important;
+    max-width: 420px !important;
+  }
+  
+  
+}
+
+/* Fix for mobile screens */
+@media (max-width: 500px) {
+  .friends-card {
+    width: 100% !important;
+    max-width: 350px !important;
+  }
+
+  .friends-left img {
+    width: 140px !important;
+    height: 140px !important;
+  }
+}
+`}
+</style>
+<style>
+{`
+  @media (max-width: 420px) {
+
+    /* shrink the entire multiplayer cards */
+    .friends-card {
+      transform: scale(0.92) !important;
+      transform-origin: top center !important;
+    }
+
+    /* shrink text */
+    .friends-card-title {
+      font-size: 10px !important;
+      line-height: 20px !important;
+    }
+    
+    .main-title {
+    font-size: 22px !important;
+}
+
+    .friends-card-desc {
+      font-size: 13px !important;
+    }
+
+    /* shrink button */
+    .friends-card-btn {
+      font-size: 14px !important;
+      padding: 8px 14px !important;
+      border-radius: 10px !important;
+    }
+
+    /* shrink the video/image height */
+    .friends-card-media {
+      height: 160px !important;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .friends-card {
+      transform: scale(0.85) !important;
+      margin-left: -30px !important;
+    }
+
+    .friends-card-title {
+      font-size: 10px !important;
+    }
+
+    .main-title {
+    font-size: 18px !important;
+}
+
+    .friends-card-desc {
+      font-size: 12px !important;
+    }
+
+    .friends-card-btn {
+      font-size: 13px !important;
+      padding: 6px 12px !important;
+    }
+  }
+`}
+</style>
+
       </section>
 
       <GameModal game={selectedGame} onClose={() => setSelectedGame(null)} />
@@ -474,7 +564,7 @@ const styles = {
   },
 
   heroTitle: {
-     fontSize: "42px",
+     fontSize: "clamp(30px, 6vw, 42px)",
   fontWeight: 800,
   marginBottom: "10px",
   position: "relative",
@@ -482,7 +572,7 @@ const styles = {
   },
 
   heroSub: {
-    fontSize: "18px",
+    fontSize: "clamp(10px, 6vw,18px)",
   color: "#9ca3af",
   position: "relative",
   zIndex: 5,
@@ -806,6 +896,8 @@ cardDarkOverlay: {
 
   filter: "brightness(0.75) contrast(1.05) saturate(1.05)"
 },
+
+
 
 };
 
