@@ -29,7 +29,7 @@ const createTrackerFile = () => {
         try {
           if (!data || typeof data !== "object") return;
 
-          fetch("/api/game/event", {
+          fetch("https://gamenethub.onrender.com/api/game/event", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
