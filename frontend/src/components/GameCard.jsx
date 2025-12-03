@@ -143,7 +143,7 @@ export default function GameCard({ game }) {
           }}
           onClick={handleFavorite}
         >
-          {fav ? "❤️" : "🤍"}
+          {fav ? "❤️" : "💛"}
         </div>
 
         {/* ⭐ DEVICE ICON (HOVER ONLY) */}
