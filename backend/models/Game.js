@@ -1,4 +1,3 @@
-
 // // backend/models/Game.js
 // import mongoose from "mongoose";
 // import slugify from "slugify";
@@ -58,6 +57,25 @@
 //       type: String,
 //       default: "",
 //       trim: true,
+//     },
+
+//     /************************************
+//      * ⭐ DEVICE COMPATIBILITY FIELD (NEW)
+//      ************************************/
+//     deviceCompatibility: {
+//       type: String,
+//       enum: ["all", "desktop", "mobile"],
+//       default: "all",
+//       index: true,
+//     },
+
+//         /************************************
+//      * ⭐ ORIENTATION SETTINGS (NEW)
+//      ************************************/
+//     orientation: {
+//       type: String,
+//       enum: ["all", "landscape"],   // portrait allowed under "all"
+//       default: "all",
 //     },
 
 //     /************************************
@@ -230,13 +248,26 @@ const gameSchema = new mongoose.Schema(
       index: true,
     },
 
-        /************************************
+    /************************************
      * ⭐ ORIENTATION SETTINGS (NEW)
      ************************************/
     orientation: {
       type: String,
       enum: ["all", "landscape"],   // portrait allowed under "all"
       default: "all",
+    },
+
+    /************************************
+     * ⭐⭐⭐ MULTIPLAYER VISIBILITY (NEW)
+     ************************************/
+    isLocal: {
+      type: Boolean,
+      default: false,
+    },
+
+    isOnline: {
+      type: Boolean,
+      default: false,
     },
 
     /************************************

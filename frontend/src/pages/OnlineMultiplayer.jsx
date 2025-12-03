@@ -3,7 +3,7 @@ import { getAllGames } from "../services/api";
 import GameCard from "../components/GameCard";
 import GameModal from "../components/GameModal";
 
-export default function OnlineMultiplayer() {
+export default function LocalMultiplayer() {
   const [games, setGames] = useState([]);
   const [animate, setAnimate] = useState(false);
   const [selectedGame, setSelectedGame] = useState(null);
@@ -13,7 +13,7 @@ export default function OnlineMultiplayer() {
       try {
         const res = await getAllGames();
         const all = res.data.games || [];
-        const filtered = all.filter((g) => g.isOnline === true);
+        const filtered = all.filter((g) => !!g.isLocal);
         setGames(filtered);
       } catch (err) {
         console.log("Error:", err);
@@ -35,8 +35,8 @@ export default function OnlineMultiplayer() {
         transform: animate ? "translateY(0)" : "translateY(15px)",
       }}
     >
-      <h1 style={styles.heading}>🌐 Online Multiplayer Games</h1>
-      <p style={styles.subText}>Play with friends anywhere in the world!</p>
+      <h1 style={styles.heading}>🎮 Local Multiplayer Games</h1>
+      <p style={styles.subText}>Play together on the same device!</p>
 
       <div style={styles.grid}>
         {games.length > 0 ? (
@@ -52,7 +52,7 @@ export default function OnlineMultiplayer() {
           ))
         ) : (
           <div style={styles.noResult}>
-            <h2>No Online Multiplayer games found 😢</h2>
+            <h2>No Local Multiplayer games found 😢</h2>
             <p style={{ color: "#64748b", marginTop: "6px" }}>
               Try again later.
             </p>
@@ -78,7 +78,7 @@ const styles = {
     marginBottom: "5px",
     fontSize: "32px",
     fontWeight: 700,
-    background: "linear-gradient(90deg,#6366f1,#a855f7)",
+    background: "linear-gradient(90deg,#34d399,#3b82f6)",
     WebkitBackgroundClip: "text",
     color: "transparent",
   },
