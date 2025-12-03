@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+<!-- HOME -->
+<url>
+  <loc>https://gamenethub.com/</loc>
+  <changefreq>weekly</changefreq>
+  <priority>1.0</priority>
+</url>
+
+<!-- ALL GAMES PAGE -->
+<url>
+  <loc>https://gamenethub.com/</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<!-- ALL CATEGORIES PAGE -->
+<url>
+  <loc>https://gamenethub.com/categories</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<!-- GENRE PAGES -->
+<url>
+  <loc>https://gamenethub.com/categories?genre=Adventure</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/categories?genre=Action</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/categories?genre=Puzzle</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/categories?genre=Arcade</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/categories?genre=Casual</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/categories?genre=Educational</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/categories?genre=Skill</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<!-- STATIC PAGES -->
+<url>
+  <loc>https://gamenethub.com/login</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.5</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/register</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.5</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/profile</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.5</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/contact</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.3</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/privacy</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.3</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/terms</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.3</priority>
+</url>
+
+<!-- ========================= -->
+<!--     GAME URL SECTION       -->
+<!-- ========================= -->
+
+
+<url>
+  <loc>https://gamenethub.com/game/escape-room</loc>
+  <lastmod>2025-12-02T15:07:53.088Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/radius-raid</loc>
+  <lastmod>2025-12-02T18:41:17.221Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/minequest</loc>
+  <lastmod>2025-12-02T17:53:48.700Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/tower-platform</loc>
+  <lastmod>2025-12-02T18:41:45.410Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/oops</loc>
+  <lastmod>2025-12-03T04:02:47.823Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/coloron</loc>
+  <lastmod>2025-12-02T18:42:41.409Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/tower-blocks</loc>
+  <lastmod>2025-12-02T18:42:59.964Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/fruit-ninja</loc>
+  <lastmod>2025-12-02T18:43:31.289Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/spacewall</loc>
+  <lastmod>2025-12-02T18:43:45.999Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/bowling-master</loc>
+  <lastmod>2025-12-02T18:44:03.802Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.75</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/coil</loc>
+  <lastmod>2025-12-02T17:58:33.118Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.78</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/tetris-mastery</loc>
+  <lastmod>2025-12-01T17:45:19.283Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.65</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/pac-man</loc>
+  <lastmod>2025-12-02T17:59:59.325Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/math-magic</loc>
+  <lastmod>2025-12-02T19:47:27.669Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/3-cup</loc>
+  <lastmod>2025-12-02T19:46:30.398Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.75</priority>
+</url>
+
+
+<url>
+  <loc>https://gamenethub.com/game/subway-surfers</loc>
+  <lastmod>2025-12-02T18:00:50.858Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/moto-road-rash-3d</loc>
+  <lastmod>2025-12-02T19:48:09.505Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.88</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/tic-tac-toe</loc>
+  <lastmod>2025-12-02T17:43:29.961Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/chess</loc>
+  <lastmod>2025-12-02T17:52:45.908Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/basketball-legends</loc>
+  <lastmod>2025-12-02T18:35:24.587Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/clicker-heroes</loc>
+  <lastmod>2025-12-02T18:37:14.064Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.78</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/cubefield</loc>
+  <lastmod>2025-12-02T18:40:43.695Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.72</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/sudokux</loc>
+  <lastmod>2025-12-02T18:32:17.223Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/eyes-on-you</loc>
+  <lastmod>2025-12-02T18:52:22.548Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/among-us</loc>
+  <lastmod>2025-12-02T18:31:19.737Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.95</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/ninjas-evil-corp</loc>
+  <lastmod>2025-12-02T18:30:44.090Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.88</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/black-hole-square</loc>
+  <lastmod>2025-11-27T18:17:00.641Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.75</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/2048</loc>
+  <lastmod>2025-12-01T17:31:56.803Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/block-master</loc>
+  <lastmod>2025-12-02T18:30:07.161Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.78</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/hand-play</loc>
+  <lastmod>2025-12-02T18:29:43.607Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/flappy-bird</loc>
+  <lastmod>2025-12-02T18:29:17.284Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.82</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/hextris</loc>
+  <lastmod>2025-12-02T18:28:55.039Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.78</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/memory-maze</loc>
+  <lastmod>2025-12-02T18:28:29.792Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.92</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/archer-legends</loc>
+  <lastmod>2025-12-02T18:28:06.851Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/memory-match</loc>
+  <lastmod>2025-12-02T18:27:29.966Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.95</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/ninjas-blade</loc>
+  <lastmod>2025-12-02T18:26:24.392Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.88</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/stairs</loc>
+  <lastmod>2025-12-01T17:45:48.793Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/bubble-shooter</loc>
+  <lastmod>2025-12-02T18:25:40.128Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/pipes-block</loc>
+  <lastmod>2025-12-02T18:25:05.184Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.77</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/tower-building</loc>
+  <lastmod>2025-11-30T07:34:48.500Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.72</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/super-mario</loc>
+  <lastmod>2025-11-28T08:37:25.956Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/car-racing</loc>
+  <lastmod>2025-12-02T18:23:54.142Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/dalgona-challenge</loc>
+  <lastmod>2025-12-02T18:23:29.176Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/cube-master</loc>
+  <lastmod>2025-12-02T18:23:09.625Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://gamenethub.com/game/hexgl</loc>
+  <lastmod>2025-12-02T18:46:22.040Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.92</priority>
+</url>
+
+
+
+
+ 

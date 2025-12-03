@@ -1,3 +1,12 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /api/
+Disallow: /uploads/zips/
+Disallow: /uploads/thumbnails/
+Disallow: /server/
+Disallow: /private/
+Disallow: /dashboard/ 
+Allow: /
+
+# Sitemap Location
+Sitemap: https://gamenethub.com/sitemap.xml
