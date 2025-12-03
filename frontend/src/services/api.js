@@ -1,9 +1,15 @@
 // // src/services/api.js
 // import axios from "axios";
 
-// // Base axios instance
+
+
+// // Use environment variable when available; fallback to Render URL
+// const API_BASE = (process.env.REACT_APP_API_BASE || "https://gamenethub.onrender.com").replace(/\/+$/, "");
+// export const apiBaseURL = API_BASE;
+
 // const API = axios.create({
-//   baseURL: "http://localhost:5000/api",
+//   baseURL: `${API_BASE}/api`,
+//   withCredentials: true, // backend allows credentials; optional but usually safe
 // });
 
 // // Auto attach token
@@ -12,6 +18,18 @@
 //   if (token) config.headers.Authorization = `Bearer ${token}`;
 //   return config;
 // });
+
+// /**
+//  * Helper to convert server-returned relative paths into absolute public URLs.
+//  * Example: game.thumbnail === "/uploads/thumbnails/123.png"
+//  * absoluteUrl(game.thumbnail) -> "https://gamenethub.onrender.com/uploads/thumbnails/123.png"
+//  */
+// export const absoluteUrl = (relativePath) => {
+//   if (!relativePath) return "";
+//   // If it's already absolute (http/https), return as-is
+//   if (/^https?:\/\//i.test(relativePath)) return relativePath;
+//   return `${API_BASE}${relativePath}`;
+// };
 
 // /**************************************
 //  *  AUTH API
@@ -25,7 +43,7 @@
 
 // export const getAllGames = () => API.get("/games");
 
-// // ⭐ Fully populated game (correct endpoint)
+// // Fully populated game (correct endpoint)
 // export const getGameBySlug = (slug) => API.get(`/games/slug/${slug}`);
 
 // export const getGameById = (id) => API.get(`/games/id/${id}`);
@@ -45,11 +63,10 @@
 // /**************************************
 //  *  GAME ACTIONS
 //  **************************************/
-
-// // ⭐ Only used by internal services, name simplified:
+// // Increase play count (no auth required)
 // export const apiIncreasePlay = (id) => API.post(`/games/${id}/play`);
 
-// // ⭐ Used by gameActions.js internally
+// // Rate game (auth required)
 // export const apiRateGame = (id, stars) =>
 //   API.post(`/games/${id}/rate`, { stars });
 
@@ -59,11 +76,8 @@
 // export const getTestData = () => API.get("/test");
 
 // export default API;
-
 // src/services/api.js
 import axios from "axios";
-
-
 
 // Use environment variable when available; fallback to Render URL
 const API_BASE = (process.env.REACT_APP_API_BASE || "https://gamenethub.onrender.com").replace(/\/+$/, "");
@@ -83,12 +97,9 @@ API.interceptors.request.use((config) => {
 
 /**
  * Helper to convert server-returned relative paths into absolute public URLs.
- * Example: game.thumbnail === "/uploads/thumbnails/123.png"
- * absoluteUrl(game.thumbnail) -> "https://gamenethub.onrender.com/uploads/thumbnails/123.png"
  */
 export const absoluteUrl = (relativePath) => {
   if (!relativePath) return "";
-  // If it's already absolute (http/https), return as-is
   if (/^https?:\/\//i.test(relativePath)) return relativePath;
   return `${API_BASE}${relativePath}`;
 };
@@ -102,7 +113,6 @@ export const registerUser = (data) => API.post("/auth/register", data);
 /**************************************
  *  GAMES API
  **************************************/
-
 export const getAllGames = () => API.get("/games");
 
 // Fully populated game (correct endpoint)
@@ -125,10 +135,8 @@ export const deleteGame = (id) => API.delete(`/games/${id}`);
 /**************************************
  *  GAME ACTIONS
  **************************************/
-// Increase play count (no auth required)
 export const apiIncreasePlay = (id) => API.post(`/games/${id}/play`);
 
-// Rate game (auth required)
 export const apiRateGame = (id, stars) =>
   API.post(`/games/${id}/rate`, { stars });
 
@@ -136,5 +144,23 @@ export const apiRateGame = (id, stars) =>
  *  TEST
  **************************************/
 export const getTestData = () => API.get("/test");
+
+/**************************************
+ *  ⭐ NEW — GAME EVENT TRACKING APIs
+ **************************************/
+// 1️⃣ Get all events (Admin Live Tracker)
+export const getAllGameEvents = (limit = 200) =>
+  API.get(`/game/events?limit=${limit}`);
+
+// ⭐ Alias so AdminLiveTracker can use getAllEvents()
+export const getAllEvents = getAllGameEvents;
+
+// 2️⃣ Get events by User ID
+export const getEventsByUser = (userId) =>
+  API.get(`/game/events/user/${userId}`);
+
+// 3️⃣ Get events by Game ID
+export const getEventsByGame = (gameId) =>
+  API.get(`/game/events/game/${gameId}`);
 
 export default API;
