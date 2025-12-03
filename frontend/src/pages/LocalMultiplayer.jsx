@@ -138,9 +138,9 @@ useEffect(() => {
             ))
           ) : (
             <div className="no-games-panel">
-              <div className="error-icon">⚠</div>
-              <h2 className="error-title">NO GAMES DETECTED</h2>
-              <p className="error-subtitle">Arena database synchronization pending</p>
+              <div className="error-icon">🕹️</div>
+              <h2 className="error-title">READY TO BATTLE!</h2>
+              <p className="error-subtitle">Waiting for local challengers...</p>
               <div className="loading-bar">
                 <div className="loading-progress"></div>
               </div>
