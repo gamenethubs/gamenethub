@@ -213,6 +213,28 @@ import gameRoutes from "./routes/gameRoutes.js";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
 import { protect, adminOnly } from "./middleware/authMiddleware.js";
 
+/********************************************
+ * ⭐ NEW SECTION — SOCKET.IO SERVER
+ * (COMPLETELY SAFE — DOES NOT TOUCH OLD CODE)
+ ********************************************/
+
+// Create HTTP server to attach socket.io   ⭐ NEW
+const server = http.createServer(app);
+
+// Create Socket.IO instance                 ⭐ NEW
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/games", gameRoutes);
 app.use("/api/favorites", favoriteRoutes);
@@ -248,21 +270,7 @@ app.get("/test", (req, res) => {
   res.json({ message: "Backend connected successfully!" });
 });
 
-/********************************************
- * ⭐ NEW SECTION — SOCKET.IO SERVER
- * (COMPLETELY SAFE — DOES NOT TOUCH OLD CODE)
- ********************************************/
 
-// Create HTTP server to attach socket.io   ⭐ NEW
-const server = http.createServer(app);
-
-// Create Socket.IO instance                 ⭐ NEW
-const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST"],
-  },
-});
 
 // Attach multiplayer handlers               ⭐ NEW
 multiplayerHandler(io);

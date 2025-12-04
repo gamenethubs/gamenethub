@@ -1,5 +1,3 @@
-
-
 // src/pages/Profile.jsx
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -64,8 +62,17 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    loadFavoriteGames();
-  }, [favorites, isAuthenticated]);
+    const init = async () => {
+      if (!isAuthenticated) return;
+
+      setFavLoading(true);
+      await refreshFavorites();     // ⭐ FORCE first sync
+      await loadFavoriteGames();    // ⭐ THEN load detailed games
+      setFavLoading(false);
+    };
+
+    init();
+  }, [isAuthenticated]);
 
   const triggerPick = () => inputRef.current?.click();
 
@@ -113,7 +120,13 @@ export default function Profile() {
     const res = await toggleFavorite(gameId);
     if (res.error === "LOGIN_REQUIRED") return alert("Please login first.");
 
-    await refreshFavorites();
+    // if backend returned updated game objects
+    if (res.favorites) {
+      setFavGames(res.favorites);
+      return;
+    }
+
+    // fallback: manually refresh
     await loadFavoriteGames();
   };
 
@@ -419,14 +432,17 @@ const styles = {
     marginTop: 30,
   },
 
+  /* ⭐ NEW — MODERN RESPONSIVE GRID FOR FAVORITES */
   favGrid: {
-    display: "flex",
-    flexWrap: "wrap",
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
     gap: 16,
+    paddingTop: 4,
+    width: "100%",
   },
 
   favCard: {
-    width: 220,
+    width: "100%",
     background: "#0b1220",
     borderRadius: 10,
     overflow: "hidden",
@@ -452,10 +468,11 @@ const styles = {
     fontWeight: 800,
     color: "#fff",
     marginBottom: 4,
+    fontSize: 14,
   },
 
   favGenre: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#93c5fd",
     marginBottom: 8,
   },
@@ -470,19 +487,20 @@ const styles = {
     background: "#2563eb",
     border: "none",
     color: "#fff",
-    padding: "8px 10px",
+    padding: "6px 8px",
     borderRadius: 8,
     cursor: "pointer",
+    fontSize: 13,
   },
 
   removeBtn: {
     background: "transparent",
     border: "1px solid rgba(255,0,0,0.3)",
     color: "#ff5b5b",
-    padding: "8px",
+    padding: "6px",
     borderRadius: 8,
     cursor: "pointer",
-    minWidth: 44,
+    minWidth: 40,
   },
 };
 
@@ -509,6 +527,7 @@ const responsive = `
   }
 }
 
+/* ⭐ 600px below → 2 columns (already good) */
 @media (max-width: 600px) {
   .fav-grid {
     display: grid !important;
@@ -520,19 +539,26 @@ const responsive = `
   }
 }
 
+/* ⭐ 400px → NOW ALSO 2 COLUMNS, PERFECT FOR Z Fold 5 */
 @media (max-width: 400px) {
   .fav-grid {
-    grid-template-columns: repeat(1, 1fr) !important;
+    grid-template-columns: repeat(2, 1fr) !important;
   }
   .profile-left {
     flex-direction: column !important;
     align-items: flex-start !important;
   }
 }
+
+/* ⭐ BELOW 300px → 1 column (super tiny phones only) */
+@media (max-width: 300px) {
+  .fav-grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+}
+
 `;
 
 const styleSheet = document.createElement("style");
 styleSheet.innerText = responsive;
 document.head.appendChild(styleSheet);
-
-
