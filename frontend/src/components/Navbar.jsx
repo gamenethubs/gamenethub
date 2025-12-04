@@ -233,7 +233,10 @@ export default function Navbar({ onSearch }) {
               ) : (
                 <>
                 <div
-                    style={styles.userBox}
+                    style={{
+                        ...styles.userBox,
+                        cursor: "pointer",   
+                      }}
                     title={getDisplayName()}
                     ref={avatarBtnRef}
                     onClick={() => setMenuOpen((s) => !s)}
