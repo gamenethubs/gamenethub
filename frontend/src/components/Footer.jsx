@@ -72,7 +72,6 @@ const handleSubscribe = async (e) => {
   <Link to="/" style={styles.link}>Home</Link>
   <Link to="/categories" style={styles.link}>Categories</Link>
   <Link to="/" style={styles.link}>Games</Link>   
-  <Link to="/kids" style={styles.link}>Kids</Link> 
 </div>
  
 
