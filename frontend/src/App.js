@@ -218,6 +218,8 @@ import Train from "./components/Train";
 //Google Analytics
 import AnalyticsTracker from "./components/AnalyticsTracker";
 
+import KidsThemeParkHub from "./KidsThemeParkHub.jsx"; // ⭐ ADDED
+
 function RequireAuth({ children }) {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" replace />;
@@ -314,6 +316,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/kids" element={<KidsThemeParkHub />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
