@@ -218,7 +218,7 @@ import Train from "./components/Train";
 //Google Analytics
 import AnalyticsTracker from "./components/AnalyticsTracker";
 
-import KidsThemeParkHub from "./KidsThemeParkHub.jsx"; // ⭐ ADDED
+import KidsThemeParkHub from "./pages/KidsThemeParkHub.jsx"; // ⭐ ADDED
 // ⭐ ADD SOCKET.IO
 import { io } from "socket.io-client";
 
