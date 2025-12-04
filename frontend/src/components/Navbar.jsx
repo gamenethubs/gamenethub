@@ -232,34 +232,34 @@ export default function Navbar({ onSearch }) {
                 </>
               ) : (
                 <>
-                  <div style={styles.userBox} title={getDisplayName()}>
-                    <button
-                      ref={avatarBtnRef}
-                      onClick={() => setMenuOpen((s) => !s)}
-                      style={styles.avatarButton}
-                    >
-                      <div style={{ position: "relative", display: "inline-block" }}>
-                        <Avatar size={40} />
-                        <span
-                          aria-hidden
-                          style={{
-                            position: "absolute",
-                            right: -2,
-                            bottom: -2,
-                            width: 12,
-                            height: 12,
-                            borderRadius: 12,
-                            border: "2px solid rgba(7,10,16,0.9)",
-                            background: isOnline ? "#60a5fa" : "#334155",
-                            boxShadow: isOnline ? "0 0 0 0 rgba(96,165,250,0.32)" : "none",
-                            animation: isOnline ? "pulseDot 1.8s infinite" : "none",
-                          }}
-                        />
-                      </div>
-                    </button>
+                <div
+                    style={styles.userBox}
+                    title={getDisplayName()}
+                    ref={avatarBtnRef}
+                    onClick={() => setMenuOpen((s) => !s)}
+                  >
+                    <div style={{ position: "relative", display: "inline-block" }}>
+                      <Avatar size={40} />
+                      <span
+                        aria-hidden
+                        style={{
+                          position: "absolute",
+                          right: -2,
+                          bottom: -2,
+                          width: 12,
+                          height: 12,
+                          borderRadius: 12,
+                          border: "2px solid rgba(7,10,16,0.9)",
+                          background: isOnline ? "#60a5fa" : "#334155",
+                          boxShadow: isOnline ? "0 0 0 0 rgba(96,165,250,0.32)" : "none",
+                          animation: isOnline ? "pulseDot 1.8s infinite" : "none",
+                        }}
+                      />
+                    </div>
 
                     <span style={styles.userNameText}>Hello, {getDisplayName()}</span>
                   </div>
+
 
                   <div style={{ position: "relative" }}>
                     <div

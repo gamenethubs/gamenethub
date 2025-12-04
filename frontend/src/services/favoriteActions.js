@@ -186,22 +186,28 @@ export function useFavorites() {
     const res = await toggleFavoriteAPI(gameId);
     if (res.error) return res;
 
+    // If backend sends updated favorites list, use it!
+  if (res.favorites) {
+    const ids = res.favorites.map((g) => g._id);
+    setFavorites(ids);
+
+    if (setInitialFavorites) setInitialFavorites(ids);
+  } else {
+    // fallback local toggle
     setFavorites((prev) =>
       prev.includes(gameId)
         ? prev.filter((id) => id !== gameId)
         : [...prev, gameId]
     );
-
     if (toggleFavoriteLocal) toggleFavoriteLocal(gameId);
+  }
 
-    return res;
-  };
+  return res;
+};
+
 
   const isFavorite = (gameId) => favorites.includes(gameId);
 
-  useEffect(() => {
-    refreshFavorites();
-  }, [isAuthenticated]);
 
   useEffect(() => {
     setFavorites(globalFavs || []);
