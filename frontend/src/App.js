@@ -218,6 +218,7 @@ import Train from "./components/Train";
 //Google Analytics
 import AnalyticsTracker from "./components/AnalyticsTracker";
 
+import KidsThemeParkHub from "./KidsThemeParkHub.jsx"; // ⭐ ADDED
 // ⭐ ADD SOCKET.IO
 import { io } from "socket.io-client";
 
@@ -350,6 +351,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/kids" element={<KidsThemeParkHub />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />

@@ -1,0 +1,731 @@
+/* ================================
+   🌈 KIDS MAGIC THEME PARK — FULL CSS
+   NEXT LEVEL GAME WORLD UI
+================================ */
+
+body:has(.kids-theme-park-wrapper) nav {
+  display: none !important;
+}
+
+
+/* ✅ GLOBAL RESET */
+.kids-theme-park-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: black;
+}
+
+
+/* ================================
+   ☁️ FLOATING CLOUDS
+================================ */
+.cloud {
+  position: absolute;
+  width: 180px;
+  height: 90px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.8;
+  animation: cloudMove 60s linear infinite;
+  z-index: 1;
+}
+
+.cloud-1 { top: 12%; left: -20%; animation-duration: 70s; }
+.cloud-2 { top: 26%; left: -35%; animation-duration: 90s; }
+.cloud-3 { top: 40%; left: -25%; animation-duration: 85s; }
+
+@keyframes cloudMove {
+  from { transform: translateX(0); }
+  to { transform: translateX(150vw); }
+}
+
+/* ================================
+   🎈 FLOATING BALLOONS
+================================ */
+.balloon {
+  position: absolute;
+  width: 80px;
+  height: 120px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 1;
+  animation: balloonFloat 14s ease-in-out infinite;
+}
+
+.balloon-1 { left: 10%; bottom: -140px; }
+.balloon-2 { right: 14%; bottom: -160px; animation-delay: 4s; }
+
+@keyframes balloonFloat {
+  from { transform: translateY(0); opacity: 0.8; }
+  to { transform: translateY(-130vh); opacity: 1; }
+}
+
+/* ================================
+   🎭 FLYING HERO MASCOT
+================================ */
+.kids-mascot-bar {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding: 40px 20px 10px;
+}
+
+.mascot-character {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 10px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: mascotFly 3s ease-in-out infinite;
+  filter: drop-shadow(0 14px 26px rgba(0,0,0,0.35));
+}
+
+@keyframes mascotFly {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-22px); }
+  100% { transform: translateY(0); }
+}
+
+/* .mascot-speech {
+  display: inline-block;
+  background: rgba(255,255,255,0.9);
+  border-radius: 24px;
+  padding: 14px 20px;
+  margin-top: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+} */
+
+/* ================================
+   🧭 THEME PARK WORLD MAP GRID
+================================ */
+.theme-park-map {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 44px;
+  padding: 70px 8%;
+  flex: 1;
+  
+}
+
+/* ================================
+   🔮 CRAZY PORTAL WORLD CARDS
+================================ */
+.world-node {
+  position: relative;
+  height: 320px;
+  border-radius: 40px;
+  overflow: hidden;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.35);
+  transition: all 0.45s cubic-bezier(0.2, 1, 0.25, 1);
+  animation: floatWorld 5s ease-in-out infinite;
+}
+
+/* ✅ Magic Hover */
+.world-node:hover {
+  transform: scale(1.13) rotate(1deg);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.55);
+}
+
+/* ✅ Light Burst Overlay */
+.world-node::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center,
+    rgba(255,255,255,0.35),
+    rgba(0,0,0,0.6)
+  );
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.world-node:hover::after {
+  opacity: 1;
+}
+
+/* ✅ Floating Motion */
+@keyframes floatWorld {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+  100% { transform: translateY(0); }
+}
+
+/* ================================
+   🏷 WORLD TITLE BAR
+================================ */
+.world-info {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 20px 24px;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.9),
+    rgba(0,0,0,0.15)
+  );
+  color: white;
+  text-align: left;
+}
+
+.world-info h2 {
+  font-size: 28px;
+  font-weight: 900;
+  margin: 0;
+}
+
+.world-info p {
+  font-size: 15px;
+  opacity: 0.95;
+  margin-top: 8px;
+}
+
+/* ================================
+   👨‍👩‍👧 PARENTS CORNER BAR
+================================ */
+.parents-corner {
+  background: rgba(255,255,255,0.95);
+  text-align: center;
+  padding: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+  box-shadow: 0 -10px 25px rgba(0,0,0,0.15);
+  z-index: 5;
+}
+
+/* ================================
+   🔍 WORLD ZOOM EFFECT
+================================ */
+.world-zoom-active .theme-park-map {
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+.world-fullscreen {
+  position: fixed !important;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  border-radius: 0 !important;
+  transform: scale(1) !important;
+  animation: portalOpen 0.6s ease forwards;
+  box-shadow: none !important;
+  pointer-events: auto !important;
+}
+
+/* 🔥 Portal zoom burst */
+@keyframes portalOpen {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ✅ World title overlay when fullscreen */
+.world-fullscreen .world-info {
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+  padding: 40px;
+}
+
+.world-fullscreen .world-info h2 {
+  font-size: 42px;
+}
+
+.world-fullscreen .world-info p {
+  font-size: 20px;
+}
+
+/* 🔙 BACK BUTTON */
+.back-to-park {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  background: linear-gradient(135deg, #ffdd55, #ff99cc);
+  border: none;
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+}
+.world-node:hover {
+  animation: worldJump 0.4s ease;
+}
+
+@keyframes worldJump {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-18px) scale(1.05); }
+  100% { transform: translateY(0) scale(1); }
+}
+/* 🌟 PAGE GRAND ENTRY */
+.kids-theme-park-wrapper {
+  animation: parkEnter 1.2s ease forwards;
+}
+
+@keyframes parkEnter {
+  0% { opacity: 0; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ✨ WORLD SHIMMER ON LOAD */
+.world-node {
+  animation: worldFloat 5s ease-in-out infinite;
+}
+
+@keyframes worldFloat {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+/* 🌈 MAGIC GLOW BORDER */
+.world-node::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  box-shadow: 0 0 25px rgba(255,200,100,0.65);
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.world-node:hover::after {
+  opacity: 1;
+}
+
+/* 🎇 PORTAL ENTRY EFFECT */
+.world-fullscreen {
+  animation: magicPortal 0.7s ease forwards;
+}
+
+@keyframes magicPortal {
+  0% { transform: scale(0.5) rotate(-12deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+/* ✅ BACKGROUND BLUR WHEN WORLD OPENS */
+.world-bg-blur {
+  backdrop-filter: blur(4px);
+}
+
+/* ✅ FIREWORKS VISIBLE LAYER */
+.portal-fireworks-active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,200,0,0.4), transparent 60%);
+  animation: fireworksFlash 1.2s ease-out;
+  pointer-events: none;
+}
+
+@keyframes fireworksFlash {
+  0% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.4); }
+}/* 🐭 BIG MICKEY INTRO */
+.big-mickey-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #000000cc, #000);
+  z-index: 9999;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;     /* ✅ HORIZONTAL CENTER */
+  justify-content: center;/* ✅ VERTICAL CENTER */
+
+  text-align: center;     /* ✅ TEXT CENTER */
+  overflow: hidden;
+  touch-action: none;
+}
+
+
+.big-mickey-overlay img {
+  width: 500px;
+  animation: pulse 1.3s infinite;
+  margin-top: -480px;
+}
+
+.tap-glow {
+  margin-top: 24px;
+  font-size: 30px;
+  color: #fff;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 1px;
+  animation: glowPulse 1.4s infinite;
+}
+
+@keyframes glowPulse {
+  0% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 0.5; transform: scale(1); }
+}
+
+
+@keyframes pulse {
+  0% {transform: scale(1);}
+  50% {transform: scale(1.15);}
+  100% {transform: scale(1);}
+}
+
+/* 🌀 GALAXY PORTAL */
+.portal-galaxy-world {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.galaxy-portal {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, #8b5cf6, transparent 70%);
+  animation: spin 2.2s linear infinite;
+}
+
+@keyframes spin {
+  0% {transform: rotate(0deg);}
+  100% {transform: rotate(360deg);}
+}
+
+/* 🪙 COINS RAIN */
+.coin-rain span {
+  position: absolute;
+  top: -20px;
+  animation: fall 3s linear infinite;
+}
+
+@keyframes fall {
+  to { transform: translateY(110vh); }
+}
+
+/* 🐭 MASCOT FLY */
+.mascot-fly {
+  position: relative;
+  width: 220px;
+  animation: pulse 1.3s infinite;
+}
+
+@keyframes flyIn {
+  to {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* 🎮 GAME GRID */
+.portal-game-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  z-index: 10;
+}
+
+.fake-game-card {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  font-size: 20px;
+}
+.theme-video-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+   pointer-events: none;
+}
+.fly-to-park {
+  animation: flyToPark 1.6s ease forwards;
+}
+
+@keyframes flyToPark {
+  0% {
+    transform: translate(0, 0) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-35vw, -32vh) scale(0.65);
+    opacity: 0;
+  }
+}
+/* .floating-home-logo {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10001;
+  background: rgba(0,0,0,0.6);
+  padding: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 25px rgba(0,255,255,0.7);
+  cursor: pointer;
+}
+
+.floating-home-logo img {
+  width: 44px;
+  height: 44px;
+} */
+ /* home button css
+  */
+.floating-home-logo {
+  /* Position and Base Style */
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10001;
+  cursor: pointer;
+
+  /* Larger Size */
+  width: 70px; /* Increased size (was 64px) */
+  height: 70px; /* Increased size (was 64px) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Circular Shape (Already included, but key for "round") */
+  border-radius: 50%; 
+
+  /* Frosted Glass Background (Attractive Effect) */
+  background: rgba(255, 255, 255, 0.15); /* Slightly less transparent */
+  backdrop-filter: blur(12px); /* Stronger blur for "frosted" look */
+  -webkit-backdrop-filter: blur(12px); 
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Clearer border */
+
+  /* Initial Glow and Lift */
+  box-shadow: 
+    0 5px 20px rgba(0, 0, 0, 0.5), /* Deeper shadow for lift */
+    0 0 20px rgba(0, 255, 255, 0.8); /* Brighter initial cyan glow */
+
+  /* Smooth Transition */
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition curve */
+}
+
+.floating-home-logo:hover {
+  /* Hover Effects: Lift and Intense Glow */
+  transform: scale(1.1) translateY(-3px); /* Slightly more prominent lift and scale */
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.7), /* Stronger lift shadow */
+    0 0 40px rgba(0, 255, 255, 1.2); /* Very intense, vibrant glow */
+}
+
+.floating-home-logo img {
+  /* Logo Image Style */
+  width: 48px; /* Image size increased to match the larger container */
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 255, 1)); /* Brighter glow on the image */
+}
+/* 🐭 MICKEY HOVER MAGIC */
+.mascot-character {
+  transition: transform 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
+}
+
+.mascot-character:hover {
+  transform: scale(1.12) rotate(-2deg) translateY(-10px);
+  filter: drop-shadow(0 0 25px gold);
+  animation: mickeyWiggle 0.4s ease;
+}
+
+@keyframes mickeyWiggle {
+  0% { transform: scale(1) rotate(0); }
+  50% { transform: scale(1.15) rotate(3deg); }
+  100% { transform: scale(1.12) rotate(-2deg); }
+}
+/* 💬 MAGIC TEXT HOVER EFFECT */
+.mascot-speech {
+  position: absolute;
+  left: 53%;                  
+  top: 40%;
+  transform: translateY(-50%) scale(0.85);
+
+  background: linear-gradient(145deg, #ffffff, #fff3b0);
+  border-radius: 18px;
+
+  padding: 10px 16px;
+
+  font-size: 13px;
+  font-weight: 800;
+  color: #1f1f1f;
+
+  max-width: 190px;
+  line-height: 1.4;
+  text-align: left;
+
+  box-shadow: 
+    0 6px 18px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    0 0 16px rgba(255, 215, 120, 0.7);
+
+  border: 1px solid rgba(255, 215, 120, 0.8);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: 
+    opacity 0.25s ease,
+    transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 10;
+}
+
+/* ✅ Bubble pointer (clean triangle) */
+.mascot-speech::after {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 9px 11px 9px 0;
+  border-style: solid;
+  border-color: transparent #fff3b0 transparent transparent;
+  filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.2));
+}
+
+/* ✅ Hover par smooth pop-in */
+.kids-mascot-bar:hover .mascot-speech {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+/* .mascot-speech {
+  opacity: 0;
+  transform: translateY(12px) scale(0.85);
+  pointer-events: none;
+  transition: all 0.35s ease;
+} */
+
+
+/* ✅ Bubble ka chhota sa pointer */
+.mascot-speech::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 8px 10px 8px 0;
+  border-style: solid;
+  border-color: transparent #fff6cc transparent transparent;
+}
+
+/* ✅ Hover par hi bubble dikhe */
+.kids-mascot-bar:hover .mascot-speech {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+@keyframes wave {
+  0%   { transform: rotate(0deg) translateY(0); }
+  25%  { transform: rotate(-4deg) translateY(-4px); }
+  50%  { transform: rotate(4deg) translateY(-6px); }
+  75%  { transform: rotate(-4deg) translateY(-4px); }
+  100% { transform: rotate(0deg) translateY(0); }
+}
+
+
+.kids-mascot-bar:hover .mascot-speech {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+@keyframes bubblePop {
+  0% {
+    transform: scale(0.7) translateY(10px);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05) translateY(-2px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ================================
+   📱 MOBILE RESPONSIVENESS (CRAZY FRIENDLY)
+================================ */
+@media (max-width: 768px) {
+  .theme-park-map {
+    grid-template-columns: 1fr;
+    padding: 40px 20px 80px;
+  }
+
+  .world-node {
+    height: 260px;
+    border-radius: 30px;
+  }
+
+  .world-info h2 {
+    font-size: 22px;
+  }
+
+  .world-info p {
+    font-size: 13px;
+  }
+
+  .mascot-character {
+    width: 120px;
+    height: 120px;
+  }
+
+  /* .mascot-speech {
+    font-size: 14px;
+  } */
+  
+}
+@media (max-width: 450px){
+  .big-mickey-overlay img {
+  width: 400px;
+  animation: pulse 1.3s infinite;
+  margin-top: -693px;
+}
+.tap-glow{
+  font-size: 15px;
+}
+
+  /* ✅ ✅ FIXED BUBBLE POSITION FOR MOBILE */
+  .mascot-speech {
+    left: 50%;
+    top: 90%;                         /* ✅ Mickey ke neeche chipka rahe */
+    transform: translateX(-50%) scale(0.92);
+
+    max-width: 85vw;
+    font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 14px;
+    text-align: center;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+
+  /* ✅ Bubble ka arrow upar se Mickey ki taraf */
+  .mascot-speech::after {
+    left: 50%;
+    bottom: 100%;                      /* ✅ Arrow upar se nikle */
+    top: auto;
+    transform: translateX(-50%);
+    border-width: 0 9px 10px 9px;
+    border-color: transparent transparent #fff3b0 transparent;
+  }
+
+  /* ✅ Mobile par hover ki jagah same effect */
+  .kids-mascot-bar:hover .mascot-speech {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
