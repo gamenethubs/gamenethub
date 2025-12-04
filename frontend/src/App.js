@@ -218,6 +218,9 @@ import Train from "./components/Train";
 //Google Analytics
 import AnalyticsTracker from "./components/AnalyticsTracker";
 
+// ⭐ ADD SOCKET.IO
+import { io } from "socket.io-client";
+
 function RequireAuth({ children }) {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" replace />;
@@ -230,6 +233,39 @@ function App() {
   const [showCartoon, setShowCartoon] = React.useState(false); 
   const [showGreeting, setShowGreeting] = React.useState(false);
   const [showTrain, setShowTrain] = React.useState(false);
+
+   /********************************************
+   * ⭐ SOCKET.IO NOTIFICATION LISTENER
+   ********************************************/
+  React.useEffect(() => {
+    const socket = io("https://gamenethub.onrender.com", {
+      withCredentials: true,
+    });
+
+    // TEMP TEST (shows in console)
+  socket.on("new-game-added", (game) => {
+    console.log("⚡ SOCKET EVENT RECEIVED:", game);
+  });
+
+    socket.on("new-game-added", (game) => {
+  window.dispatchEvent(
+    new CustomEvent("notify-user", {
+      detail: {
+        id: Date.now(),
+        title: game.title,
+        slug: game.slug,
+        thumbnail: game.thumbnail,
+        text: `${game.title} is now available!`,
+        time: new Date().toLocaleTimeString(),
+        seen: false
+      }
+    })
+  );
+});
+
+
+    return () => socket.disconnect();
+  }, []);
 
   return (
     <div style={styles.appWrapper}>
