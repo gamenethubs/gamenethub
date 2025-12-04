@@ -69,13 +69,26 @@
 //       index: true,
 //     },
 
-//         /************************************
+//     /************************************
 //      * ⭐ ORIENTATION SETTINGS (NEW)
 //      ************************************/
 //     orientation: {
 //       type: String,
 //       enum: ["all", "landscape"],   // portrait allowed under "all"
 //       default: "all",
+//     },
+
+//     /************************************
+//      * ⭐⭐⭐ MULTIPLAYER VISIBILITY (NEW)
+//      ************************************/
+//     isLocal: {
+//       type: Boolean,
+//       default: false,
+//     },
+
+//     isOnline: {
+//       type: Boolean,
+//       default: false,
 //     },
 
 //     /************************************
@@ -176,7 +189,6 @@
 
 // export default mongoose.model("Game", gameSchema);
 
-
 // backend/models/Game.js
 import mongoose from "mongoose";
 import slugify from "slugify";
@@ -219,7 +231,7 @@ const gameSchema = new mongoose.Schema(
      ************************************/
     gameZip: {
       type: String,
-      required: true,   // important for deployment
+      required: true,
       trim: true,
     },
 
@@ -253,7 +265,7 @@ const gameSchema = new mongoose.Schema(
      ************************************/
     orientation: {
       type: String,
-      enum: ["all", "landscape"],   // portrait allowed under "all"
+      enum: ["all", "landscape"],
       default: "all",
     },
 
@@ -269,6 +281,22 @@ const gameSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    /************************************
+     * ⭐⭐⭐ KIDS MODE (NEW)
+     * MATCHES THE CONTROLLER PERFECTLY
+     ************************************/
+    isKids: {
+      type: Boolean,
+      default: false,
+    },
+
+    kidsArenas: [
+      {
+        type: String,
+        enum: ["brainlab", "racingcity", "skillcircus", "candymath"],
+      },
+    ],
 
     /************************************
      * ⭐ USER-BASED RATING SYSTEM
@@ -303,12 +331,12 @@ const gameSchema = new mongoose.Schema(
     playedIPs: [
       {
         ip: String,
-        time: Number, // timestamp
+        time: Number,
       },
     ],
 
     /************************************
-     * ⭐ ANALYTICS — BEST SORTING FIELDS
+     * ⭐ ANALYTICS
      ************************************/
     trendingScore: {
       type: Number,
@@ -367,3 +395,5 @@ gameSchema.post("save", function (error, doc, next) {
 });
 
 export default mongoose.model("Game", gameSchema);
+
+
