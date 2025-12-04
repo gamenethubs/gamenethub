@@ -1,4 +1,6 @@
-// src/pages/EditGame.jsx
+
+
+// // src/pages/EditGame.jsx
 // import React, { useEffect, useState } from "react";
 // import { useNavigate, useParams } from "react-router-dom";
 // import { useAuth } from "../context/AuthContext";
@@ -22,6 +24,10 @@
 
 //   // ⭐ NEW FIELD (ORIENTATION)
 //   const [orientation, setOrientation] = useState("all");
+
+//   // ⭐⭐⭐ NEW MULTIPLAYER CHECKBOXES
+//   const [isLocal, setIsLocal] = useState(false);
+//   const [isOnline, setIsOnline] = useState(false);
 
 //   // EXISTING (from backend)
 //   const [thumbnailURL, setThumbnailURL] = useState("");
@@ -63,6 +69,10 @@
 
 //       // ⭐ LOAD NEW ORIENTATION FIELD
 //       setOrientation(g.orientation || "all");
+
+//       // ⭐⭐⭐ LOAD NEW MULTIPLAYER FIELDS
+//       setIsLocal(g.isLocal || false);
+//       setIsOnline(g.isOnline || false);
 
 //       // ✔ Never modify backend paths!
 //       setThumbnailURL(g.thumbnail || "");
@@ -118,6 +128,10 @@
 
 //       // ⭐ NEW FIELD (ORIENTATION)
 //       formData.append("orientation", orientation);
+
+//       // ⭐⭐⭐ NEW MULTIPLAYER
+//       formData.append("isLocal", isLocal);
+//       formData.append("isOnline", isOnline);
 
 //       if (thumbnailFile) formData.append("thumbnail", thumbnailFile);
 //       if (zipFile) formData.append("gameZip", zipFile);
@@ -216,33 +230,58 @@
 //             </div>
 
 //             {/* ⭐ NEW ORIENTATION FIELD */}
-// <div style={styles.field}>
-//   <label style={styles.label}>Game Orientation *</label>
+//             <div style={styles.field}>
+//               <label style={styles.label}>Game Orientation *</label>
 
-//   <div style={{ display: "flex", gap: "15px", marginTop: 6 }}>
-//     <label style={{ color: "#cbd5e1", fontSize: 14 }}>
-//       <input
-//         type="radio"
-//         name="orient"
-//         value="all"
-//         checked={orientation === "all"}
-//         onChange={(e) => setOrientation(e.target.value)}
-//       />
-//       &nbsp;All Orientations
-//     </label>
+//               <div style={{ display: "flex", gap: "15px", marginTop: 6 }}>
+//                 <label style={{ color: "#cbd5e1", fontSize: 14 }}>
+//                   <input
+//                     type="radio"
+//                     name="orient"
+//                     value="all"
+//                     checked={orientation === "all"}
+//                     onChange={(e) => setOrientation(e.target.value)}
+//                   />
+//                   &nbsp;All Orientations
+//                 </label>
 
-//     <label style={{ color: "#cbd5e1", fontSize: 14 }}>
-//       <input
-//         type="radio"
-//         name="orient"
-//         value="landscape"
-//         checked={orientation === "landscape"}
-//         onChange={(e) => setOrientation(e.target.value)}
-//       />
-//       &nbsp;Landscape Only
-//     </label>
-//   </div>
-// </div>
+//                 <label style={{ color: "#cbd5e1", fontSize: 14 }}>
+//                   <input
+//                     type="radio"
+//                     name="orient"
+//                     value="landscape"
+//                     checked={orientation === "landscape"}
+//                     onChange={(e) => setOrientation(e.target.value)}
+//                   />
+//                   &nbsp;Landscape Only
+//                 </label>
+//               </div>
+//             </div>
+
+//             {/* ⭐⭐⭐ NEW MULTIPLAYER CHECKBOXES */}
+//             <div style={styles.field}>
+//               <label style={styles.label}>Multiplayer Visibility</label>
+
+//               <div style={{ display: "flex", gap: "20px", marginTop: 6 }}>
+//                 <label style={{ color: "#cbd5e1", fontSize: 14 }}>
+//                   <input
+//                     type="checkbox"
+//                     checked={isLocal}
+//                     onChange={(e) => setIsLocal(e.target.checked)}
+//                   />
+//                   &nbsp;Local Multiplayer
+//                 </label>
+
+//                 <label style={{ color: "#cbd5e1", fontSize: 14 }}>
+//                   <input
+//                     type="checkbox"
+//                     checked={isOnline}
+//                     onChange={(e) => setIsOnline(e.target.checked)}
+//                   />
+//                   &nbsp;Online Multiplayer
+//                 </label>
+//               </div>
+//             </div>
 
 //             {/* THUMBNAIL */}
 //             <div style={styles.field}>
@@ -402,7 +441,6 @@
 //   loading: { textAlign: "center", color: "#cbd5e1" },
 // };
 
-
 // src/pages/EditGame.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -431,6 +469,10 @@ export default function EditGame() {
   // ⭐⭐⭐ NEW MULTIPLAYER CHECKBOXES
   const [isLocal, setIsLocal] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
+
+  // ⭐⭐⭐⭐ KIDS MODE (NEW)
+  const [isKids, setIsKids] = useState(false);
+  const [kidsArenas, setKidsArenas] = useState([]);
 
   // EXISTING (from backend)
   const [thumbnailURL, setThumbnailURL] = useState("");
@@ -477,6 +519,11 @@ export default function EditGame() {
       setIsLocal(g.isLocal || false);
       setIsOnline(g.isOnline || false);
 
+      // ⭐⭐⭐⭐ LOAD KIDS MODE
+      setIsKids(g.isKids || false);
+setKidsArenas(g.kidsArenas || []);
+
+
       // ✔ Never modify backend paths!
       setThumbnailURL(g.thumbnail || "");
       setZipURL(g.gameZip || "");
@@ -508,6 +555,15 @@ export default function EditGame() {
     setZipFile(file);
   };
 
+  // ⭐ KIDS MODE — ARENA HANDLER
+  const toggleArena = (arena) => {
+    setKidsArenas((prev) =>
+      prev.includes(arena)
+        ? prev.filter((a) => a !== arena)
+        : [...prev, arena]
+    );
+  };
+
   // UPDATE GAME API
   const handleUpdate = async () => {
     setErrorMsg("");
@@ -535,6 +591,14 @@ export default function EditGame() {
       // ⭐⭐⭐ NEW MULTIPLAYER
       formData.append("isLocal", isLocal);
       formData.append("isOnline", isOnline);
+
+      // ⭐⭐⭐⭐ KIDS MODE (NEW)
+      formData.append("isKids", isKids);
+
+kidsArenas.forEach((arena) => {
+  formData.append("kidsArenas[]", arena);
+});
+
 
       if (thumbnailFile) formData.append("thumbnail", thumbnailFile);
       if (zipFile) formData.append("gameZip", zipFile);
@@ -684,6 +748,35 @@ export default function EditGame() {
                   &nbsp;Online Multiplayer
                 </label>
               </div>
+            </div>
+
+            {/* ⭐⭐⭐⭐ KIDS MODE */}
+            <div style={styles.field}>
+              <label style={styles.label}>Kids Mode</label>
+
+              <label style={{ color: "#cbd5e1", fontSize: 14 }}>
+                <input
+                  type="checkbox"
+                  checked={isKids}
+                  onChange={(e) => setIsKids(e.target.checked)}
+                />
+                &nbsp;Mark as Kids Game
+              </label>
+
+              {isKids && (
+                <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+                  {["brainlab", "racingcity", "skillcircus", "candymath"].map((arena) => (
+                    <label key={arena} style={{ color: "#cbd5e1", fontSize: 14 }}>
+                      <input
+                        type="checkbox"
+                        checked={kidsArenas.includes(arena)}
+                        onChange={() => toggleArena(arena)}
+                      />
+                      &nbsp;{arena}
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* THUMBNAIL */}
@@ -843,4 +936,3 @@ const styles = {
 
   loading: { textAlign: "center", color: "#cbd5e1" },
 };
-

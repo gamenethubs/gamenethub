@@ -22,6 +22,10 @@
 //   // ⭐ NEW FIELD (ORIENTATION)
 //   const [orientation, setOrientation] = useState("all");
 
+//   // ⭐⭐⭐ NEW MULTIPLAYER CHECKBOXES
+//   const [isLocal, setIsLocal] = useState(false);
+//   const [isOnline, setIsOnline] = useState(false);
+
 //   // FILES
 //   const [thumbnailFile, setThumbnailFile] = useState(null);
 //   const [zipFile, setZipFile] = useState(null);
@@ -89,6 +93,10 @@
 
 //       // ⭐ NEW FIELD APPEND (ORIENTATION)
 //       formData.append("orientation", orientation);
+
+//       // ⭐⭐⭐ NEW MULTIPLAYER APPEND
+//       formData.append("isLocal", isLocal);
+//       formData.append("isOnline", isOnline);
 
 //       // FILES (IMPORTANT: filename included!)
 //       formData.append("thumbnail", thumbnailFile, thumbnailFile.name);
@@ -186,34 +194,58 @@
 //         </div>
 
 //         {/* ⭐ NEW ORIENTATION FIELD */}
-// <div style={styles.field}>
-//   <label style={styles.label}>Game Orientation *</label>
+//         <div style={styles.field}>
+//           <label style={styles.label}>Game Orientation *</label>
 
-//   <div style={{ display: "flex", gap: "15px", marginTop: 6 }}>
-//     <label style={{ color: "#cbd5e1", fontSize: 14 }}>
-//       <input
-//         type="radio"
-//         name="orient"
-//         value="all"
-//         checked={orientation === "all"}
-//         onChange={(e) => setOrientation(e.target.value)}
-//       />
-//       &nbsp;All Orientations
-//     </label>
+//           <div style={{ display: "flex", gap: "15px", marginTop: 6 }}>
+//             <label style={{ color: "#cbd5e1", fontSize: 14 }}>
+//               <input
+//                 type="radio"
+//                 name="orient"
+//                 value="all"
+//                 checked={orientation === "all"}
+//                 onChange={(e) => setOrientation(e.target.value)}
+//               />
+//               &nbsp;All Orientations
+//             </label>
 
-//     <label style={{ color: "#cbd5e1", fontSize: 14 }}>
-//       <input
-//         type="radio"
-//         name="orient"
-//         value="landscape"
-//         checked={orientation === "landscape"}
-//         onChange={(e) => setOrientation(e.target.value)}
-//       />
-//       &nbsp;Landscape Only
-//     </label>
-//   </div>
-// </div>
+//             <label style={{ color: "#cbd5e1", fontSize: 14 }}>
+//               <input
+//                 type="radio"
+//                 name="orient"
+//                 value="landscape"
+//                 checked={orientation === "landscape"}
+//                 onChange={(e) => setOrientation(e.target.value)}
+//               />
+//               &nbsp;Landscape Only
+//             </label>
+//           </div>
+//         </div>
 
+//         {/* ⭐⭐⭐ NEW MULTIPLAYER CHECKBOXES */}
+//         <div style={styles.field}>
+//           <label style={styles.label}>Multiplayer Visibility</label>
+
+//           <div style={{ display: "flex", gap: "20px", marginTop: 6 }}>
+//             <label style={{ color: "#cbd5e1", fontSize: 14 }}>
+//               <input
+//                 type="checkbox"
+//                 checked={isLocal}
+//                 onChange={(e) => setIsLocal(e.target.checked)}
+//               />
+//               &nbsp;Local Multiplayer
+//             </label>
+
+//             <label style={{ color: "#cbd5e1", fontSize: 14 }}>
+//               <input
+//                 type="checkbox"
+//                 checked={isOnline}
+//                 onChange={(e) => setIsOnline(e.target.checked)}
+//               />
+//               &nbsp;Online Multiplayer
+//             </label>
+//           </div>
+//         </div>
 
 //         {/* THUMBNAIL */}
 //         <div style={styles.field}>
@@ -263,9 +295,7 @@
 //   );
 // }
 
-// /****************************************
-//  *  PREMIUM UI (unchanged)
-//  ****************************************/
+
 // const styles = {
 //   wrapper: {
 //     minHeight: "calc(100vh - 70px)",
@@ -357,7 +387,6 @@
 // };
 
 
-
 // src/pages/AddGame.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -385,6 +414,15 @@ export default function AddGame() {
   // ⭐⭐⭐ NEW MULTIPLAYER CHECKBOXES
   const [isLocal, setIsLocal] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
+
+  // ⭐⭐⭐⭐ NEW KIDS MODE FIELDS
+  const [isKids, setIsKids] = useState(false);
+  const [kidsArenas, setKidsArenas] = useState({
+    brainlab: false,
+    racingcity: false,
+    skillcircus: false,
+    candymath: false,
+  });
 
   // FILES
   const [thumbnailFile, setThumbnailFile] = useState(null);
@@ -414,6 +452,16 @@ export default function AddGame() {
   };
 
   /************************************************
+   * HANDLE ARENA CHECKBOXES
+   ************************************************/
+  const toggleArena = (arena) => {
+    setKidsArenas((prev) => ({
+      ...prev,
+      [arena]: !prev[arena],
+    }));
+  };
+
+  /************************************************
    * SUBMIT FORM (100% stable)
    ************************************************/
   const handleSubmit = async () => {
@@ -430,17 +478,20 @@ export default function AddGame() {
       return;
     }
 
+    // Kids mode validation
+    if (isKids) {
+      const selected = Object.values(kidsArenas).filter(Boolean).length;
+      if (selected === 0) {
+        setErrorMsg("Please select at least one Kids Arena.");
+        return;
+      }
+    }
+
     try {
       setLoading(true);
 
       // ⏳ FIX: Ensure React has fully set file state before submit
       await new Promise((resolve) => setTimeout(resolve, 50));
-
-      if (!thumbnailFile || !zipFile) {
-        setErrorMsg("File selection failed — pick again.");
-        setLoading(false);
-        return;
-      }
 
       const formData = new FormData();
       formData.append("title", title);
@@ -457,6 +508,18 @@ export default function AddGame() {
       // ⭐⭐⭐ NEW MULTIPLAYER APPEND
       formData.append("isLocal", isLocal);
       formData.append("isOnline", isOnline);
+
+      // ⭐⭐⭐⭐ NEW KIDS MODE APPEND
+      formData.append("isKids", isKids);
+
+      if (isKids) {
+        const selectedArenas = Object.keys(kidsArenas).filter(
+          (key) => kidsArenas[key]
+        );
+        selectedArenas.forEach((arena) => {
+          formData.append("kidsArenas[]", arena);
+        });
+      }
 
       // FILES (IMPORTANT: filename included!)
       formData.append("thumbnail", thumbnailFile, thumbnailFile.name);
@@ -582,7 +645,7 @@ export default function AddGame() {
           </div>
         </div>
 
-        {/* ⭐⭐⭐ NEW MULTIPLAYER CHECKBOXES */}
+        {/* ⭐⭐⭐ MULTIPLAYER CHECKBOXES */}
         <div style={styles.field}>
           <label style={styles.label}>Multiplayer Visibility</label>
 
@@ -607,6 +670,42 @@ export default function AddGame() {
           </div>
         </div>
 
+        {/* ⭐⭐⭐⭐ NEW KIDS MODE CHECKBOX */}
+        <div style={styles.field}>
+          <label style={styles.label}>Kids Mode</label>
+
+          <label style={{ color: "#cbd5e1", fontSize: 14 }}>
+            <input
+              type="checkbox"
+              checked={isKids}
+              onChange={(e) => setIsKids(e.target.checked)}
+            />
+            &nbsp;Mark this game as Kids Game
+          </label>
+        </div>
+
+        {/* ⭐⭐⭐⭐ KIDS ARENAS CHECKBOXES */}
+        {isKids && (
+          <div style={styles.field}>
+            <label style={styles.label}>Select Kids Arenas *</label>
+
+            <div style={{ display: "grid", gap: "10px", marginTop: 6 }}>
+              {["brainlab", "racingcity", "skillcircus", "candymath"].map(
+                (arena) => (
+                  <label key={arena} style={{ color: "#cbd5e1", fontSize: 14 }}>
+                    <input
+                      type="checkbox"
+                      checked={kidsArenas[arena]}
+                      onChange={() => toggleArena(arena)}
+                    />
+                    &nbsp;{arena.charAt(0).toUpperCase() + arena.slice(1)}
+                  </label>
+                )
+              )}
+            </div>
+          </div>
+        )}
+
         {/* THUMBNAIL */}
         <div style={styles.field}>
           <label style={styles.label}>Thumbnail Image *</label>
@@ -630,9 +729,7 @@ export default function AddGame() {
             style={styles.input}
             onChange={handleZipFile}
           />
-          {zipFile && (
-            <p style={styles.fileName}>Selected: {zipFile.name}</p>
-          )}
+          {zipFile && <p style={styles.fileName}>Selected: {zipFile.name}</p>}
         </div>
 
         {/* DESCRIPTION */}
@@ -671,7 +768,8 @@ const styles = {
     left: "-20%",
     width: "200%",
     height: "200%",
-    background: "radial-gradient(circle, rgba(96,165,250,0.15), transparent 70%)",
+    background:
+      "radial-gradient(circle, rgba(96,165,250,0.15), transparent 70%)",
     filter: "blur(140px)",
     zIndex: -1,
   },
