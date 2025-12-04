@@ -28,6 +28,16 @@ export default function Home() {
   // 🔹 NEW: which multiplayer card is hovered? ("local" | "online" | null)
   const [hoverCard, setHoverCard] = useState(null);
 
+  const SECRET_COMMANDS = [
+  "ding dong",
+  "hello ding dong",
+  "hello kid"
+];
+
+const isSecretTyping = SECRET_COMMANDS.some(cmd => 
+  cmd.startsWith(searchTerm.trim().toLowerCase())
+);
+
   useEffect(() => {
     async function loadGames() {
       try {
@@ -155,7 +165,24 @@ export default function Home() {
         <p style={styles.heroSub}>Play amazing online games — fully free!</p>
       </section>
 
-      <div style={styles.sectionDivider}></div>
+      <div style={styles.sectionDivider}></div> 
+      {/* NO SEARCH RESULTS */}
+        {searchTerm.trim() &&
+        !isSecretTyping &&
+        filteredGames.length === 0 && (
+          <div style={{ textAlign: "center", marginTop: 40 }}>
+            <h2 style={{ fontSize: 32, fontWeight: 800 }}>
+              No games found 😥
+            </h2>
+            <p style={{ color: "#9ca3af", fontSize: 16 }}>
+              Try searching something else.
+            </p>
+          </div> 
+        )}
+
+
+      {(!searchTerm.trim() || filteredGames.length > 0) && (
+  <>
 
       {/* TRENDING */}
       <section style={styles.section}>
@@ -395,6 +422,8 @@ export default function Home() {
       {/* NEW RELEASES */}
       <section style={styles.section}>
         <h2 style={styles.sectionTitleGlow}>🎮 All Games</h2>
+       
+
 
         <div style={styles.grid} className="game-grid-fix">
           {newReleases.map((game, i) => (
@@ -527,6 +556,9 @@ export default function Home() {
 </style>
 
       </section>
+        </>
+)}
+
 
       <GameModal game={selectedGame} onClose={() => setSelectedGame(null)} />
     </div>
