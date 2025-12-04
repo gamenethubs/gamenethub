@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from "react";
-import "./css/kidsThemePark.css";
+import "../css/kidsThemePark.css";
 
 // import themeBg from "./assets/backgrounds/theme-park-bg.png";
-import themeBg from "./assets/backgrounds/theme-bg.mp4";
+import themeBg from "../assets/backgrounds/theme-bg.mp4";
 
-import mascotIdle from "./assets/mascots/mickey-idle.png";
-import mascotJump from "./assets/mascots/mickey-jump.png";
+import mascotIdle from "../assets/mascots/mickey-idle.png";
+import mascotJump from "../assets/mascots/mickey-jump.png";
 
-import cloudImg from "./assets/clouds/cloud.png";
-import balloonImg from "./assets/balloons/balloon.png";
+import cloudImg from "../assets/clouds/cloud.png";
+import balloonImg from "../assets/balloons/balloon.png";
 
-import puzzleIcon from "./assets/worlds/puzzle.png";
-import racingIcon from "./assets/worlds/racing.png";
-import skillIcon from "./assets/worlds/skill1.png";
-import mathIcon from "./assets/worlds/math.png";
+import puzzleIcon from "../assets/worlds/puzzle.png";
+import racingIcon from "../assets/worlds/racing.png";
+import skillIcon from "../assets/worlds/skill1.png";
+import mathIcon from "../assets/worlds/math.png";
 
-import hoverPop from "./assets/sfx/pop.mp3";
-import jumpSound from "./assets/sfx/jump1.mp3";
-import welcomeVoice from "./assets/sfx/welcome.mp3";
-import bgMusic from "./assets/sfx/bg-music.mp3";
-import drumRoll from "./assets/sfx/drum-roll.mp3";
-import sparkleSound from "./assets/sfx/sparkle.mp3";
-import fireworksSound from "./assets/sfx/fireworks.wav";
+import hoverPop from "../assets/sfx/pop.mp3";
+import jumpSound from "../assets/sfx/jump1.mp3";
+import welcomeVoice from "../assets/sfx/welcome.mp3";
+import bgMusic from "../assets/sfx/bg-music.mp3";
+import drumRoll from "../assets/sfx/drum-roll.mp3";
+import sparkleSound from "../assets/sfx/sparkle.mp3";
+import fireworksSound from "../assets/sfx/fireworks.wav";
 
 
 // ✅ AUDIO OBJECTS
