@@ -73,6 +73,7 @@
 import GameEvent from "../models/GameEvent.js";
 import Game from "../models/Game.js";
 import User from "../models/User.js";
+import UserGameStats from "../models/UserGameStats.js";
 
 const VALID_EVENT_TYPES = [
   "game_start",
@@ -123,6 +124,45 @@ export const createGameEvent = async (req, res) => {
       metadata: metadata || {},
       timestamp: new Date(),
     });
+
+    /*************************************
+ * ⭐ ADD: Update User Game Stats
+ *************************************/
+try {
+  let stats = await UserGameStats.findOne({ user: user._id, game: game._id });
+
+  if (!stats) {
+    stats = await UserGameStats.create({
+      user: user._id,
+      game: game._id,
+    });
+  }
+
+  if (eventType === "game_start") {
+    stats.lastSessionStart = new Date();
+    stats.openCount += 1;
+  }
+
+  if (eventType === "game_end") {
+    if (stats.lastSessionStart) {
+      const duration =
+        (Date.now() - new Date(stats.lastSessionStart).getTime()) / 1000;
+
+      if (duration > 1) {
+        stats.totalPlayTime += duration;
+        stats.sessionCount += 1;
+      }
+    }
+
+    stats.lastSessionStart = null;
+    stats.lastPlayed = new Date();
+  }
+
+  await stats.save(); 
+} catch (err) {
+  console.error("USER GAME STATS UPDATE ERROR:", err);
+}
+
 
     return res.json({ success: true, eventId: event._id });
 
