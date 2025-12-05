@@ -163,4 +163,11 @@ export const getEventsByUser = (userId) =>
 export const getEventsByGame = (gameId) =>
   API.get(`/game/events/game/${gameId}`);
 
+/**************************************
+ * ⭐ NEW — RECOMMENDATION ENGINE API
+ **************************************/
+export const getRecommendations = (userId) =>
+  API.get(`/recommendations/${userId}`);
+
+
 export default API;
