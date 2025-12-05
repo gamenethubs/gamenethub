@@ -1,3 +1,5 @@
+
+///////////////src/pages/KidsThemeParkHub.jsx/////////////////
 import React, { useState, useEffect } from "react";
 import "../css/kidsThemePark.css";
 
@@ -22,6 +24,14 @@ import bgMusic from "../assets/sfx/bg-music.mp3";
 import drumRoll from "../assets/sfx/drum-roll.mp3";
 import sparkleSound from "../assets/sfx/sparkle.mp3";
 import fireworksSound from "../assets/sfx/fireworks.wav";
+import brainVideo from "../assets/videos/puzzle.mp4";
+import racingVideo from "../assets/videos/racing.mp4";
+import skillVideo from "../assets/videos/skill.mp4";
+import mathVideo from "../assets/videos/math.mp4";
+import { useNavigate } from "react-router-dom";
+
+
+
 
 
 // ✅ AUDIO OBJECTS
@@ -44,6 +54,7 @@ export default function KidsThemeParkHub() {
   const [showBigMickey, setShowBigMickey] = useState(true);
   const [isTalking, setIsTalking] = useState(false);
   const [showBubble, setShowBubble] = useState(false);
+  const navigate = useNavigate();
 
 
 
@@ -124,14 +135,10 @@ useEffect(() => {
   <img src="/GamenetHub.png" alt="Home" />
 </a>
 
-       <video
-    className="theme-video-bg"
-    src={themeBg}
-    autoPlay
-    muted
-    loop
-    playsInline
-  />
+      <video className="theme-video-bg" autoPlay muted loop playsInline>
+  <source src={themeBg} type="video/mp4" />
+</video>
+
       {showBigMickey && (
   <div
     className="big-mickey-overlay"
@@ -208,33 +215,77 @@ useEffect(() => {
       {/* 🌍 WORLD MAP */}
       <div className="theme-park-map">
         {[
-          { id: "puzzle", title: "🧠 Brain Lab", desc: "Smart puzzles & logic", icon: puzzleIcon },
-          { id: "racing", title: "🚗 Racing City", desc: "Speed & fun", icon: racingIcon },
-          { id: "skill", title: "🎯 Skill Circus", desc: "Reflex games", icon: skillIcon },
-          { id: "math", title: "🔢 Candy Math Land", desc: "Sweet equations", icon: mathIcon },
-        ].map((world) => (
+  { 
+    id: "puzzle", 
+    title: "🧠 Brain Lab", 
+    desc: "Smart puzzles & logic", 
+    icon: puzzleIcon,
+    video: brainVideo
+  },
+  { 
+    id: "racing", 
+    title: "🚗 Racing City", 
+    desc: "Speed & fun", 
+    icon: racingIcon,
+    video: racingVideo
+  },
+  { 
+    id: "skill", 
+    title: "🎯 Skill Circus", 
+    desc: "Reflex games", 
+    icon: skillIcon,
+    video: skillVideo
+  },
+  { 
+    id: "math", 
+    title: "🔢 Candy Math Land", 
+    desc: "Sweet equations", 
+    icon: mathIcon,
+    video: mathVideo
+  },
+]
+.map((world) => (
           <div
-            key={world.id}
-            className={`world-node ${
-              activeWorld === world.id ? "world-fullscreen" : ""
-            }`}
-            onMouseEnter={() => {
-              if (soundUnlocked) {
-                sfxHover.currentTime = 0;
-                sfxHover.play().catch(() => {});
-              }
-            }}
-            onClick={() => {
-              if (soundUnlocked) {
-                sfxJump.currentTime = 0;
-                sfxJump.play().catch(() => {});
-                sfxDrum.currentTime = 0;
-                sfxDrum.play().catch(() => {});
-              }
-              setActiveWorld(world.id);
-            }}
-            style={{ backgroundImage: `url(${world.icon})` }}
-          >
+  className={`world-node ${activeWorld === world.id ? "world-fullscreen" : ""}`}
+  onMouseEnter={(e) => {
+    if (soundUnlocked) {
+      sfxHover.currentTime = 0;
+      sfxHover.play().catch(() => {});
+    }
+    const video = e.currentTarget.querySelector("video");
+    if (video) video.play();
+  }}
+  onMouseLeave={(e) => {
+    const video = e.currentTarget.querySelector("video");
+    if (video) video.pause();
+  }}
+  onClick={(e) => {
+  if (soundUnlocked) {
+    sfxJump.currentTime = 0;
+    sfxJump.play().catch(() => {});
+    sfxDrum.currentTime = 0;
+    sfxDrum.play().catch(() => {});
+  }
+
+  const video = e.currentTarget.querySelector("video");
+  if (video) video.pause(); // ✅ click par band ho jaye
+
+  setActiveWorld(world.id); // ✅ existing zoom logic bhi chale
+
+  // ✅ ✅ NEW PAGE OPEN (SAFE)
+  if (world.id === "puzzle") navigate("/kids/brain-lab");
+  if (world.id === "racing") navigate("/kids/racing-city");
+  if (world.id === "skill") navigate("/kids/skill-circus");
+  if (world.id === "math") navigate("/kids/math-land");
+}}
+
+  style={{ backgroundImage: `url(${world.icon})` }}
+>
+           <video className="world-hover-video" muted loop playsInline>
+  <source src={world.video} type="video/mp4" />
+</video>
+
+
             <div className="world-glow" />
             <div className="world-info">
               <h2>{world.title}</h2>

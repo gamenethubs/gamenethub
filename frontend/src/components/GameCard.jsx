@@ -50,7 +50,12 @@ export default function GameCard({ game }) {
         localStorage.setItem(`play_${game._id}`, Date.now());
       } catch {}
     }
+    // / ✅ SMART ROUTING FIX
+  if (game.isKids) {
+    navigate(`/kids/game/${game.slug}?autoPlay=true`);
+  } else {
     navigate(`/game/${game.slug}?autoPlay=true`);
+  }
   };
  
 
