@@ -1,0 +1,119 @@
+body {
+  background: red !important;
+}
+
+
+/* ✅ PAGE */
+.kids-detail-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #020617, #000);
+  color: white;
+  position: relative;
+  padding-bottom: 80px;
+}
+
+/* ✅ BACK BUTTON */
+.kids-detail-back {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 9999;
+  background: linear-gradient(135deg, #ffe066, #ff6ad5);
+  border: none;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* ✅ HERO IMAGE */
+.kids-detail-hero {
+  height: 340px;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+/* ✅ DARK GLASS OVERLAY */
+.kids-detail-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(0,0,0,0.85),
+    rgba(0,0,0,0.45)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px 60px;
+}
+
+/* ✅ LEFT INFO */
+.kids-detail-left h1 {
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.genre {
+  color: #38bdf8;
+  margin-bottom: 10px;
+}
+
+/* ✅ STATS */
+.kids-detail-stats {
+  display: flex;
+  gap: 18px;
+}
+
+.kids-detail-stats div {
+  background: rgba(255,255,255,0.12);
+  padding: 16px 22px;
+  border-radius: 14px;
+  text-align: center;
+  min-width: 90px;
+}
+
+/* ✅ ABOUT SECTION */
+.kids-detail-about {
+  max-width: 1200px;
+  margin: 60px auto 0;
+  padding: 0 24px;
+}
+
+.kids-detail-about h2 {
+  font-size: 26px;
+  margin-bottom: 16px;
+}
+
+.kids-detail-tagline {
+  font-size: 18px;
+  color: #38bdf8;
+  margin-bottom: 16px;
+}
+
+.kids-detail-desc {
+  font-size: 16px;
+  line-height: 1.9;
+  opacity: 0.9;
+}
+
+/* ✅ MOBILE */
+@media (max-width: 768px) {
+  .kids-detail-overlay {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 30px;
+  }
+
+  .kids-detail-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .kids-detail-left h1 {
+    font-size: 26px;
+  }
+}

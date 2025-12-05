@@ -1,4 +1,10 @@
 /* index.css - global reset and layout fixes */
+/* ✅ HIDE NAVBAR ON ALL KIDS WORLDS */
+body:has(.kids-world-wrapper) nav,
+body:has(.brain-lab-wrapper) nav,
+body:has(.kids-world-overlay) nav {
+  display: none !important;
+}
 
 /* Basic reset */
 *,

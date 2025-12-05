@@ -219,6 +219,10 @@ import Train from "./components/Train";
 import AnalyticsTracker from "./components/AnalyticsTracker";
 
 import KidsThemeParkHub from "./pages/KidsThemeParkHub.jsx"; // ⭐ ADDED
+import BrainLab from "./pages/worlds/BrainLabWorld.jsx";
+import KidsGameDetail from "./pages/kids/KidsGameDetail";
+import KidsGamePlayer from "./pages/kids/KidsGamePlayer";
+
 // ⭐ ADD SOCKET.IO
 import { io } from "socket.io-client";
 
@@ -230,10 +234,14 @@ function RequireAuth({ children }) {
 function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+   const isKidsRoute = location.pathname.startsWith("/kids");
 
   const [showCartoon, setShowCartoon] = React.useState(false); 
   const [showGreeting, setShowGreeting] = React.useState(false);
   const [showTrain, setShowTrain] = React.useState(false);
+  
+
+  
 
    /********************************************
    * ⭐ SOCKET.IO NOTIFICATION LISTENER
@@ -267,11 +275,12 @@ function App() {
 
     return () => socket.disconnect();
   }, []);
+  
 
   return (
     <div style={styles.appWrapper}>
       <AnalyticsTracker /> 
-      {!isAdminRoute && (
+       {!isAdminRoute && !isKidsRoute &&  (
         <Navbar
           onSearch={(value) => {
             const term = value.toLowerCase().trim().replace(/\s+/g, " ");
@@ -352,6 +361,9 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/kids" element={<KidsThemeParkHub />} />
+          <Route path="/kids/brain-lab" element={<BrainLab />} />
+          <Route path="/kids/game/:slug/details" element={<KidsGameDetail />} />
+          <Route path="/kids/game/:slug" element={<KidsGamePlayer />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />
@@ -366,7 +378,7 @@ function App() {
         </Routes>
       </main>
 
-      {!isAdminRoute && <Footer />}
+      {!isAdminRoute && !isKidsRoute && <Footer />}
     </div>
   );
 }

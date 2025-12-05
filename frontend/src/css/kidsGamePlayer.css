@@ -1,0 +1,426 @@
+/* ////////src/css/kidsGamePlayer.css */
+/* =========================================
+   🎮 KIDS GAME PLAYER — NEON PREMIUM
+========================================= */
+
+/* ✅ FULL GALAXY BACKGROUND */
+.kids-player-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 20%, #00ffff33, transparent 40%),
+    radial-gradient(circle at 80% 80%, #ff00ff44, transparent 40%),
+    linear-gradient(180deg, #020617, #000);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 140px;
+  position: relative;
+  overflow: hidden;
+}
+
+
+@keyframes galaxyMove {
+  from { background-position: 0 0; }
+  to { background-position: 2000px 2000px; }
+}
+
+/* ✅ CANDY COIN RAIN */
+.kids-coin-rain span {
+  position: fixed;
+  top: -40px;
+  font-size: 26px;
+  animation: candyFall 6s linear infinite;
+  z-index: 5;
+  opacity: 0.9;
+}
+
+@keyframes candyFall {
+  to {
+    transform: translateY(120vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+
+
+@keyframes floatMascot {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-18px); }
+  100% { transform: translateY(0); }
+}
+
+/* ✅ BACK BUTTON */
+.kids-player-back {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 9999;
+  background: linear-gradient(135deg,#ffe066,#ff6ad5);
+  border: none;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 40px hotpink;
+}
+
+/* ✅ GAME STAGE */
+.kids-player-stage {
+  width: 95%;
+  max-width: 1250px;
+  height: 62vh;
+  min-height: 360px;
+  margin-top: 200px;
+  border-radius: 30px;
+  overflow: hidden;
+  position: relative;
+  z-index: 5;
+}
+
+.kids-player-stage iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ✅ HUD GLASS */
+.kids-game-hud {
+  margin-top: 50px;
+  width: 95%;
+  max-width: 1250px;
+  background: linear-gradient(135deg, rgba(10,30,80,.95), rgba(5,15,35,.98));
+  border-radius: 40px;
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 280px 1fr 1.2fr;
+  gap: 32px;
+  color: white;
+  position: relative;
+  z-index: 6;
+}
+
+/* ✅ THUMBNAIL */
+.kids-game-thumb img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 22px;
+  box-shadow: 0 0 40px cyan;
+}
+
+/* ✅ TITLE */
+.kids-game-info h2 {
+  font-size: 34px;
+  font-weight: 900;
+  text-shadow: 0 0 25px cyan;
+}
+
+.kids-genre {
+  color: #ffd966;
+}
+
+/* ✅ STATS */
+.kids-game-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.kids-game-stats div {
+  background: rgba(255,255,255,0.12);
+  padding: 12px 18px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+/* ✅ DESCRIPTION */
+.kids-game-desc {
+  font-size: 16px;
+  line-height: 1.9;
+  max-height: 190px;
+  overflow-y: auto;
+}
+
+  /* ✅ FULL GALAXY BACKGROUND */
+.kids-player-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 20%, #00ffff33, transparent 40%),
+    radial-gradient(circle at 80% 80%, #ff00ff44, transparent 40%),
+    linear-gradient(180deg, #020617, #000);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 140px;
+  position: relative;
+  overflow: hidden;
+
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+
+/* ✅ GALAXY PARALLAX LAYER */
+/* .kids-galaxy-layer {
+  position: fixed;
+  inset: 0;
+  background: url("../assets/backgrounds/star.png") repeat;
+  background-size: cover;
+  opacity: 0.15;
+  animation: galaxyMove 60s linear infinite;
+  z-index: 8;
+} */
+
+@keyframes galaxyMove {
+  from { background-position: 0 0; }
+  to { background-position: 2000px 2000px; }
+}
+
+/* ✅ CANDY COIN RAIN */
+.kids-coin-rain span {
+  position: fixed;
+  top: -40px;
+  font-size: 26px;
+  animation: candyFall 6s linear infinite;
+  z-index: 5;
+  opacity: 0.9;
+}
+
+@keyframes candyFall {
+  to {
+    transform: translateY(120vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ✅ FLOATING MASCOT */
+.kids-player-mascot {
+  position: absolute;
+  right: 500px;
+  bottom: 830px;
+  width: 200px;
+  animation: floatMascot 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 45px cyan);
+  z-index: 10;
+}
+
+@keyframes floatMascot {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-18px); }
+  100% { transform: translateY(0); }
+}
+
+/* ✅ BACK BUTTON */
+.kids-player-back {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+
+  background: linear-gradient(135deg,#ffe066,#ff6ad5);
+  border: none;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 40px hotpink;
+   z-index: 10;
+}
+
+/* ✅ GAME STAGE */
+.kids-player-stage {
+  width: 95%;
+  max-width: 1250px;
+  height: 62vh;
+  min-height: 360px;
+  margin-top: 130px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: black;
+  z-index: 3;
+
+}
+
+.kids-player-stage iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ✅ HUD GLASS */
+.kids-game-hud {
+  margin-top: 50px;
+  width: 95%;
+  max-width: 1250px;
+  /* background: linear-gradient(135deg, rgba(10,30,80,.95), rgba(5,15,35,.98)); */
+  border-radius: 40px;
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 280px 1fr 1.2fr;
+  gap: 32px;
+  color: white;
+  box-shadow:
+    0 0 60px rgba(0,255,255,0.35),
+    inset 0 0 30px rgba(0,255,255,0.15);
+  z-index: 3;
+}
+
+/* ✅ THUMBNAIL */
+.kids-game-thumb img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 22px;
+  box-shadow: 0 0 40px cyan;
+}
+
+/* ✅ TITLE */
+.kids-game-info h2 {
+  font-size: 34px;
+  font-weight: 900;
+  text-shadow: 0 0 25px cyan;
+}
+
+.kids-genre {
+  color: #ffd966;
+}
+
+/* ✅ STATS */
+.kids-game-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.kids-game-stats div {
+  background: rgba(255,255,255,0.12);
+  padding: 12px 18px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+/* ✅ DESCRIPTION */
+.kids-game-desc {
+  font-size: 16px;
+  line-height: 1.9;
+  max-height: 190px;
+  overflow-y: auto;
+}
+
+
+/* 🍭 FIXED CANDY RAIN */
+.kids-coin-rain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 999;
+}
+
+.kids-coin-rain .rain-drop {
+  position: fixed;
+  top: -50px;
+  font-size: 28px;
+  opacity: 0.9;
+  animation: candyFall 5.5s linear infinite;
+}
+
+@keyframes candyFall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+/* 🌌 GALAXY PARALLAX LAYER */
+.kids-galaxy-parallax {
+  position: fixed;
+  inset: -20%;
+background:
+  radial-gradient(circle at 20% 20%, #a855f733, transparent 40%),
+  radial-gradient(circle at 80% 70%, #ec489933, transparent 40%),
+  radial-gradient(circle at 50% 50%, #6366f133, transparent 45%),
+  linear-gradient(180deg, #02010a, #000);
+
+
+  background-size: 140% 140%;
+  animation: galaxySwirl 90s linear infinite;
+  filter: blur(0.6px);
+  transition: transform 0.12s ease-out;
+  z-index: 0;
+}
+
+@keyframes galaxySwirl {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(360deg) scale(1.15); }
+}
+
+/* 🐭 SNEAK PEEK MASCOT */
+/* .kids-sneak-mascot {
+  position: fixed;
+  right: 500px;
+  bottom: 484px;
+  width: 260px;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 40px cyan);
+  z-index: 2;
+  animation: floatMascot 4s ease-in-out infinite;
+  pointer-events: none;
+} */
+
+/* ✅ HUD ABOVE MASCOT */
+.kids-game-hud {
+  position: relative;
+  z-index: 4;
+}
+
+/* ✅ PLAYER ABOVE GALAXY */
+.kids-player-stage {
+  position: relative;
+  z-index: 4;
+}
+
+/* ✅ FLOAT ANIMATION */
+@keyframes floatMascot {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-18px); }
+  100% { transform: translateY(0); }
+}
+.kids-player-back:hover {
+  transform: scale(1.15) rotate(-2deg);
+  box-shadow: 0 0 60px red;
+}
+.kids-coin-rain .rain-drop {
+  position: fixed;
+  top: -50px;
+  font-size: 30px;
+  opacity: 0.9;
+  animation: candyFall 5s linear infinite;
+}
+
+/* ✅ RANDOM DEPTH LAYERS */
+.kids-coin-rain .rain-drop:nth-child(3n) {
+  font-size: 22px;
+  opacity: 0.6;
+  animation-duration: 7.5s;
+  filter: blur(1px);
+}
+
+.kids-coin-rain .rain-drop:nth-child(5n) {
+  font-size: 34px;
+  opacity: 1;
+  animation-duration: 4s;
+  filter: blur(0px);
+}
+
+/* ✅ 3D FALL */
+@keyframes candyFall {
+  0% {
+    transform: translateY(-60px) translateZ(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(120vh) translateZ(300px) rotate(720deg);
+  }
+}
