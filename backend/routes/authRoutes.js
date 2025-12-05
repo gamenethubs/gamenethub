@@ -203,6 +203,12 @@ const userResponse = (u) => ({
   favorites: u.favorites || [],
   ratedGames: u.ratedGames || [],
   username: u.username || null, // ⭐ NEW
+   bio: u.bio || "",
+  social: {
+    instagram: u.social?.instagram || "",
+    twitter: u.social?.twitter || "",
+    linkedin: u.social?.linkedin || "",
+  }
 });
 
 /************************************
@@ -244,7 +250,8 @@ router.post("/register", async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      avatar: null,
+      avatar: "/avatars/avatar01.png",
+
     });
 
     // ⭐ Auto-generate username
@@ -334,7 +341,8 @@ router.post("/google-login", async (req, res) => {
         name,
         email,
         googleId: sub,
-        avatar: picture,
+        avatar: "/avatars/avatar01.png",
+
         password: "GOOGLE_AUTH",
       });
     }

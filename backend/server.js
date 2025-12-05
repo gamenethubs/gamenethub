@@ -167,6 +167,8 @@ import connectDB from "./config/db.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import contactRoutes from "./routes/contactRoutes.js";
+import User from "./models/User.js";
+
 
 // ⭐ ADDED
 import subscriberRoutes from "./routes/subscriberRoutes.js";
@@ -326,6 +328,30 @@ app.get("/test", (req, res) => {
  ********************************************/
 multiplayerHandler(io);
 presenceHandler(io);
+
+
+async function fixMissingAvatars() {
+  try {
+    const result = await User.updateMany(
+      {
+        $or: [
+          { avatar: null },
+          { avatar: "" },
+          { avatar: { $exists: false } },
+        ]
+      },
+      {
+        $set: { avatar: "/avatars/avatar01.png" }
+      }
+    );
+
+    console.log(`🛠 Updated avatar for ${result.modifiedCount} old users`);
+  } catch (error) {
+    console.error("Avatar fix failed:", error.message);
+  }
+}
+
+fixMissingAvatars();
 
 /********************************************
  * 9️⃣ START SERVER (CHANGED FROM app.listen → server.listen)
