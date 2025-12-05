@@ -155,6 +155,9 @@ import createTrackerFile from "./utils/createTrackerFile.js";
 // ⭐ NEW — GAME EVENT ROUTES
 import gameEventRoutes from "./routes/gameEventRoutes.js";
 
+//Recommendation system imports
+import recommendationRoutes from "./routes/recommendationRoutes.js";
+
 dotenv.config();
 
 // Fix __dirname in ES modules
@@ -245,6 +248,10 @@ app.use("/api/subscribe", subscriberRoutes);
 
 // ⭐ NEW — GAME TRACKING API
 app.use("/api/game", gameEventRoutes);
+
+//Recommendation system route
+app.use("/api/recommendations", recommendationRoutes); 
+
 
 /********************************************
  * 5️⃣ PROTECTED TEST ENDPOINTS
