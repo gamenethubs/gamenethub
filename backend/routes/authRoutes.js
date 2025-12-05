@@ -1,3 +1,5 @@
+
+
 // // backend/routes/authRoutes.js
 // import express from "express";
 // import bcrypt from "bcryptjs";
@@ -9,7 +11,31 @@
 // const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // /************************************
-//  *           REGISTER
+//  * UTIL — SIGN JWT TOKEN
+//  ************************************/
+// const generateToken = (user) => {
+//   return jwt.sign(
+//     { id: user._id, role: user.role },
+//     process.env.JWT_SECRET,
+//     { expiresIn: "7d" }
+//   );
+// };
+
+// /************************************
+//  * UTIL — FORMAT USER RESPONSE
+//  ************************************/
+// const userResponse = (u) => ({
+//   id: u._id,
+//   name: u.name,
+//   email: u.email,
+//   role: u.role,
+//   avatar: u.avatar,
+//   favorites: u.favorites || [],
+//   ratedGames: u.ratedGames || [],
+// });
+
+// /************************************
+//  * REGISTER
 //  ************************************/
 // router.post("/register", async (req, res) => {
 //   try {
@@ -20,33 +46,34 @@
 
 //     const existingUser = await User.findOne({ email });
 //     if (existingUser)
-//       return res.status(409).json({ message: "Email already registered" });
+//       return res
+//         .status(409)
+//         .json({ message: "Email already registered. Try logging in." });
 
-//     const hashedPassword = await bcrypt.hash(password, 10);
+//     const hashedPassword = await bcrypt.hash(password, 12);
 
 //     const newUser = await User.create({
 //       name,
 //       email,
 //       password: hashedPassword,
+//       avatar: null,
 //     });
 
+//     const token = generateToken(newUser);
+
 //     res.status(201).json({
-//       message: "User registered successfully",
-//       user: {
-//         id: newUser._id,
-//         name: newUser.name,
-//         email: newUser.email,
-//         role: newUser.role,
-//       },
+//       message: "Registration successful",
+//       token,
+//       user: userResponse(newUser),
 //     });
 //   } catch (error) {
-//     console.error("Register Error:", error);
-//     res.status(500).json({ message: "Server error" });
+//     console.error("🔥 REGISTER ERROR:", error);
+//     res.status(500).json({ message: "Server error during registration" });
 //   }
 // });
 
 // /************************************
-//  *            LOGIN
+//  * LOGIN
 //  ************************************/
 // router.post("/login", async (req, res) => {
 //   try {
@@ -59,7 +86,7 @@
 //     if (!user)
 //       return res.status(404).json({ message: "User not found" });
 
-//     // Prevent normal login for Google users
+//     // If Google login user tries password login
 //     if (user.googleId && user.password === "GOOGLE_AUTH") {
 //       return res.status(400).json({
 //         message: "This account uses Google Login. Please sign in with Google.",
@@ -70,44 +97,30 @@
 //     if (!isMatch)
 //       return res.status(401).json({ message: "Invalid credentials" });
 
-//     const token = jwt.sign(
-//       { id: user._id, role: user.role },
-//       process.env.JWT_SECRET,
-//       { expiresIn: "7d" }
-//     );
+//     const token = generateToken(user);
 
 //     res.json({
 //       message: "Login successful",
 //       token,
-//       user: {
-//         id: user._id,
-//         name: user.name,
-//         email: user.email,
-//         avatar: user.avatar,
-//         role: user.role,
-
-//         // ⭐ NEW → Send favorites & rated games
-//         favorites: user.favorites || [],
-//         ratedGames: user.ratedGames || [],
-//       },
+//       user: userResponse(user),
 //     });
 //   } catch (error) {
-//     console.error("Login Error:", error);
-//     res.status(500).json({ message: "Server error" });
+//     console.error("🔥 LOGIN ERROR:", error);
+//     res.status(500).json({ message: "Server error during login" });
 //   }
 // });
 
 // /************************************
-//  *        GOOGLE LOGIN (SECURE)
+//  * GOOGLE LOGIN
 //  ************************************/
 // router.post("/google-login", async (req, res) => {
 //   try {
 //     const { credential } = req.body;
 
 //     if (!credential)
-//       return res.status(400).json({ message: "No Google token received" });
+//       return res.status(400).json({ message: "Google token missing" });
 
-//     // VERIFY GOOGLE TOKEN
+//     // Verify Google token
 //     const ticket = await client.verifyIdToken({
 //       idToken: credential,
 //       audience: process.env.GOOGLE_CLIENT_ID,
@@ -121,41 +134,33 @@
 
 //     let user = await User.findOne({ email });
 
-//     // If first time → auto-create user
+//     // If user doesn't exist → create new entry
 //     if (!user) {
 //       user = await User.create({
 //         name,
 //         email,
-//         avatar: picture,
 //         googleId: sub,
-//         password: "GOOGLE_AUTH",
+//         avatar: picture,
+//         password: "GOOGLE_AUTH", // indicator user is Google based
 //       });
 //     }
 
-//     // Generate JWT
-//     const token = jwt.sign(
-//       { id: user._id, role: user.role },
-//       process.env.JWT_SECRET,
-//       { expiresIn: "7d" }
-//     );
+//     // If Google user tries with wrong Google account → reject
+//     if (user.googleId && user.googleId !== sub) {
+//       return res.status(400).json({
+//         message: "This Google account doesn't match your registered account.",
+//       });
+//     }
+
+//     const token = generateToken(user);
 
 //     res.json({
 //       message: "Google login successful",
 //       token,
-//       user: {
-//         id: user._id,
-//         name: user.name,
-//         email: user.email,
-//         avatar: user.avatar,
-//         role: user.role,
-
-//         // ⭐ NEW → Send favorites & rated games
-//         favorites: user.favorites || [],
-//         ratedGames: user.ratedGames || [],
-//       },
+//       user: userResponse(user),
 //     });
 //   } catch (error) {
-//     console.error("Google Login Error:", error);
+//     console.error("🔥 GOOGLE LOGIN ERROR:", error);
 //     res.status(500).json({ message: "Google login failed" });
 //   }
 // });
@@ -169,6 +174,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { OAuth2Client } from "google-auth-library";
+import generateUsername from "../utils/generateUsername.js"; // ⭐ NEW
 
 const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -186,6 +192,7 @@ const generateToken = (user) => {
 
 /************************************
  * UTIL — FORMAT USER RESPONSE
+ * (kept exactly same, only username added)
  ************************************/
 const userResponse = (u) => ({
   id: u._id,
@@ -195,7 +202,25 @@ const userResponse = (u) => ({
   avatar: u.avatar,
   favorites: u.favorites || [],
   ratedGames: u.ratedGames || [],
+  username: u.username || null, // ⭐ NEW
 });
+
+/************************************
+ * ⭐ ensureUsername(user)
+ * Automatically generates username if missing
+ ************************************/
+async function ensureUsername(user) {
+  if (!user) return user;
+  if (user.username) return user;
+
+  const raw = user.name || user.email || `user${Date.now()}`;
+  const finalUsername = await generateUsername(raw);
+
+  user.username = finalUsername;
+  await user.save();
+
+  return user;
+}
 
 /************************************
  * REGISTER
@@ -221,6 +246,9 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
       avatar: null,
     });
+
+    // ⭐ Auto-generate username
+    await ensureUsername(newUser);
 
     const token = generateToken(newUser);
 
@@ -260,6 +288,9 @@ router.post("/login", async (req, res) => {
     if (!isMatch)
       return res.status(401).json({ message: "Invalid credentials" });
 
+    // ⭐ FIX old accounts — generate username if missing
+    await ensureUsername(user);
+
     const token = generateToken(user);
 
     res.json({
@@ -297,23 +328,26 @@ router.post("/google-login", async (req, res) => {
 
     let user = await User.findOne({ email });
 
-    // If user doesn't exist → create new entry
+    // If user doesn't exist → create
     if (!user) {
       user = await User.create({
         name,
         email,
         googleId: sub,
         avatar: picture,
-        password: "GOOGLE_AUTH", // indicator user is Google based
+        password: "GOOGLE_AUTH",
       });
     }
 
-    // If Google user tries with wrong Google account → reject
+    // If Google account mismatched
     if (user.googleId && user.googleId !== sub) {
       return res.status(400).json({
         message: "This Google account doesn't match your registered account.",
       });
     }
+
+    // ⭐ Auto-username for Google sign-in
+    await ensureUsername(user);
 
     const token = generateToken(user);
 
@@ -329,5 +363,3 @@ router.post("/google-login", async (req, res) => {
 });
 
 export default router;
-
-
