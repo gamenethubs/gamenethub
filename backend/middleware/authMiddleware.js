@@ -146,7 +146,6 @@ export const protect = async (req, res, next) => {
      ********************************************/
     const user = await User.findById(decoded.id)
       .select("-password")
-      .lean();
 
     if (!user) {
       return res.status(404).json({

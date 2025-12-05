@@ -163,4 +163,42 @@ export const getEventsByUser = (userId) =>
 export const getEventsByGame = (gameId) =>
   API.get(`/game/events/game/${gameId}`);
 
+/**************************************
+ * ⭐ NEW — RECOMMENDATION ENGINE API
+ **************************************/
+export const getRecommendations = (userId) =>
+  API.get(`/recommendations/${userId}`);
+
+
+/**************************************
+ * ⭐ NEW — PROFILE UPDATE / USER SEARCH / PUBLIC PROFILE
+ **************************************/
+export const updateProfile = (data) => API.put("/users/update", data);
+
+export const searchUsers = (query) =>
+  API.get(`/users/search?q=${encodeURIComponent(query)}`);
+
+export const getPublicProfile = (username) =>
+  API.get(`/users/${encodeURIComponent(username)}`);
+
+/**************************************
+ * ⭐ NEW — FRIENDS SYSTEM API
+ **************************************/
+export const sendFriendRequest = (toUserId) =>
+  API.post("/friends/request", { toUserId });
+
+export const cancelFriendRequest = (toUserId) =>
+  API.post("/friends/request/cancel", { toUserId });
+
+export const acceptFriendRequest = (fromUserId) =>
+  API.post("/friends/request/accept", { fromUserId });
+
+export const rejectFriendRequest = (fromUserId) =>
+  API.post("/friends/request/reject", { fromUserId });
+
+export const removeFriend = (friendId) =>
+  API.post("/friends/remove", { friendId });
+
+export const getFriendsList = () => API.get("/friends/list");
+
 export default API;
