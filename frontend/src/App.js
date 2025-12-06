@@ -247,34 +247,61 @@ function App() {
    * ⭐ SOCKET.IO NOTIFICATION LISTENER
    ********************************************/
   React.useEffect(() => {
-    const socket = io("https://gamenethub.onrender.com", {
-      withCredentials: true,
-    });
-
-    // TEMP TEST (shows in console)
-  socket.on("new-game-added", (game) => {
-    console.log("⚡ SOCKET EVENT RECEIVED:", game);
+  const socket = io("https://gamenethub.onrender.com", {
+    withCredentials: true,
+    transports: ["websocket", "polling"],
   });
 
-    socket.on("new-game-added", (game) => {
-  window.dispatchEvent(
-    new CustomEvent("notify-user", {
-      detail: {
-        id: Date.now(),
-        title: game.title,
-        slug: game.slug,
-        thumbnail: game.thumbnail,
-        text: `${game.title} is now available!`,
-        time: new Date().toLocaleTimeString(),
-        seen: false
-      }
-    })
-  );
-});
+  socket.on("new-game-added", (game) => {
+    window.dispatchEvent(
+      new CustomEvent("notify-user", {
+        detail: {
+          id: Date.now(),
+          title: game.title,
+          slug: game.slug,
+          thumbnail: game.thumbnail,
+          text: `${game.title} is now available!`,
+          time: new Date().toLocaleTimeString(),
+          seen: false
+        }
+      })
+    );
+  });
 
+  return () => socket.disconnect();
+}, []);
 
-    return () => socket.disconnect();
-  }, []);
+// React.useEffect(() => {
+//   console.log("🔥 SOCKET INIT ATTEMPT...");
+
+//   const socket = io("https://gamenethub.onrender.com", {
+//     withCredentials: true,
+//     transports: ["websocket", "polling"],
+//     reconnectionAttempts: 3,
+//     timeout: 20000,
+//   });
+
+//   window.socket = socket; // <- IMPORTANT DEBUG
+
+//   socket.on("connect", () => {
+//     console.log("🟢 SOCKET CONNECTED:", socket.id);
+//   });
+
+//   socket.on("connect_error", (err) => {
+//     console.log("🔴 SOCKET CONNECTION ERROR:", err.message);
+//   });
+
+//   socket.on("disconnect", () => {
+//     console.log("🟡 SOCKET DISCONNECTED");
+//   });
+
+//   socket.on("new-game-added", (data) => {
+//     console.log("⚡ EVENT RECEIVED:", data);
+//   });
+
+//   return () => socket.disconnect();
+// }, []);
+
   
 
   return (

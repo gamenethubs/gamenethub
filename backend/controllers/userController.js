@@ -133,7 +133,7 @@ export const searchUsers = async (req, res) => {
 export const getPublicProfile = async (req, res) => {
   try {
     const viewerId = req.user?._id; // logged-in user (optional)
-    const username = req.params.username.toLowerCase();
+    const username = (req.params.username || "").toLowerCase();
 
     // Populate favorites + friends
     const user = await User.findOne({ username })
@@ -151,13 +151,16 @@ export const getPublicProfile = async (req, res) => {
       const me = await User.findById(viewerId)
         .select("friends incomingRequests outgoingRequests");
 
+      // normalize my friends to strings for reliable comparisons
+      const myFriendIds = (me?.friends || []).map((f) => f.toString());
+
       const targetId = user._id.toString();
 
-      if (me.friends.includes(targetId)) {
+      if (myFriendIds.includes(targetId)) {
         relationship = "friend";
-      } else if (me.outgoingRequests.find(r => r.to.toString() === targetId)) {
+      } else if ((me?.outgoingRequests || []).some(r => (r.to || r.toString || "").toString() === targetId)) {
         relationship = "outgoing";
-      } else if (me.incomingRequests.find(r => r.from.toString() === targetId)) {
+      } else if ((me?.incomingRequests || []).some(r => (r.from || r.fromString || "").toString() === targetId)) {
         relationship = "incoming";
       }
     }
@@ -166,8 +169,9 @@ export const getPublicProfile = async (req, res) => {
     let mutualFriends = [];
     if (viewerId) {
       const me = await User.findById(viewerId).select("friends");
-      const myFriends = me.friends.map(id => id.toString());
-      mutualFriends = user.friends.filter(f =>
+      const myFriends = (me?.friends || []).map(id => id.toString());
+      // user.friends is populated with friend objects — compare by _id string
+      mutualFriends = (user.friends || []).filter(f =>
         myFriends.includes(f._id.toString())
       );
     }
@@ -176,7 +180,8 @@ export const getPublicProfile = async (req, res) => {
     let online = false;
     if (user.lastSeen) {
       const diff = Date.now() - new Date(user.lastSeen).getTime();
-      online = diff < 60000; // 1 minute threshold
+      // Slightly longer threshold to avoid flapping due to tiny inactivity
+      online = diff < 2 * 60 * 1000; // 2 minutes threshold
     }
 
     return res.json({

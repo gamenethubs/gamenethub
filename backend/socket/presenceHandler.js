@@ -1,101 +1,88 @@
 /*******************************************************
- * backend/socket/presenceHandler.js
- * Handles realtime Online / Offline user presence
+ * backend/socket/presenceHandler.js (PERFECTED VERSION)
  *******************************************************/
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-// Mapping: userId → Set of socketIds
-const userSockets = new Map();
+const userSockets = new Map(); // userId → Set(socketIds)
 
 export default function presenceHandler(io) {
-  io.on("connection", async (socket) => {
+  io.of("/presence").on("connection", async (socket) => {
 
-    /****************************************************
-     * 1️⃣ Verify Token
-     ****************************************************/
+
+    /***********************
+     * 1) AUTH CHECK
+     ***********************/
     const token = socket.handshake.auth?.token;
-
-    if (!token) {
-      console.log("❌ No token → disconnect");
-      return socket.disconnect();
-    }
+    if (!token) return socket.disconnect();
 
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (err) {
-      console.log("❌ Invalid JWT for socket:", err.message);
+    } catch {
       return socket.disconnect();
     }
 
     const userId = decoded.id;
     socket.userId = userId;
 
-    /****************************************************
-     * 2️⃣ Track user socket
-     ****************************************************/
-    if (!userSockets.has(userId)) {
-      userSockets.set(userId, new Set());
-    }
-    userSockets.get(userId).add(socket.id);
+    /***********************
+     * 2) REGISTER SOCKET
+     ***********************/
+    if (!userSockets.has(userId)) userSockets.set(userId, new Set());
+    const socketSet = userSockets.get(userId);
+    socketSet.add(socket.id);
 
-    /****************************************************
-     * 3️⃣ Mark user ONLINE
-     ****************************************************/
-    await User.findByIdAndUpdate(userId, {
-      $set: { lastSeen: new Date() },
-    });
+    /***********************
+     * 3) MARK ONLINE only if first socket
+     ***********************/
+    if (socketSet.size === 1) {
+      await User.findByIdAndUpdate(userId, { lastSeen: new Date() });
 
-    /****************************************************
-     * 4️⃣ Notify friends → "online"
-     ****************************************************/
-    const user = await User.findById(userId).select("friends");
+      const user = await User.findById(userId).select("friends");
+      user?.friends?.forEach((fid) =>
+        io.to(fid.toString()).emit("friend_online", { userId })
+      );
 
-    if (user?.friends) {
-      user.friends.forEach((fId) => {
-        io.to(fId.toString()).emit("friend_online", { userId });
-      });
+      console.log(`🔵 ONLINE: ${userId}`);
     }
 
-    /****************************************************
-     * 5️⃣ Join personal room
-     ****************************************************/
+    /***********************
+     * 4) JOIN PERSONAL ROOM
+     ***********************/
     socket.join(userId.toString());
 
-    console.log(`🔵 Online: ${userId}, socket ${socket.id}`);
+    /***********************
+     * 5) HEARTBEAT HANDLER
+     ***********************/
+    socket.on("heartbeat", async () => {
+      await User.findByIdAndUpdate(userId, { lastSeen: new Date() });
+    });
 
-    /****************************************************
-     * 6️⃣ On DISCONNECT
-     ****************************************************/
-    socket.on("disconnect", async () => {
-      console.log(`🔻 Disconnect: ${socket.id}`);
+    /***********************
+     * 6) DISCONNECT HANDLER
+     ***********************/
+    socket.on("disconnect", () => {
+      setTimeout(async () => {
+        const sockets = userSockets.get(userId);
+        if (!sockets) return;
 
-      const sockets = userSockets.get(userId);
-      if (!sockets) return;
+        sockets.delete(socket.id);
 
-      sockets.delete(socket.id);
+        // If user has ZERO sockets left → mark offline
+        if (sockets.size === 0) {
+          userSockets.delete(userId);
 
-      // If user has NO active sockets → user is offline
-      if (sockets.size === 0) {
-        userSockets.delete(userId);
+          await User.findByIdAndUpdate(userId, { lastSeen: new Date() });
 
-        /****************************************************
-         * Update lastSeen & notify friends
-         ****************************************************/
-        await User.findByIdAndUpdate(userId, {
-          $set: { lastSeen: new Date() },
-        });
-
-        const u = await User.findById(userId).select("friends");
-        if (u?.friends) {
-          u.friends.forEach((fId) =>
-            io.to(fId.toString()).emit("friend_offline", { userId })
+          const user = await User.findById(userId).select("friends");
+          user?.friends?.forEach((fid) =>
+            io.to(fid.toString()).emit("friend_offline", { userId })
           );
-        }
 
-        console.log(`⚪ Offline: ${userId}`);
-      }
+          console.log(`⚪ OFFLINE: ${userId}`);
+        }
+      }, 1500); // small delay prevents flicker on page refresh
     });
   });
 }

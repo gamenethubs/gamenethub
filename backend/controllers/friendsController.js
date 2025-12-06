@@ -241,7 +241,6 @@
 //   }
 // };
 
-
 /****************************************
  * backend/controllers/friendsController.js
  *****************************************/
@@ -251,7 +250,7 @@ import User from "../models/User.js";
  * Helper → format minimal user object
  **************************************/
 const miniUser = (u) => ({
-  id: u._id,
+  id: u._id.toString(),
   name: u.name,
   username: u.username,
   avatar: u.avatar,
@@ -262,15 +261,14 @@ const miniUser = (u) => ({
  **************************************/
 export const sendRequest = async (req, res) => {
   try {
-    const fromId = req.user._id;
+    const fromId = req.user._id.toString();
     const { toUserId } = req.body;
 
     if (!toUserId)
       return res.status(400).json({ message: "Missing target user" });
 
-    if (fromId.toString() === toUserId) {
+    if (fromId === toUserId)
       return res.status(400).json({ message: "You cannot add yourself" });
-    }
 
     const from = await User.findById(fromId);
     const to = await User.findById(toUserId);
@@ -278,45 +276,37 @@ export const sendRequest = async (req, res) => {
     if (!to) return res.status(404).json({ message: "User not found" });
 
     // Already friends?
-    if (from.friends.includes(toUserId)) {
+    if (from.friends.map(String).includes(toUserId))
       return res.status(400).json({ message: "Already friends" });
-    }
 
     // Already sent request?
-    if (from.outgoingRequests.find((r) => r.to.toString() === toUserId)) {
+    if (from.outgoingRequests.find((r) => r.to.toString() === toUserId))
       return res.status(400).json({ message: "Request already sent" });
-    }
 
-    // Already received request? → auto-accept
-    const incomingFromTarget = from.incomingRequests.find(
-      (r) => r.from.toString() === toUserId
-    );
-
-    if (incomingFromTarget) {
+    // Already received → auto-accept
+    if (from.incomingRequests.find((r) => r.from.toString() === toUserId)) {
       req.body.fromUserId = toUserId;
       return acceptRequest(req, res);
     }
 
-    // Push new requests
+    // Send request
     from.outgoingRequests.push({ to: toUserId });
     to.incomingRequests.push({ from: fromId });
 
     await from.save();
     await to.save();
 
-    // SOCKET EVENT → notify receiver (existing)
+    // SOCKET EVENT
     req.io.to(toUserId.toString()).emit("friend_request_received", {
       from: miniUser(from),
     });
 
-    /**************************************
-     * ⭐ NOTIFICATION → NEW FRIEND REQUEST
-     **************************************/
+    // NOTIFICATION
     req.io.to(toUserId.toString()).emit("notify-user", {
       id: Date.now(),
       title: "New Friend Request",
       text: `${from.username} sent you a friend request.`,
-      slug: "friends", // redirect not required but valid
+      slug: "friends",
       thumbnail: from.avatar,
       time: new Date().toLocaleTimeString(),
       seen: false,
@@ -334,7 +324,7 @@ export const sendRequest = async (req, res) => {
  **************************************/
 export const cancelRequest = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user._id.toString();
     const { toUserId } = req.body;
 
     const user = await User.findById(userId);
@@ -347,15 +337,13 @@ export const cancelRequest = async (req, res) => {
     );
 
     target.incomingRequests = target.incomingRequests.filter(
-      (r) => r.from.toString() !== userId.toString()
+      (r) => r.from.toString() !== userId
     );
 
     await user.save();
     await target.save();
 
-    /**************************************
-     * ⭐ NOTIFICATION → REQUEST CANCELED
-     **************************************/
+    // NOTIFICATION
     req.io.to(toUserId.toString()).emit("notify-user", {
       id: Date.now(),
       title: "Friend Request Canceled",
@@ -378,7 +366,7 @@ export const cancelRequest = async (req, res) => {
  **************************************/
 export const acceptRequest = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user._id.toString();
     const { fromUserId } = req.body;
 
     const user = await User.findById(userId);
@@ -390,33 +378,31 @@ export const acceptRequest = async (req, res) => {
       (r) => r.from.toString() === fromUserId
     );
 
-    if (!incoming) {
+    if (!incoming)
       return res.status(400).json({ message: "No incoming request found" });
-    }
 
     // Remove pending requests
     user.incomingRequests = user.incomingRequests.filter(
       (r) => r.from.toString() !== fromUserId
     );
     from.outgoingRequests = from.outgoingRequests.filter(
-      (r) => r.to.toString() !== userId.toString()
+      (r) => r.to.toString() !== userId
     );
 
-    // Add mutual friendship
-    if (!user.friends.includes(fromUserId)) user.friends.push(fromUserId);
-    if (!from.friends.includes(userId)) from.friends.push(userId);
+    // Mutual friendship
+    if (!user.friends.map(String).includes(fromUserId))
+      user.friends.push(fromUserId);
+    if (!from.friends.map(String).includes(userId)) from.friends.push(userId);
 
     await user.save();
     await from.save();
 
-    // SOCKET notify → accepted
+    // SOCKET notify sender
     req.io.to(fromUserId.toString()).emit("friend_request_accepted", {
       user: miniUser(user),
     });
 
-    /**************************************
-     * ⭐ NOTIFICATION → REQUEST ACCEPTED
-     **************************************/
+    // NOTIFICATION
     req.io.to(fromUserId.toString()).emit("notify-user", {
       id: Date.now(),
       title: "Friend Request Accepted",
@@ -435,11 +421,11 @@ export const acceptRequest = async (req, res) => {
 };
 
 /**************************************
- * ⭐ REJECT REQUEST (with FIX)
+ * ⭐ REJECT REQUEST
  **************************************/
 export const rejectRequest = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user._id.toString();
     const { fromUserId } = req.body;
 
     const user = await User.findById(userId);
@@ -451,16 +437,14 @@ export const rejectRequest = async (req, res) => {
     const from = await User.findById(fromUserId);
     if (from) {
       from.outgoingRequests = from.outgoingRequests.filter(
-        (r) => r.to.toString() !== userId.toString()
+        (r) => r.to.toString() !== userId
       );
       await from.save();
     }
 
     await user.save();
 
-    /**************************************
-     * ⭐ NOTIFICATION → REQUEST REJECTED
-     **************************************/
+    // NOTIFICATION
     req.io.to(fromUserId.toString()).emit("notify-user", {
       id: Date.now(),
       title: "Friend Request Rejected",
@@ -483,7 +467,7 @@ export const rejectRequest = async (req, res) => {
  **************************************/
 export const removeFriend = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user._id.toString();
     const { friendId } = req.body;
 
     const user = await User.findById(userId);
@@ -493,15 +477,13 @@ export const removeFriend = async (req, res) => {
 
     user.friends = user.friends.filter((f) => f.toString() !== friendId);
     friend.friends = friend.friends.filter(
-      (f) => f.toString() !== userId.toString()
+      (f) => f.toString() !== userId
     );
 
     await user.save();
     await friend.save();
 
-    /**************************************
-     * ⭐ NOTIFICATION → UNFRIEND
-     **************************************/
+    // NOTIFICATION
     req.io.to(friendId.toString()).emit("notify-user", {
       id: Date.now(),
       title: "Friend Removed",
@@ -534,7 +516,8 @@ export const getFriends = async (req, res) => {
     const offline = [];
 
     user.friends.forEach((f) => {
-      const isOnline = f.lastSeen && now - f.lastSeen.getTime() < 60000;
+      const last = f.lastSeen ? new Date(f.lastSeen).getTime() : 0;
+      const isOnline = now - last < 2 * 60 * 1000; // 2 min threshold
 
       if (isOnline) online.push(miniUser(f));
       else offline.push(miniUser(f));
@@ -546,3 +529,4 @@ export const getFriends = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
