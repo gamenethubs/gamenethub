@@ -1,7 +1,7 @@
 
 ///////////////src/pages/KidsThemeParkHub.jsx/////////////////
 import React, { useState, useEffect } from "react";
-import "../css/kidsThemePark.css";
+import "../assets/css/kidsThemePark.css";
 
 // import themeBg from "./assets/backgrounds/theme-park-bg.png";
 import themeBg from "../assets/backgrounds/theme-bg.mp4";
