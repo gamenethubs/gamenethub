@@ -209,6 +209,37 @@ const userSchema = new mongoose.Schema(
      **************************************/
     ratedGames: [ratedGameSchema],
 
+    
+    /*******************************************************
+     * 🔥 NEW — XP SYSTEM & LEVEL SYSTEM (ADD ONLY)
+     *******************************************************/
+
+    xp: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    level: {
+      type: Number,
+      default: 1,
+      min: 1,
+    },
+
+    weeklyStreak: {
+      type: Number,
+      default: 0,
+    },
+
+    lastStreakUpdate: {
+      type: Date,
+      default: null,
+    },
+
+    totalPlayTime: {
+      type: Number,
+      default: 0, // minutes played
+    },
 
     /*******************************************************
      * 🔥 NEW SYSTEM — PREMIUM USER PROFILE & FRIEND SYSTEM

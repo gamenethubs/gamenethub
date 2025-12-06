@@ -192,6 +192,10 @@ import recommendationRoutes from "./routes/recommendationRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import friendsRoutes from "./routes/friendsRoutes.js";
 
+//xp system imports
+import xpRoutes from "./routes/xpRoutes.js";
+
+
 dotenv.config();
 
 // Fix __dirname in ES modules
@@ -293,6 +297,9 @@ app.use("/api/recommendations", recommendationRoutes);
 // ⭐ NEW — USER & FRIENDS ROUTES (profile, search, friends system)
 app.use("/api/users", userRoutes);      // GET /api/users/me, /api/users/search, /api/users/:username, PUT /api/users/update
 app.use("/api/friends", friendsRoutes); // POST /api/friends/request, /list, accept, reject, remove etc.
+
+app.use("/api/xp", xpRoutes);
+
 
 /********************************************
  * 5️⃣ PROTECTED TEST ENDPOINTS
