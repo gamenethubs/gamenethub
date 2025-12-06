@@ -451,6 +451,9 @@ body:has(.kids-theme-park-wrapper) nav {
   object-fit: cover;
   z-index: 0;
    pointer-events: none;
+   opacity: 0.58;
+
+
 }
 .fly-to-park {
   animation: flyToPark 1.6s ease forwards;

@@ -445,7 +445,7 @@ import AnalyticsTracker from "./components/AnalyticsTracker";
 
 import KidsThemeParkHub from "./pages/KidsThemeParkHub.jsx"; // ⭐ ADDED
 import BrainLab from "./pages/worlds/BrainLabWorld.jsx";
-import KidsGameDetail from "./pages/kids/KidsGameDetail";
+
 import KidsGamePlayer from "./pages/kids/KidsGamePlayer";
 import PublicProfile from "./pages/PublicProfile.jsx";
 
@@ -614,6 +614,31 @@ function App() {
         {!isAdminRoute && !isKidsRoute && <Footer />}
       </div>
     </SocketProvider>
+
+          <Route path="/about" element={<About />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/kids" element={<KidsThemeParkHub />} />
+          <Route path="/kids/brain-lab" element={<BrainLab />} />
+  
+          <Route path="/kids/game/:slug" element={<KidsGamePlayer />} />
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/add-game" element={<AddGame />} />
+          <Route path="/admin/games" element={<ManageGames />} />
+          <Route path="/admin/games/:id/edit" element={<EditGame />} />
+
+          {/* ⭐ NEW: Live Game Tracker Route */}
+          <Route path="/admin/live-tracker" element={<AdminLiveTracker />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+
+      {!isAdminRoute  && <Footer />}
+    </div>
   );
 }
 
