@@ -1,5 +1,6 @@
 // utils/xpSystem.js
 import User from "../models/User.js";
+import { checkAndAwardBadges } from "./badgeSystem.js";
 
 /**************************************
  * ⭐ XP REQUIRED PER LEVEL
@@ -26,6 +27,7 @@ export async function giveXP(userId, amount) {
     }
 
     await user.save();
+    await checkAndAwardBadges(user._id);
     return true;
 
   } catch (err) {
@@ -44,6 +46,7 @@ export async function addPlayTime(userId, minutes) {
 
     user.totalPlayTime += minutes;
     await user.save();
+    await checkAndAwardBadges(user._id);
   } catch (err) {
     console.error("PLAYTIME ERROR:", err);
   }

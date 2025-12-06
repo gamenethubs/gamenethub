@@ -9,19 +9,22 @@ const router = express.Router();
  **************************************/
 router.get("/me", protect, async (req, res) => {
   try {
+    // Fetch XP stats
     const stats = await getUserXPStats(req.user._id);
 
-    if (!stats) {
-      return res.status(404).json({
-        success: false,
-        message: "User XP stats not found",
-      });
-    }
+    const user = await User.findById(req.user._id)
+      .select("weeklyStreak totalPlayTime badges");
 
     return res.json({
       success: true,
-      stats,
+      stats: {
+        ...stats,
+        weeklyStreak: user.weeklyStreak,
+        totalPlayTime: user.totalPlayTime,
+        badges: user.badges,
+      },
     });
+
   } catch (err) {
     console.error("XP ROUTE ERROR:", err);
     return res.status(500).json({
@@ -30,5 +33,6 @@ router.get("/me", protect, async (req, res) => {
     });
   }
 });
+
 
 export default router;
