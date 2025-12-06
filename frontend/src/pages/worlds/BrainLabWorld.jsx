@@ -199,7 +199,7 @@
 //   );
 // }
 
-import "../../css/brainLab.css";
+import "../../assets/css/brainLab.css";
 
 import KidsWorldLayout from "../../components/KidsWorldLayout.jsx";
 

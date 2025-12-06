@@ -480,7 +480,7 @@
 //   }
 // };
 
-
+////////controlers/gameController.js
 import Game from "../models/Game.js";
 import User from "../models/User.js";
 import extract from "extract-zip";

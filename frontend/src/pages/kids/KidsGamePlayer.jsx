@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getAllGames, absoluteUrl } from "../../services/api";
 import GamePlayer from "../../components/GamePlayer";
 import RatingStars from "../../components/RatingStars";
-import "../../css/kidsGamePlayer.css";
+import "../../assets/css/kidsGamePlayer.css";
 
 import mascotHappy from "../../assets/mascots/tj-win.png";
 import mascotSad from "../../assets/mascots/tj-sad.png";
@@ -53,21 +53,7 @@ useEffect(() => {
 
 
 
-      {/* ✅ COIN RAIN */}
-     <div className="kids-coin-rain">
-  {[...Array(30)].map((_, i) => (
-    <span
-      key={i}
-      className="rain-drop"
-      style={{
-        left: `${Math.random() * 100}%`,
-        animationDelay: `${Math.random() * 3}s`,
-      }}
-    >
-       🧩
-    </span>
-  ))}
-</div>
+
 
 
       {/* ✅ FLOATING MASCOT */}

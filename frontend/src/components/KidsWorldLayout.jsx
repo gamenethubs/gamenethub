@@ -1,6 +1,6 @@
 ////////////////src/components/KidsWorldLayout.jsx///////////////////
 import React, { useEffect, useState } from "react";
-import "../css/kidsWorldLayout.css";
+import "../assets/css/kidsWorldLayout.css";
 import { getAllGames } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import GameCard from "./GameCard";
