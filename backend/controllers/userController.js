@@ -109,20 +109,92 @@ export const searchUsers = async (req, res) => {
 /************************************
  * 🔹 GET PUBLIC PROFILE BY USERNAME
  ************************************/
+// export const getPublicProfile = async (req, res) => {
+//   try {
+//     const username = req.params.username.toLowerCase();
+
+//     const user = await User.findOne({ username })
+//       .select("-password -email -googleId -favorites -ratedGames");
+
+//     if (!user)
+//       return res.status(404).json({ message: "User not found" });
+
+//     return res.json({
+//       success: true,
+//       user,
+//     });
+//   } catch (err) {
+//     console.error("🔥 PUBLIC PROFILE ERROR:", err.message);
+//     return res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+
 export const getPublicProfile = async (req, res) => {
   try {
+    const viewerId = req.user?._id; // logged-in user (optional)
     const username = req.params.username.toLowerCase();
 
+    // Populate favorites + friends
     const user = await User.findOne({ username })
-      .select("-password -email -googleId -favorites -ratedGames");
+      .select("-password -email -googleId -ratedGames")
+      .populate("favorites", "title slug thumbnail genre")
+      .populate("friends", "name username avatar lastSeen");
 
     if (!user)
       return res.status(404).json({ message: "User not found" });
 
+    // Relationship Status Calculation
+    let relationship = "none";
+
+    if (viewerId) {
+      const me = await User.findById(viewerId)
+        .select("friends incomingRequests outgoingRequests");
+
+      const targetId = user._id.toString();
+
+      if (me.friends.includes(targetId)) {
+        relationship = "friend";
+      } else if (me.outgoingRequests.find(r => r.to.toString() === targetId)) {
+        relationship = "outgoing";
+      } else if (me.incomingRequests.find(r => r.from.toString() === targetId)) {
+        relationship = "incoming";
+      }
+    }
+
+    // Mutual Friends
+    let mutualFriends = [];
+    if (viewerId) {
+      const me = await User.findById(viewerId).select("friends");
+      const myFriends = me.friends.map(id => id.toString());
+      mutualFriends = user.friends.filter(f =>
+        myFriends.includes(f._id.toString())
+      );
+    }
+
+    // Online Status (only if they are your friend)
+    let online = false;
+    if (user.lastSeen) {
+      const diff = Date.now() - new Date(user.lastSeen).getTime();
+      online = diff < 60000; // 1 minute threshold
+    }
+
     return res.json({
       success: true,
-      user,
+      user: {
+        id: user._id,
+        name: user.name,
+        username: user.username,
+        avatar: user.avatar,
+        bio: user.bio,
+        social: user.social,
+        favorites: user.favorites,
+        mutualFriends,
+        relationship,
+        online
+      }
     });
+
   } catch (err) {
     console.error("🔥 PUBLIC PROFILE ERROR:", err.message);
     return res.status(500).json({ message: "Server error" });
