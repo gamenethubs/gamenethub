@@ -269,7 +269,12 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
     credentials: true,
   },
+
+  // REQUIRED FOR RENDER
+  transports: ["websocket", "polling"],  
+  allowEIO3: true,
 });
+
 
 // Make io available to routes via req.io
 app.use((req, res, next) => {
