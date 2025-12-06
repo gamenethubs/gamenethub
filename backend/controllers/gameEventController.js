@@ -74,6 +74,8 @@ import GameEvent from "../models/GameEvent.js";
 import Game from "../models/Game.js";
 import User from "../models/User.js";
 import UserGameStats from "../models/UserGameStats.js";
+import { giveXP, addPlayTime } from "../utils/xpSystem.js";
+ 
 
 const VALID_EVENT_TYPES = [
   "game_start",
@@ -162,6 +164,34 @@ try {
 } catch (err) {
   console.error("USER GAME STATS UPDATE ERROR:", err);
 }
+
+// ⭐ XP SYSTEM TRIGGERS (ADD ONLY — SAFE)
+
+// Game started
+if (eventType === "game_start") {
+  giveXP(userId, 2);
+}
+
+// Game ended
+if (eventType === "game_end") {
+  giveXP(userId, 3);
+}
+
+// Level completed
+if (eventType === "level_complete") {
+  giveXP(userId, 10);
+}
+
+// Level failed
+if (eventType === "level_fail") {
+  giveXP(userId, 1);
+}
+
+// Optional: Check for playtime metadata
+if (metadata?.playTimeMinutes) {
+  addPlayTime(userId, metadata.playTimeMinutes);
+}
+
 
 
     return res.json({ success: true, eventId: event._id });
