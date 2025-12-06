@@ -1,12 +1,13 @@
+//////////////////src/pages/kids/KidsGamePlayer.jsx///////////////////////
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getAllGames, absoluteUrl } from "../../services/api";
 import GamePlayer from "../../components/GamePlayer";
 import RatingStars from "../../components/RatingStars";
 import "../../assets/css/kidsGamePlayer.css";
+import GameDetail  from "../GameDetail.jsx";
 
-import mascotHappy from "../../assets/mascots/tj-win.png";
-import mascotSad from "../../assets/mascots/tj-sad.png";
+
 import {  useRef } from "react";
 export default function KidsGamePlayer() {
   const { slug } = useParams();
@@ -14,7 +15,6 @@ export default function KidsGamePlayer() {
   const [search] = useSearchParams();
   const autoPlay = search.get("autoPlay") === "true";
   const bgRef = useRef(null);
-   const [mascotMood, setMascotMood] = useState(mascotHappy);
 const statCard = {
   background: "rgba(255,255,255,0.12)",
   padding: "16px 30px",
@@ -55,28 +55,6 @@ useEffect(() => {
 
   if (!game) return null;
 
-  // 🔹 Split description into intro + bullet points
- const rawDesc = game.description || "";
-
-// 🔹 Split by bullet symbol, trim parts
-let parts = rawDesc
-  .split("•")
-  .map((p) => p.trim())
-  .filter(Boolean);
-
-// 🔹 The first part is intro paragraph.
-// BUT if it contains "How to play", push it into bullet list.
-let intro = parts[0] || "";
-let bullets = [];
-
-// If first part contains early how-to text move to bullets
-if (/how to play/i.test(intro)) {
-  bullets = parts;
-  intro = "";
-} else {
-  bullets = parts.slice(1);
-}
-
 
 
   return (
@@ -90,14 +68,11 @@ if (/how to play/i.test(intro)) {
 
 
 
-      {/* ✅ FLOATING MASCOT */}
-      <img src={mascotMood} className="kids-player-mascot" alt="mascot" />
+
 
       {/* ✅ BACK */}
       <button
         className="kids-player-back"
-         onMouseEnter={() => setMascotMood(mascotSad)}
-        onMouseLeave={() => setMascotMood(mascotHappy)}
         onClick={() => navigate("/kids/brain-lab")}
       >
         ⬅ Back to Kids World
@@ -121,7 +96,7 @@ if (/how to play/i.test(intro)) {
   style={{
     width: "95%",
     maxWidth: "1250px",
-    minHeight: "320px",
+    minHeight: "230px",
     marginTop: "80px",
     borderRadius: "28px",
     position: "relative",
@@ -142,7 +117,7 @@ if (/how to play/i.test(intro)) {
       inset: 0,
       width: "100%",
       height: "100%",
-      objectFit: "contain",   // ✅ FULL IMAGE – NO CUT
+      objectFit: "cover",   // ✅ FULL IMAGE – NO CUT
       opacity: 0.45,
       zIndex: 0
     }}
@@ -176,19 +151,6 @@ if (/how to play/i.test(intro)) {
     </div>
   </div>
 
-  {/* ✅ RIGHT MASCOT */}
-  <img
-    src={mascotHappy}
-    alt="mascot"
-    style={{
-      position: "absolute",
-      right: "80px",
-      bottom: "0",
-      width: "190px",
-      filter: "drop-shadow(0 0 40px cyan)",
-      zIndex: 2
-    }}
-  />
 
 </div>
 
@@ -220,81 +182,32 @@ if (/how to play/i.test(intro)) {
   </div>
 </div>
 
-{/* ✅ ABOUT GAME */}
-<div
-  style={{
-    marginTop: "38px",
-    width: "95%",
-    maxWidth: "1250px",
-    background:
-      "linear-gradient(180deg, rgba(12,20,48,.95), rgba(4,8,25,.98))",
-    borderRadius: "30px",
-    padding: "40px",
-    color: "white",
-  }}
->
-  <h2 style={{ fontSize: "26px", marginBottom: "10px" }}>
-    🧠 About This Game
-  </h2>
-
-  {/* 🔹 subtitle */}
-  <p
+{/* ✅ SAME ABOUT SECTION AS NORMAL GAME PAGE */}
+<div style={{ width: "95%", maxWidth: "1250px", marginTop: "38px" }}>
+  <div
     style={{
-      color: "#38bdf8",
-      marginBottom: "14px",
-      fontWeight: 600,
+      background: "rgba(255,255,255,0.03)",
+      padding: "20px",
+      borderRadius: 14,
+      border: "1px solid rgba(255,255,255,0.05)",
+      color: "white",
     }}
   >
-    {game.title}: Play Smart, Win Fast! ⚡🎯
-  </p>
+    <h3 style={{ fontSize: 20, marginBottom: 8 }}>About This Game</h3>
 
-  {/* 🔹 clean intro paragraph */}
-  {intro && (
     <p
       style={{
-        fontSize: "16px",
-        lineHeight: "1.9",
-        opacity: 0.95,
-        marginBottom: "20px",
+        fontSize: 15,
+        lineHeight: 1.6,
+        color: "#e2e8f0",
+        whiteSpace: "pre-line",
+        wordBreak: "break-word",
       }}
     >
-      {intro}
+      {game.description}
     </p>
-  )}
-
-  {/* 🔹 HOW TO PLAY section */}
-  {bullets.length > 0 && (
-    <>
-      <h3
-        style={{
-          marginTop: "4px",
-          fontSize: "20px",
-          color: "#facc15",
-          marginBottom: "12px",
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-        }}
-      >
-        🎯 How to Play
-      </h3>
-
-      <ul
-        style={{
-          paddingLeft: "26px",
-          lineHeight: "1.9",
-          fontSize: "16px",
-          opacity: 0.95,
-        }}
-      >
-        {bullets.map((line, idx) => (
-          <li key={idx}>{line}</li>
-        ))}
-      </ul>
-    </>
-  )}
+  </div>
 </div>
-
 
 
 
