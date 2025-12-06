@@ -15,6 +15,16 @@ export default function KidsGamePlayer() {
   const autoPlay = search.get("autoPlay") === "true";
   const bgRef = useRef(null);
    const [mascotMood, setMascotMood] = useState(mascotHappy);
+const statCard = {
+  background: "rgba(255,255,255,0.12)",
+  padding: "16px 30px",
+  borderRadius: "18px",
+  textAlign: "center",
+  minWidth: "120px",
+  boxShadow: "inset 0 0 18px rgba(255,255,255,0.15)",
+  color: "white",
+};
+
 
 
   const [game, setGame] = useState(null);
@@ -44,6 +54,30 @@ useEffect(() => {
   }, [slug]);
 
   if (!game) return null;
+
+  // 🔹 Split description into intro + bullet points
+ const rawDesc = game.description || "";
+
+// 🔹 Split by bullet symbol, trim parts
+let parts = rawDesc
+  .split("•")
+  .map((p) => p.trim())
+  .filter(Boolean);
+
+// 🔹 The first part is intro paragraph.
+// BUT if it contains "How to play", push it into bullet list.
+let intro = parts[0] || "";
+let bullets = [];
+
+// If first part contains early how-to text move to bullets
+if (/how to play/i.test(intro)) {
+  bullets = parts;
+  intro = "";
+} else {
+  bullets = parts.slice(1);
+}
+
+
 
   return (
     <div className="kids-player-page">
@@ -80,31 +114,190 @@ useEffect(() => {
         />
       </div>
 
-      {/* ✅ HUD */}
-      <div className="kids-game-hud">
+        {/* ✅ GAME DETAILS (NEECHE) */}
+   {/* ✅ HERO + DETAILS */}
+{/* ✅ HERO + DETAILS (FULL IMAGE VISIBLE) */}
+<div
+  style={{
+    width: "95%",
+    maxWidth: "1250px",
+    minHeight: "320px",
+    marginTop: "80px",
+    borderRadius: "28px",
+    position: "relative",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    padding: "40px",
+    background: "rgba(0,0,0,0.75)"
+  }}
+>
 
-        <div className="kids-game-thumb">
-          <img src={absoluteUrl(game.thumbnail)} alt={game.title} />
-        </div>
+  {/* ✅ ACTUAL BACKGROUND IMAGE (REAL FIX) */}
+  <img
+    src={absoluteUrl(game.thumbnail)}
+    alt="bg"
+    style={{
+      position: "absolute",
+      inset: 0,
+      width: "100%",
+      height: "100%",
+      objectFit: "contain",   // ✅ FULL IMAGE – NO CUT
+      opacity: 0.45,
+      zIndex: 0
+    }}
+  />
 
-        <div className="kids-game-info">
-          <h2>{game.title}</h2>
-          <p className="kids-genre">🎯 {game.genre}</p>
+  {/* ✅ LEFT CONTENT */}
+  <div style={{ 
+    display: "flex", 
+    gap: "26px", 
+    alignItems: "center", 
+    zIndex: 2 
+  }}>
 
-          <RatingStars rating={game.averageRating || 4} size={22} />
+    <div style={{ color: "white" }}>
+      <h1 style={{ fontSize: "34px", fontWeight: "900" }}>
+        {game.title}
+      </h1>
 
-          <div className="kids-game-stats">
-            <div><b>{game.playCount || 0}</b><span>Plays</span></div>
-            <div><b>{(game.averageRating || 0).toFixed(1)}</b><span>Rating</span></div>
-            <div><b>{new Date(game.updatedAt).getFullYear()}</b><span>Updated</span></div>
-          </div>
-        </div>
+      <p style={{ color: "#38bdf8", marginBottom: "6px" }}>
+        {game.genre}
+      </p>
 
-        <div className="kids-game-desc">
-          {game.description}
-        </div>
+      <RatingStars 
+        rating={Number(game.averageRating || 4)} 
+        size={22} 
+      />
 
-      </div>
+      <p style={{ opacity: ".7", marginTop: "6px" }}>
+        Please rate this game
+      </p>
+    </div>
+  </div>
+
+  {/* ✅ RIGHT MASCOT */}
+  <img
+    src={mascotHappy}
+    alt="mascot"
+    style={{
+      position: "absolute",
+      right: "80px",
+      bottom: "0",
+      width: "190px",
+      filter: "drop-shadow(0 0 40px cyan)",
+      zIndex: 2
+    }}
+  />
+
+</div>
+
+
+
+{/* ✅ CENTER STATS */}
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    gap: "28px",
+    marginTop: "26px",
+    flexWrap: "wrap",
+  }}
+>
+  <div style={statCard}>
+    <b>{game.playCount || 0}</b>
+    <span>Plays</span>
+  </div>
+
+  <div style={statCard}>
+    <b>{(game.averageRating || 0).toFixed(1)}</b>
+    <span>Rating</span>
+  </div>
+
+  <div style={statCard}>
+    <b>{new Date(game.updatedAt).getFullYear()}</b>
+    <span>Updated</span>
+  </div>
+</div>
+
+{/* ✅ ABOUT GAME */}
+<div
+  style={{
+    marginTop: "38px",
+    width: "95%",
+    maxWidth: "1250px",
+    background:
+      "linear-gradient(180deg, rgba(12,20,48,.95), rgba(4,8,25,.98))",
+    borderRadius: "30px",
+    padding: "40px",
+    color: "white",
+  }}
+>
+  <h2 style={{ fontSize: "26px", marginBottom: "10px" }}>
+    🧠 About This Game
+  </h2>
+
+  {/* 🔹 subtitle */}
+  <p
+    style={{
+      color: "#38bdf8",
+      marginBottom: "14px",
+      fontWeight: 600,
+    }}
+  >
+    {game.title}: Play Smart, Win Fast! ⚡🎯
+  </p>
+
+  {/* 🔹 clean intro paragraph */}
+  {intro && (
+    <p
+      style={{
+        fontSize: "16px",
+        lineHeight: "1.9",
+        opacity: 0.95,
+        marginBottom: "20px",
+      }}
+    >
+      {intro}
+    </p>
+  )}
+
+  {/* 🔹 HOW TO PLAY section */}
+  {bullets.length > 0 && (
+    <>
+      <h3
+        style={{
+          marginTop: "4px",
+          fontSize: "20px",
+          color: "#facc15",
+          marginBottom: "12px",
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+        }}
+      >
+        🎯 How to Play
+      </h3>
+
+      <ul
+        style={{
+          paddingLeft: "26px",
+          lineHeight: "1.9",
+          fontSize: "16px",
+          opacity: 0.95,
+        }}
+      >
+        {bullets.map((line, idx) => (
+          <li key={idx}>{line}</li>
+        ))}
+      </ul>
+    </>
+  )}
+</div>
+
+
+
+
     </div>
   );
 }

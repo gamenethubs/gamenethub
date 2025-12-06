@@ -220,7 +220,7 @@ import AnalyticsTracker from "./components/AnalyticsTracker";
 
 import KidsThemeParkHub from "./pages/KidsThemeParkHub.jsx"; // ⭐ ADDED
 import BrainLab from "./pages/worlds/BrainLabWorld.jsx";
-import KidsGameDetail from "./pages/kids/KidsGameDetail";
+
 import KidsGamePlayer from "./pages/kids/KidsGamePlayer";
 
 // ⭐ ADD SOCKET.IO
@@ -362,7 +362,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/kids" element={<KidsThemeParkHub />} />
           <Route path="/kids/brain-lab" element={<BrainLab />} />
-          <Route path="/kids/game/:slug/details" element={<KidsGameDetail />} />
+  
           <Route path="/kids/game/:slug" element={<KidsGamePlayer />} />
 
           {/* Admin Routes */}

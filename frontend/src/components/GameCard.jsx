@@ -14,6 +14,8 @@ import cuteLikeGif from "../assets/cute-like.gif";
 // ⭐ NEW ICON IMPORTS
 import mobileIcon from "../assets/mobileIcon.png";
 import desktopIcon from "../assets/desktopIcon.png";
+import { useLocation } from "react-router-dom";
+
 
 export default function GameCard({ game }) {
   const navigate = useNavigate();
@@ -42,6 +44,7 @@ export default function GameCard({ game }) {
     if (!last) return true;
     return Date.now() - Number(last) > 3000;
   };
+  const location = useLocation();
 
   const handleCardClick = async () => {
     if (canPlay()) {
@@ -50,12 +53,17 @@ export default function GameCard({ game }) {
         localStorage.setItem(`play_${game._id}`, Date.now());
       } catch {}
     }
-    // / ✅ SMART ROUTING FIX
-  if (game.isKids) {
-    navigate(`/kids/game/${game.slug}?autoPlay=true`);
-  } else {
-    navigate(`/game/${game.slug}?autoPlay=true`);
-  }
+ 
+    
+  const isKidsPage = location.pathname.includes("/kids");
+
+  navigate(
+    game.isKids && isKidsPage
+      ? `/kids/game/${game.slug}?autoPlay=true`
+      : `/game/${game.slug}?autoPlay=true`
+  );
+
+  
   };
  
 
