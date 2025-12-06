@@ -256,6 +256,27 @@ const miniUser = (u) => ({
   avatar: u.avatar,
 });
 
+/**
+ * Helper: emit to both default namespace AND presence namespace (if available)
+ * Keeps payload delivery consistent whether client listens on "/" or "/presence".
+ */
+const emitToUser = (io, userId, event, payload) => {
+  try {
+    // emit on default namespace / root
+    io.to(userId.toString()).emit(event, payload);
+  } catch (e) {
+    // ignore
+  }
+  try {
+    // if presence namespace exists, emit there too
+    if (io.of && io.of("/presence")) {
+      io.of("/presence").to(userId.toString()).emit(event, payload);
+    }
+  } catch (e) {
+    // ignore
+  }
+};
+
 /**************************************
  * ⭐ SEND FRIEND REQUEST
  **************************************/
@@ -296,13 +317,13 @@ export const sendRequest = async (req, res) => {
     await from.save();
     await to.save();
 
-    // SOCKET EVENT
-    req.io.to(toUserId.toString()).emit("friend_request_received", {
+    // SOCKET EVENT → emit to both namespaces
+    emitToUser(req.io, toUserId, "friend_request_received", {
       from: miniUser(from),
     });
 
-    // NOTIFICATION
-    req.io.to(toUserId.toString()).emit("notify-user", {
+    // NOTIFICATION → emit to both namespaces
+    emitToUser(req.io, toUserId, "notify-user", {
       id: Date.now(),
       title: "New Friend Request",
       text: `${from.username} sent you a friend request.`,
@@ -343,8 +364,8 @@ export const cancelRequest = async (req, res) => {
     await user.save();
     await target.save();
 
-    // NOTIFICATION
-    req.io.to(toUserId.toString()).emit("notify-user", {
+    // NOTIFICATION → emit to both namespaces
+    emitToUser(req.io, toUserId, "notify-user", {
       id: Date.now(),
       title: "Friend Request Canceled",
       text: `${user.username} canceled the friend request.`,
@@ -397,13 +418,13 @@ export const acceptRequest = async (req, res) => {
     await user.save();
     await from.save();
 
-    // SOCKET notify sender
-    req.io.to(fromUserId.toString()).emit("friend_request_accepted", {
+    // SOCKET notify sender → emit on both namespaces
+    emitToUser(req.io, fromUserId, "friend_request_accepted", {
       user: miniUser(user),
     });
 
-    // NOTIFICATION
-    req.io.to(fromUserId.toString()).emit("notify-user", {
+    // NOTIFICATION → emit on both namespaces
+    emitToUser(req.io, fromUserId, "notify-user", {
       id: Date.now(),
       title: "Friend Request Accepted",
       text: `${user.username} accepted your friend request.`,
@@ -444,8 +465,8 @@ export const rejectRequest = async (req, res) => {
 
     await user.save();
 
-    // NOTIFICATION
-    req.io.to(fromUserId.toString()).emit("notify-user", {
+    // NOTIFICATION → emit to both namespaces
+    emitToUser(req.io, fromUserId, "notify-user", {
       id: Date.now(),
       title: "Friend Request Rejected",
       text: `${user.username} rejected your friend request.`,
@@ -483,8 +504,8 @@ export const removeFriend = async (req, res) => {
     await user.save();
     await friend.save();
 
-    // NOTIFICATION
-    req.io.to(friendId.toString()).emit("notify-user", {
+    // NOTIFICATION → emit to both namespaces
+    emitToUser(req.io, friendId, "notify-user", {
       id: Date.now(),
       title: "Friend Removed",
       text: `${user.username} removed you from friends.`,
@@ -529,4 +550,5 @@ export const getFriends = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 

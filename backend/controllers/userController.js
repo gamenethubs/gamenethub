@@ -129,7 +129,9 @@ export const searchUsers = async (req, res) => {
 //   }
 // };
 
-
+/************************************
+ * 🔹 GET PUBLIC PROFILE BY USERNAME
+ ************************************/
 export const getPublicProfile = async (req, res) => {
   try {
     const viewerId = req.user?._id; // logged-in user (optional)
@@ -151,16 +153,22 @@ export const getPublicProfile = async (req, res) => {
       const me = await User.findById(viewerId)
         .select("friends incomingRequests outgoingRequests");
 
-      // normalize my friends to strings for reliable comparisons
       const myFriendIds = (me?.friends || []).map((f) => f.toString());
-
       const targetId = user._id.toString();
 
       if (myFriendIds.includes(targetId)) {
         relationship = "friend";
-      } else if ((me?.outgoingRequests || []).some(r => (r.to || r.toString || "").toString() === targetId)) {
+
+      // ⭐ FIXED: outgoing comparison
+      } else if ((me?.outgoingRequests || [])
+        .some(r => r.to && r.to.toString() === targetId)) {
+
         relationship = "outgoing";
-      } else if ((me?.incomingRequests || []).some(r => (r.from || r.fromString || "").toString() === targetId)) {
+
+      // ⭐ FIXED: incoming comparison
+      } else if ((me?.incomingRequests || [])
+        .some(r => r.from && r.from.toString() === targetId)) {
+
         relationship = "incoming";
       }
     }
@@ -170,7 +178,6 @@ export const getPublicProfile = async (req, res) => {
     if (viewerId) {
       const me = await User.findById(viewerId).select("friends");
       const myFriends = (me?.friends || []).map(id => id.toString());
-      // user.friends is populated with friend objects — compare by _id string
       mutualFriends = (user.friends || []).filter(f =>
         myFriends.includes(f._id.toString())
       );
@@ -180,7 +187,6 @@ export const getPublicProfile = async (req, res) => {
     let online = false;
     if (user.lastSeen) {
       const diff = Date.now() - new Date(user.lastSeen).getTime();
-      // Slightly longer threshold to avoid flapping due to tiny inactivity
       online = diff < 2 * 60 * 1000; // 2 minutes threshold
     }
 
