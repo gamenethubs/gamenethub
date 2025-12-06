@@ -405,7 +405,7 @@ function App() {
         </Routes>
       </main>
 
-      {!isAdminRoute && !isKidsRoute && <Footer />}
+      {!isAdminRoute  && <Footer />}
     </div>
   );
 }
