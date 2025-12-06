@@ -201,4 +201,9 @@ export const removeFriend = (friendId) =>
 
 export const getFriendsList = () => API.get("/friends/list");
 
+
+//XP SYSTEM API
+export const getUserXP = () => API.get("/xp/me");
+
+
 export default API;
