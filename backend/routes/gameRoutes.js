@@ -132,6 +132,27 @@ router.put(
 // Delete game
 router.delete("/:id", protect, adminOnly, deleteGame);
 
+/************************************
+ * ⭐ TEST SOCKET BROADCAST
+ ************************************/
+router.get("/test-broadcast", (req, res) => {
+  const sample = {
+    id: Date.now(),
+    title: "Test Game",
+    slug: "test-game",
+    thumbnail: "/uploads/test-thumb.png",
+    text: "A test notification has arrived!",
+    time: new Date().toLocaleTimeString(),
+  };
+
+  if (req.io) {
+    req.io.emit("new-game-added", sample);
+    return res.json({ success: true, message: "Test broadcast sent!" });
+  }
+
+  return res.status(500).json({ success: false, message: "Socket.IO not initialized" });
+});
+
 
 /************************************
  * ⭐ GLOBAL UPLOAD ERROR HANDLER
