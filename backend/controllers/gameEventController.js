@@ -168,29 +168,31 @@ try {
 // ⭐ XP SYSTEM TRIGGERS (ADD ONLY — SAFE)
 
 // Game started
-if (eventType === "game_start") {
-  giveXP(userId, 2);
+// ⭐ XP SYSTEM TRIGGERS (FINAL + CORRECT)
+try {
+  if (eventType === "game_start") {
+    await giveXP(userId, 2);
+  }
+
+  if (eventType === "game_end") {
+    await giveXP(userId, 3);
+  }
+
+  if (eventType === "level_complete") {
+    await giveXP(userId, 10);
+  }
+
+  if (eventType === "level_fail") {
+    await giveXP(userId, 1);
+  }
+
+  if (metadata?.playTimeMinutes) {
+    await addPlayTime(userId, metadata.playTimeMinutes);
+  }
+} catch (xpErr) {
+  console.error("XP UPDATE ERROR:", xpErr);
 }
 
-// Game ended
-if (eventType === "game_end") {
-  giveXP(userId, 3);
-}
-
-// Level completed
-if (eventType === "level_complete") {
-  giveXP(userId, 10);
-}
-
-// Level failed
-if (eventType === "level_fail") {
-  giveXP(userId, 1);
-}
-
-// Optional: Check for playtime metadata
-if (metadata?.playTimeMinutes) {
-  addPlayTime(userId, metadata.playTimeMinutes);
-}
 
 
 

@@ -1,35 +1,42 @@
 // utils/xpSystem.js
 import User from "../models/User.js";
 
-// XP required per level (simple formula)
-function getXPRequired(level) {
-  return 100 + (level - 1) * 50; // Level 1→2 = 100 XP, Level 2→3 = 150 XP...
+/**************************************
+ * ⭐ XP REQUIRED PER LEVEL
+ **************************************/
+export function getXPRequired(level) {
+  return 100 + (level - 1) * 50;
 }
- 
-// Give XP safely
+
+/**************************************
+ * ⭐ GIVE XP (LEVEL SYSTEM INSIDE)
+ **************************************/
 export async function giveXP(userId, amount) {
   try {
     const user = await User.findById(userId);
-    if (!user) return;
+    if (!user) return false;
 
     user.xp += amount;
 
-    // Level up loop
+    // Check level ups
     while (user.xp >= getXPRequired(user.level)) {
-      user.xp -= getXPRequired(user.level);
+      const req = getXPRequired(user.level);
+      user.xp -= req;
       user.level += 1;
-      console.log(`🎉 User ${user.name} leveled up → Level ${user.level}`);
     }
 
     await user.save();
     return true;
+
   } catch (err) {
     console.error("XP ERROR:", err);
     return false;
   }
 }
 
-// Track playtime from events
+/**************************************
+ * ⭐ ADD PLAYTIME (TRACK TOTAL MINUTES)
+ **************************************/
 export async function addPlayTime(userId, minutes) {
   try {
     const user = await User.findById(userId);
@@ -39,5 +46,30 @@ export async function addPlayTime(userId, minutes) {
     await user.save();
   } catch (err) {
     console.error("PLAYTIME ERROR:", err);
+  }
+}
+
+/**************************************
+ * ⭐ FETCH XP + LEVEL FOR FRONTEND
+ **************************************/
+export async function getUserXPStats(userId) {
+  try {
+    const user = await User.findById(userId).select("xp level");
+
+    if (!user) return null;
+
+    const xpNeeded = getXPRequired(user.level);
+    const progress = (user.xp / xpNeeded) * 100;
+
+    return {
+      xp: user.xp,
+      level: user.level,
+      xpNeeded,
+      progress,
+    };
+
+  } catch (err) {
+    console.error("XP FETCH ERROR:", err);
+    return null;
   }
 }

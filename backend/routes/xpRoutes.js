@@ -1,23 +1,33 @@
 import express from "express";
-import User from "../models/User.js";
 import { protect } from "../middleware/authMiddleware.js";
- 
+import { getUserXPStats } from "../utils/xpSystem.js";
+
 const router = express.Router();
 
-// Get logged-in user's XP + Level
+/**************************************
+ * ⭐ GET LOGGED-IN USER XP STATS
+ **************************************/
 router.get("/me", protect, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select(
-      "xp level weeklyStreak totalPlayTime"
-    );
+    const stats = await getUserXPStats(req.user._id);
+
+    if (!stats) {
+      return res.status(404).json({
+        success: false,
+        message: "User XP stats not found",
+      });
+    }
 
     return res.json({
       success: true,
-      stats: user,
+      stats,
     });
   } catch (err) {
     console.error("XP ROUTE ERROR:", err);
-    return res.status(500).json({ success: false });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to load XP stats",
+    });
   }
 });
 
