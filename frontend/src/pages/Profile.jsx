@@ -8,6 +8,7 @@ import AvatarSelector from "../components/AvatarSelector";
 import ShareProfileModal from "../components/ShareProfileModal";
 import { getUserXP } from "../services/api";
 import ProfileXPCard from "../components/ProfileXPCard";
+import ProfileBadges from "../components/ProfileBadges";
 
 const API_BASE = process.env.REACT_APP_API_BASE;
 
@@ -254,6 +255,11 @@ useEffect(() => {
               xpNeeded={xpStats.xpNeeded}
               progress={xpStats.progress}
             />
+            <ProfileBadges
+                badges={xpStats.badges}
+                badgeProgress={xpStats.badgeProgress}
+              />
+
           </div>
 
 
