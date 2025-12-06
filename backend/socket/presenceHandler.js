@@ -7,7 +7,8 @@ import User from "../models/User.js";
 const userSockets = new Map(); // userId → Set(socketIds)
 
 export default function presenceHandler(io) {
-  io.on("connection", async (socket) => {
+  io.of("/presence").on("connection", async (socket) => {
+
 
     /***********************
      * 1) AUTH CHECK
