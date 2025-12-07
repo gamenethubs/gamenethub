@@ -51,10 +51,23 @@ export default function KidsThemeParkHub() {
   const [activeWorld, setActiveWorld] = useState(null);
   const [mascotImg, setMascotImg] = useState(mascotIdle);
   const [soundUnlocked, setSoundUnlocked] = useState(false);
-  const [showBigMickey, setShowBigMickey] = useState(true);
+  // const [showBigMickey, setShowBigMickey] = useState(true);
   const [isTalking, setIsTalking] = useState(false);
   const [showBubble, setShowBubble] = useState(false);
   const navigate = useNavigate();
+  const [showBigMickey, setShowBigMickey] = useState(() => {
+  return sessionStorage.getItem("skipMickey") !== "true";
+});
+
+
+
+
+useEffect(() => {
+  // If user is coming from outside the kids section → show Mickey
+  if (!document.referrer.includes("/kids")) {
+    sessionStorage.removeItem("skipMickey");
+  }
+}, []);
 
 
 
@@ -141,27 +154,32 @@ useEffect(() => {
 
       {showBigMickey && (
   <div
-    className="big-mickey-overlay"
-    onClick={() => {
-      setShowBigMickey(false);
+  className="big-mickey-overlay"
+  onClick={() => {
+    sessionStorage.setItem("skipMickey", "true");
 
-      sfxSparkle.currentTime = 0;
-      sfxSparkle.play().catch(() => {});
 
-      setTimeout(() => {
-        sfxWelcome.currentTime = 0;
-        sfxWelcome.play().catch(() => {});
-      }, 500);
+    setShowBigMickey(false);
 
-      setTimeout(() => {
-        sfxBg.play().catch(() => {});
-      }, 1400);
-      setTimeout(() => {
+    sfxSparkle.currentTime = 0;
+    sfxSparkle.play().catch(() => {});
+
+    setTimeout(() => {
+      sfxWelcome.currentTime = 0;
+      sfxWelcome.play().catch(() => {});
+    }, 500);
+
+    setTimeout(() => {
+      sfxBg.play().catch(() => {});
+    }, 1400);
+
+    setTimeout(() => {
       sfxFireworks.currentTime = 0;
-      sfxFireworks.play().catch(() => {});   // ✅ FIREWORK BLAST
+      sfxFireworks.play().catch(() => {});
     }, 350);
-    }}
-  >
+  }}
+>
+
     <img
   src={mascotIdle}
   alt="Mickey"
@@ -260,6 +278,7 @@ useEffect(() => {
     if (video) video.pause();
   }}
   onClick={(e) => {
+    sessionStorage.setItem("skipMickey", "true");
   if (soundUnlocked) {
     sfxJump.currentTime = 0;
     sfxJump.play().catch(() => {});
@@ -303,8 +322,8 @@ useEffect(() => {
     if (soundUnlocked) {
       sfxHover.currentTime = 0;
       sfxHover.play().catch(() => {});
-   sfxBg.pause();
-sfxBg.currentTime = 0;
+      sfxBg.pause();
+      sfxBg.currentTime = 0;
 
 setTimeout(() => {
   sfxBg.play().catch(() => {});
