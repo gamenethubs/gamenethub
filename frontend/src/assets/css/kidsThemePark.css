@@ -530,10 +530,14 @@ body:has(.kids-theme-park-wrapper) nav {
 
 .floating-home-logo img {
   /* Logo Image Style */
-  width: 48px; /* Image size increased to match the larger container */
-  height: 48px;
+  width: 100%; /* Image size increased to match the larger container */
+  height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 0 8px rgba(0, 255, 255, 1)); /* Brighter glow on the image */
+  border-radius: 50%;           /* make image circular */
+  object-fit: cover;            /* fills circle perfectly */
+  display: block;               /* removes inline gap */
+  filter: none; 
 }
 /* 🐭 MICKEY HOVER MAGIC */
 .mascot-character {
