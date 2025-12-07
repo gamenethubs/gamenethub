@@ -51,10 +51,14 @@ export default function KidsThemeParkHub() {
   const [activeWorld, setActiveWorld] = useState(null);
   const [mascotImg, setMascotImg] = useState(mascotIdle);
   const [soundUnlocked, setSoundUnlocked] = useState(false);
-  const [showBigMickey, setShowBigMickey] = useState(true);
+  // const [showBigMickey, setShowBigMickey] = useState(true);
   const [isTalking, setIsTalking] = useState(false);
   const [showBubble, setShowBubble] = useState(false);
   const navigate = useNavigate();
+  const [showBigMickey, setShowBigMickey] = useState(() => {
+  return sessionStorage.getItem("mickeySeen") !== "true";
+});
+
 
 
 
@@ -141,27 +145,31 @@ useEffect(() => {
 
       {showBigMickey && (
   <div
-    className="big-mickey-overlay"
-    onClick={() => {
-      setShowBigMickey(false);
+  className="big-mickey-overlay"
+  onClick={() => {
+    sessionStorage.setItem("mickeySeen", "true"); // <-- ADD THIS
 
-      sfxSparkle.currentTime = 0;
-      sfxSparkle.play().catch(() => {});
+    setShowBigMickey(false);
 
-      setTimeout(() => {
-        sfxWelcome.currentTime = 0;
-        sfxWelcome.play().catch(() => {});
-      }, 500);
+    sfxSparkle.currentTime = 0;
+    sfxSparkle.play().catch(() => {});
 
-      setTimeout(() => {
-        sfxBg.play().catch(() => {});
-      }, 1400);
-      setTimeout(() => {
+    setTimeout(() => {
+      sfxWelcome.currentTime = 0;
+      sfxWelcome.play().catch(() => {});
+    }, 500);
+
+    setTimeout(() => {
+      sfxBg.play().catch(() => {});
+    }, 1400);
+
+    setTimeout(() => {
       sfxFireworks.currentTime = 0;
-      sfxFireworks.play().catch(() => {});   // ✅ FIREWORK BLAST
+      sfxFireworks.play().catch(() => {});
     }, 350);
-    }}
-  >
+  }}
+>
+
     <img
   src={mascotIdle}
   alt="Mickey"
