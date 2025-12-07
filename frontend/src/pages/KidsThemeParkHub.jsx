@@ -56,9 +56,18 @@ export default function KidsThemeParkHub() {
   const [showBubble, setShowBubble] = useState(false);
   const navigate = useNavigate();
   const [showBigMickey, setShowBigMickey] = useState(() => {
-  return sessionStorage.getItem("mickeySeen") !== "true";
+  return sessionStorage.getItem("skipMickey") !== "true";
 });
 
+
+
+
+useEffect(() => {
+  // If user is coming from outside the kids section → show Mickey
+  if (!document.referrer.includes("/kids")) {
+    sessionStorage.removeItem("skipMickey");
+  }
+}, []);
 
 
 
@@ -147,7 +156,8 @@ useEffect(() => {
   <div
   className="big-mickey-overlay"
   onClick={() => {
-    sessionStorage.setItem("mickeySeen", "true"); // <-- ADD THIS
+    sessionStorage.setItem("skipMickey", "true");
+
 
     setShowBigMickey(false);
 
@@ -268,6 +278,7 @@ useEffect(() => {
     if (video) video.pause();
   }}
   onClick={(e) => {
+    sessionStorage.setItem("skipMickey", "true");
   if (soundUnlocked) {
     sfxJump.currentTime = 0;
     sfxJump.play().catch(() => {});
@@ -311,8 +322,8 @@ useEffect(() => {
     if (soundUnlocked) {
       sfxHover.currentTime = 0;
       sfxHover.play().catch(() => {});
-   sfxBg.pause();
-sfxBg.currentTime = 0;
+      sfxBg.pause();
+      sfxBg.currentTime = 0;
 
 setTimeout(() => {
   sfxBg.play().catch(() => {});
