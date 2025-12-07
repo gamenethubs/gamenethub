@@ -3,7 +3,10 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getAllGames, absoluteUrl } from "../../services/api";
 import GamePlayer from "../../components/GamePlayer";
-import RatingStars from "../../components/RatingStars";
+import RatingStars from "../../components/RatingStars.jsx";
+import { rateGame } from "../../services/gameActions";
+import { useAuth } from "../../context/AuthContext";
+
 import "../../assets/css/kidsGamePlayer.css";
 import GameDetail  from "../GameDetail.jsx";
 
@@ -23,6 +26,40 @@ const statCard = {
   minWidth: "120px",
   boxShadow: "inset 0 0 18px rgba(255,255,255,0.15)",
   color: "white",
+};
+
+const { isAuthenticated, user, updateUser } = useAuth();
+const [userRating, setUserRating] = useState(null);
+
+const handleRating = async (stars) => {
+  if (!isAuthenticated) return alert("Please login to rate!");
+
+  try {
+    setUserRating(stars); // ✅ INSTANT UI UPDATE (important)
+
+    const res = await rateGame(game._id, stars);
+
+    updateUser({
+      ratedGames: [
+        ...(user?.ratedGames || []).filter(
+          (x) => String(x.game) !== String(game._id)
+        ),
+        { game: game._id, stars },
+      ],
+    });
+
+    setGame((prev) =>
+      prev
+        ? {
+            ...prev,
+            averageRating: res.rating,
+            totalRatings: res.totalRatings,
+          }
+        : prev
+    );
+  } catch (err) {
+    console.log("Rating error:", err);
+  }
 };
 
 
@@ -51,6 +88,25 @@ useEffect(() => {
       setGame(found);
     }
     load();
+    let rating = null;
+if (game && isAuthenticated && user) {
+  const uRate = game.ratings?.find(
+    (r) =>
+      String(r.user?._id || r.user) ===
+      String(user.id || user._id)
+  );
+  if (uRate) rating = uRate.stars;
+}
+
+if (!rating && user?.ratedGames) {
+  const fromUser = user.ratedGames.find(
+    (x) => String(x.game) === String(game?._id)
+  );
+  if (fromUser) rating = fromUser.stars;
+}
+
+setUserRating(rating ?? null);
+
   }, [slug]);
 
   if (!game) return null;
@@ -139,15 +195,31 @@ useEffect(() => {
       <p style={{ color: "#38bdf8", marginBottom: "6px" }}>
         {game.genre}
       </p>
+<RatingStars
+  rating={game.averageRating}
+  userRating={userRating}
+  onRate={handleRating}
+  size={26}
+  editable={true}
+  showUserTag={true}
+/>
 
-      <RatingStars 
-        rating={Number(game.averageRating || 4)} 
-        size={22} 
-      />
 
-      <p style={{ opacity: ".7", marginTop: "6px" }}>
-        Please rate this game
-      </p>
+
+
+{userRating && (
+  <p style={{
+    marginTop: "6px",
+    fontSize: "14px",
+    color: "#22c55e",
+    fontWeight: 600,
+    animation: "fadeIn 0.5s ease"
+  }}>
+    ✅ Thanks for rating {userRating} stars!
+  </p>
+)}
+
+
     </div>
   </div>
 
