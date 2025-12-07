@@ -29,7 +29,7 @@
 .kids-world-mascot {
   position: relative;
   z-index: 2;
-  margin-top: 60px;
+  margin-top: 0px;
 }
 
 .kids-world-mascot img {
@@ -110,5 +110,79 @@
 /* 📱 MOBILE */
 @media (max-width: 520px) {
   .kids-world-title { font-size: 26px; }
+  .kids-world-mascot{ margin-top: 20px;}
   .kids-world-mascot img { width: 160px; }
+  .kids-world-back-btn {
+    padding: 8px 14px;    /* smaller padding */
+    font-size: 12px;      /* smaller text */
+    top: 20px;            /* adjust spacing */
+    left: 10px;
+    box-shadow: 0 0 15px gold; /* lighter shadow */
+    transform: scale(0.9);     /* optional subtle shrink */
+  }
 }
+
+@media (max-width: 480px) {
+  .kids-world-title { font-size: 26px; }
+  .kids-world-mascot{ margin-top: 40px;}
+  .kids-world-mascot img { width: 100px; }
+  .kids-world-back-btn {
+    padding: 6px 12px;     /* even smaller */
+    font-size: 11px;
+    top: 20px;
+    left: 10px;
+    transform: scale(0.85);
+    box-shadow: 0 0 12px gold;
+  }
+}
+
+@media (max-width: 750px) {
+
+  /* force 2 columns */
+  .kids-world-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 12px;
+  }
+
+}
+
+@media (max-width: 680px) {
+
+  /* force 2 columns */
+  .kids-world-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px;
+  }
+
+}
+
+@media (max-width: 510px) {
+
+  /* force 2 columns */
+  .kids-world-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+
+}
+/* Ultra–small screens: force 2 columns & shrink cards */
+@media (max-width: 385px) {
+
+  /* force 2 columns */
+  .kids-world-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px;
+  }
+
+}
+
+@media (max-width: 340px) {
+
+  /* force 2 columns */
+  .kids-world-grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+    gap: 8px;
+  }
+
+}
+
