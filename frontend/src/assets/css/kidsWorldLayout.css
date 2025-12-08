@@ -103,7 +103,8 @@
   position: relative;
   cursor: pointer;
   transition: 0.25s ease;
-  
+  z-index: 1;              /* ✅ ADD */
+  overflow: visible;       /* ✅ ADD */
 }
 
 .world-game-wrap:hover {
@@ -216,7 +217,7 @@
   /* force 2 columns */
   .kids-world-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px;
+    gap: 14px;
   }
 
 }
@@ -236,14 +237,14 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  overflow: hidden;
-  z-index: 10;
+  overflow: visible;
+  z-index: 9999;          /* ✅ FORCE TOP */
 }
 
 .spark {
   position: absolute;
-  width: 14px;              /* ✅ BIG SIZE */
-  height: 14px;             /* ✅ BIG SIZE */
+  width: 12px;
+  height: 12px;
   background: radial-gradient(
     circle,
     #ffffff,
@@ -252,12 +253,13 @@
     #a855f7
   );
   border-radius: 50%;
-  animation: sparkExplosion 800ms ease-out forwards;
+  animation: sparkExplosion 700ms ease-out forwards;
+
   box-shadow:
-    0 0 14px #fff,
-    0 0 28px #facc15,
-    0 0 45px #f472b6,
-    0 0 60px #a855f7;
+    0 0 12px #fff,
+    0 0 22px #facc15,
+    0 0 35px #f472b6,
+    0 0 45px #a855f7;
 }
 
 @keyframes sparkExplosion {
