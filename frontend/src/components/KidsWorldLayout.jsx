@@ -191,7 +191,7 @@ const playBackSound = () => {
     setMascot(mascotWin);
 
     setTimeout(() => {
-      navigate(`/kids/game/${game.slug}?autoPlay=true`);
+      navigate(`/kids/game/${game.slug}?autoPlay=true&world=${filterArena}`);
     }, 350);
   }}
 >

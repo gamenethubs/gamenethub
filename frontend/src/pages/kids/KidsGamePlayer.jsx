@@ -17,6 +17,7 @@ export default function KidsGamePlayer() {
   const navigate = useNavigate();
   const [search] = useSearchParams();
   const autoPlay = search.get("autoPlay") === "true";
+  const world  = search.get("world"); 
   const bgRef = useRef(null);
 const statCard = {
   background: "rgba(255,255,255,0.12)",
@@ -163,26 +164,25 @@ const playBackSound = () => {
   osc2.stop(ctx.currentTime + 0.35);
 };
 
+const backPath = 
+  world === "candymath" ? "/kids/math-land" :
+  world === "brainlab" ? "/kids/brain-lab" :
+  world === "racingcity" ? "/kids/racing-city" :
+  world === "skillcircus" ? "/kids/skill-circus" :
+  "/kids";
+
 
   return (
     <div className="kids-player-page">
            {/* 🌌 GALAXY PARALLAX */}
 <div className="kids-galaxy-parallax" ref={bgRef}></div>
-
-
-
-
-
-
-
-
-
       {/* ✅ BACK */}
       <button
         className="kids-player-back"
         onClick={() => {
           playBackSound();
-          setTimeout(() => navigate("/kids/brain-lab"), 200);
+          setTimeout(() => navigate(backPath), 200);
+          console.log("BackPath : ", backPath);
         }}
       >
         ⬅ Back to Kids World
