@@ -140,11 +140,7 @@ const playBackSound = () => {
     playBackSound();
     setMascot(mascotWin);   // 🎉 CLICK PE HAPPY
     ///new added
-      // 🎡 Theme park BG music resume
-    if (window.__KIDS_BG_MUSIC__) {
-      window.__KIDS_BG_MUSIC__.currentTime = 0;   // ya agar jahan se band hua tha wahi se chahiye to ye line hata sakti ho
-      window.__KIDS_BG_MUSIC__.play().catch(() => {});
-    }
+     
     setTimeout(() => navigate(backPath), 200);
   }}
   className="kids-world-back-btn"

@@ -234,12 +234,20 @@ const backPath =
   />
 
   {/* ✅ LEFT CONTENT */}
-  <div style={{ 
-    display: "flex", 
-    gap: "26px", 
-    alignItems: "center", 
-    zIndex: 2 
-  }}>
+ <div style={{ 
+  display: "flex",
+  flexDirection: "column",
+  gap: "14px",
+  alignItems: "flex-start",
+  zIndex: 2,
+  padding: "22px 26px",
+  borderRadius: "20px",
+  background: "rgba(2, 6, 23, 0.55)",
+  backdropFilter: "blur(10px)",
+  WebkitBackdropFilter: "blur(10px)",
+  boxShadow: "0 0 20px rgba(0,0,0,0.6)"
+}}>
+
 
     <div style={{ color: "white" }}>
       <h1 style={{ fontSize: "34px", fontWeight: "900" }}>
