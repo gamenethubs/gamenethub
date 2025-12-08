@@ -98,6 +98,25 @@
    z-index: 10;
 }
 
+.kids-player-back:hover {
+  background: linear-gradient(135deg, #facc15, #fb7185, #8b5cf6);
+  color: #000;
+
+  box-shadow:
+    0 0 20px rgba(250,204,21,0.9),
+    0 0 45px rgba(251,113,133,0.7),
+    0 0 75px rgba(139,92,246,0.8);
+
+  transform: scale(1.08) translateY(-2px);
+}
+
+/* ✅ Click / Press effect */
+.kids-player-back:active {
+  transform: scale(0.95);
+  box-shadow:
+    0 0 10px rgba(250,204,21,0.6),
+    0 0 25px rgba(139,92,246,0.6);
+}
 
 
 
@@ -121,10 +140,6 @@
 
 /* ✅ FLOAT ANIMATION */
 
-.kids-player-back:hover {
-  transform: scale(1.15) rotate(-2deg);
-  box-shadow: 0 0 60px red;
-}
 
 
 
@@ -275,4 +290,32 @@
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+/* 📱 MOBILE TEXT OPTIMIZATION */
+@media (max-width: 768px) {
+
+  /* About This Game Card Padding */
+  .kids-player-page > div:last-of-type > div {
+    padding: 16px !important;
+    border-radius: 18px !important;
+  }
+
+  /* About Heading Smaller */
+  .kids-player-page > div:last-of-type h3 {
+    font-size: 18px !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* ✅ DESCRIPTION TEXT SMALLER (MAIN FIX) */
+  .kids-player-page > div:last-of-type p {
+    font-size: 13px !important;   /* ⬅️ YAHI MAIN FIX HAI */
+    line-height: 1.55 !important;
+    letter-spacing: 0.2px;
+  }
+
+  /* ✅ Bullet Points bhi controlled honge */
+  .kids-player-page > div:last-of-type li {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
 }

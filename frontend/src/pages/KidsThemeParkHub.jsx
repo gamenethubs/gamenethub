@@ -29,6 +29,7 @@ import racingVideo from "../assets/videos/racing.mp4";
 import skillVideo from "../assets/videos/skill.mp4";
 import mathVideo from "../assets/videos/math.mp4";
 import { useNavigate } from "react-router-dom";
+import mascotSad from "../assets/mascots/mickey-sad.png";
 
 
 
@@ -38,6 +39,9 @@ import { useNavigate } from "react-router-dom";
 const sfxBg = new Audio(bgMusic);
 sfxBg.loop = true;
 sfxBg.volume = 0.25;
+
+
+
 
 const sfxDrum = new Audio(drumRoll);
 const sfxSparkle = new Audio(sparkleSound);
@@ -108,6 +112,8 @@ sfxWelcome.onended = () => {
       window.removeEventListener("touchstart", unlockSound);
     };
   }, [soundUnlocked]);
+
+
   useEffect(() => {
   return () => {
     // ✅ Page leave hote hi saari sounds band
@@ -124,6 +130,8 @@ sfxWelcome.onended = () => {
     sfxSparkle.currentTime = 0;
   };
 }, []);
+
+
 useEffect(() => {
   if (showBigMickey) {
     document.body.style.overflow = "hidden"; // ✅ SCROLL LOCK
@@ -144,9 +152,15 @@ useEffect(() => {
         activeWorld ? "world-zoom-active" : ""
       }`}
     >
-      <a href="/" className="floating-home-logo">
+     <a
+  href="/"
+  className="floating-home-logo"
+  onMouseEnter={() => setMascotImg(mascotSad)}   // 😢 SAD ON HOVER
+  onMouseLeave={() => setMascotImg(mascotIdle)}  // 🙂 BACK TO NORMAL
+>
   <img src="/GamenetHub.png" alt="Home" />
 </a>
+
 
       <video className="theme-video-bg" autoPlay muted loop playsInline>
   <source src={themeBg} type="video/mp4" />
@@ -270,6 +284,10 @@ useEffect(() => {
       sfxHover.currentTime = 0;
       sfxHover.play().catch(() => {});
     }
+
+    //new added
+
+    
     const video = e.currentTarget.querySelector("video");
     if (video) video.play();
   }}
