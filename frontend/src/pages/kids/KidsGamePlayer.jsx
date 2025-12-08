@@ -17,7 +17,7 @@ export default function KidsGamePlayer() {
   const navigate = useNavigate();
   const [search] = useSearchParams();
   const autoPlay = search.get("autoPlay") === "true";
-  const world  = search.get("world"); 
+  // const world  = search.get("world"); 
   const bgRef = useRef(null);
 const statCard = {
   background: "rgba(255,255,255,0.12)",
@@ -28,6 +28,18 @@ const statCard = {
   boxShadow: "inset 0 0 18px rgba(255,255,255,0.15)",
   color: "white",
 };
+
+// WORLD FIX — game cannot override this
+const worldRef = useRef(null);
+
+useEffect(() => {
+  const w = search.get("world");
+  if (w) {
+    console.log("INITIAL WORLD:", w);
+    worldRef.current = w;   // store forever
+  }
+}, []); // only ONCE — URL change won't matter
+
 
 const { isAuthenticated, user, updateUser } = useAuth();
 const [userRating, setUserRating] = useState(null);
@@ -164,11 +176,12 @@ const playBackSound = () => {
   osc2.stop(ctx.currentTime + 0.35);
 };
 
+const w = worldRef.current;
 const backPath = 
-  world === "candymath" ? "/kids/math-land" :
-  world === "brainlab" ? "/kids/brain-lab" :
-  world === "racingcity" ? "/kids/racing-city" :
-  world === "skillcircus" ? "/kids/skill-circus" :
+  w === "candymath" ? "/kids/math-land" :
+  w === "brainlab" ? "/kids/brain-lab" :
+  w === "racingcity" ? "/kids/racing-city" :
+  w === "skillcircus" ? "/kids/skill-circus" :
   "/kids";
 
 
