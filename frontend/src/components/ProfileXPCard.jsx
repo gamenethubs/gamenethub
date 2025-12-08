@@ -1,6 +1,9 @@
 import React from "react";
 
 export default function ProfileXPCard({ xp, level, xpNeeded, progress }) {
+
+  const rounded = Math.round(progress); // 👈 round once and reuse
+
   return (
     <div style={card} className="xp-card-root">
       <div style={topRow}>
@@ -9,13 +12,14 @@ export default function ProfileXPCard({ xp, level, xpNeeded, progress }) {
       </div>
 
       <div style={progressWrapper}>
-        <div style={{ ...progressFill, width: `${progress}%` }}></div>
+        <div style={{ ...progressFill, width: `${rounded}%` }}></div>
       </div>
 
-      <div style={percentText}>{progress}% Complete</div>
+      <div style={percentText}>{rounded}% Complete</div>
     </div>
   );
 }
+
 
 /* ---------- STYLES ---------- */
 

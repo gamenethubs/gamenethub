@@ -848,7 +848,7 @@ import ShareProfileModal from "../components/ShareProfileModal";
 import { getUserXP } from "../services/api";
 import ProfileXPCard from "../components/ProfileXPCard";
 import ProfileBadges from "../components/ProfileBadges";
-
+   
 const API_BASE = process.env.REACT_APP_API_BASE;
 
 export default function Profile() {
@@ -907,6 +907,7 @@ export default function Profile() {
     };
 
     init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   const [shareOpen, setShareOpen] = useState(false);
@@ -1003,12 +1004,12 @@ export default function Profile() {
       <div style={styles.container}>
         <div style={styles.headerRow}>
           <h1 style={styles.pageTitle}>
-            <span style={styles.pageTitleIcon}>⚡</span> COMMAND CENTER
+            <span style={styles.pageTitleIcon}>⚡</span> Profile
           </h1>
           <div style={styles.statusBadge}>
             <span style={styles.statusDot} /> ONLINE
           </div>
-        </div>
+        </div>  
 
         <div style={styles.mainGrid} className="profile-main-grid">
           {/* LEFT PROFILE CARD */}
@@ -1017,7 +1018,7 @@ export default function Profile() {
             
             <div style={styles.avatarContainer}>
               <div style={styles.avatarRing} />
-              <img
+              <img 
                 src={avatarPreview}
                 alt="avatar"
                 style={styles.avatar}
