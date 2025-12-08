@@ -104,7 +104,14 @@
   cursor: pointer;
   transition: 0.25s ease;
   z-index: 1;              /* ✅ ADD */
-  overflow: visible;       /* ✅ ADD */
+  overflow: visible; 
+  display: flex;
+  justify-content: center;
+  align-items: center;    /* ✅ ADD */
+}
+
+.world-game-wrap > div {
+  pointer-events: none !important;
 }
 
 .world-game-wrap:hover {
