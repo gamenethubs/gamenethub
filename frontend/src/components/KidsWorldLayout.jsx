@@ -49,12 +49,15 @@ export default function KidsWorldLayout({
   }, [filterArena]);
 const triggerSparkBurst = (e) => {
   const card = e.currentTarget;
+  const rect = card.getBoundingClientRect();
+
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
 
   const burst = document.createElement("div");
   burst.className = "spark-burst";
 
-  for (let i = 0; i < 22; i++) {   // 🔥 DENSE BURST
-
+  for (let i = 0; i < 22; i++) {
     const spark = document.createElement("span");
     spark.className = "spark";
 
@@ -64,16 +67,16 @@ const triggerSparkBurst = (e) => {
     spark.style.setProperty("--x", `${Math.cos(angle) * distance}px`);
     spark.style.setProperty("--y", `${Math.sin(angle) * distance}px`);
 
-    spark.style.left = "50%";
-    spark.style.top = "50%";
+    spark.style.left = `${x}px`;   // ✅ MOUSE POSITION
+    spark.style.top = `${y}px`;    // ✅ MOUSE POSITION
 
     burst.appendChild(spark);
   }
 
   card.appendChild(burst);
-
   setTimeout(() => burst.remove(), 700);
 };
+
 const playMagicPop = () => {
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   const ctx = new AudioCtx();
@@ -138,7 +141,7 @@ const playBackSound = () => {
   onMouseLeave={() => setMascot(mascotIdle)}   // 🙂 NORMAL MODE
   onClick={() => {
     playBackSound();
-    setMascot(mascotWin);   // 🎉 CLICK PE HAPPY
+    setMascot(mascotSad);   // 🎉 CLICK PE HAPPY
     ///new added
      
     setTimeout(() => navigate(backPath), 200);
