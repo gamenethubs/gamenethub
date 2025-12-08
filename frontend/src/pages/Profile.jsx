@@ -1136,9 +1136,9 @@ export default function Profile() {
         <div style={styles.favoritesCard} className="glass-panel">
           <div style={styles.favHeader}>
             <h3 style={styles.favoritesTitle}>
-              <span style={styles.titleIcon}>❤️</span> LIBRARY
+              <span style={styles.titleIcon}>❤️</span> Favourites
             </h3>
-            <div style={styles.favCount}>{favGames.length} TITLES</div>
+            <div style={styles.favCount}>{favGames.length} LIKES</div>
           </div>
 
           {favLoading ? (
@@ -1733,8 +1733,8 @@ const styles = {
   },
   favImageWrapper: {
     position: "relative",
-    height: 260, // Taller, premium aspect ratio
-    overflow: "hidden",
+    height: 180, // Taller, premium aspect ratio
+    overflow: "hidden", 
   },
   favImage: {
     width: "100%",
@@ -1767,7 +1767,7 @@ const styles = {
     transition: "all 0.3s ease",
   },
   favContent: {
-    padding: "16px",
+    padding: "12px",
     background: "linear-gradient(180deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.8) 100%)",
     display: "flex",
     justifyContent: "space-between",
