@@ -1094,14 +1094,16 @@ export default function Profile() {
           {/* RIGHT COL: XP, CHALLENGES, BADGES */}
           <div style={styles.statsColumn}>
             {/* XP CARD */}
-            <div style={styles.glassSection} className="glass-panel hover-glow">
-              <ProfileXPCard
+           <div style={styles.glassSection} className="glass-panel weekly-shimmer-container">
+              <div className="shimmer-anim" style={styles.shimmerOverlay}></div>
+              <ProfileXPCard 
                 xp={xpStats.xp}
                 level={xpStats.level}
                 xpNeeded={xpStats.xpNeeded}
                 progress={xpStats.progress}
               />
             </div>
+
 
             {/* 🏆 WEEKLY CHALLENGES (NEW FEATURE) */}
             <div style={styles.weeklyCard} className="weekly-shimmer-container">
@@ -1119,12 +1121,14 @@ export default function Profile() {
             </div>
 
             {/* BADGES SECTION */}
-            <div style={styles.glassSection} className="glass-panel hover-glow">
-              <ProfileBadges
-                badges={xpStats.badges}
-                badgeProgress={xpStats.badgeProgress}
-              />
-            </div>
+            <div style={styles.glassSection} className="glass-panel weekly-shimmer-container">
+                <div className="shimmer-anim" style={styles.shimmerOverlay}></div>
+                <ProfileBadges
+                  badges={xpStats.badges}
+                  badgeProgress={xpStats.badgeProgress}
+                />
+              </div>
+
           </div>
         </div>
 
