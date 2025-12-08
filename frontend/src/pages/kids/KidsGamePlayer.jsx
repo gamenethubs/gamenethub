@@ -8,7 +8,7 @@ import { rateGame } from "../../services/gameActions";
 import { useAuth } from "../../context/AuthContext";
 
 import "../../assets/css/kidsGamePlayer.css";
-import GameDetail  from "../GameDetail.jsx";
+
 
 
 import {  useRef } from "react";
@@ -30,13 +30,13 @@ const statCard = {
 
 const { isAuthenticated, user, updateUser } = useAuth();
 const [userRating, setUserRating] = useState(null);
-
 const handleRating = async (stars) => {
   if (!isAuthenticated) return alert("Please login to rate!");
 
-  try {
-    setUserRating(stars); // ✅ INSTANT UI UPDATE (important)
+  // ✅ ✅ UI KO TURANT UPDATE KARO (MOST IMPORTANT LINE)
+  setUserRating(stars);
 
+  try {
     const res = await rateGame(game._id, stars);
 
     updateUser({
@@ -63,8 +63,24 @@ const handleRating = async (stars) => {
 };
 
 
-
   const [game, setGame] = useState(null);
+  useEffect(() => {
+  const interval = setInterval(() => {
+    const buttons = document.querySelectorAll("button");
+
+    buttons.forEach(btn => {
+      const text = btn.innerText?.toLowerCase() || "";
+      const label = btn.getAttribute("aria-label")?.toLowerCase() || "";
+
+      if (text.includes("reload") || label.includes("reload")) {
+        btn.remove(); // ✅ PERMANENT DELETE
+      }
+    });
+  }, 300);
+
+  return () => clearInterval(interval);
+}, []);
+
 useEffect(() => {
   const move = (e) => {
     const x = (e.clientX / window.innerWidth - 0.5) * 10;
@@ -88,29 +104,64 @@ useEffect(() => {
       setGame(found);
     }
     load();
-    let rating = null;
-if (game && isAuthenticated && user) {
+   
+
+
+  }, [slug]);
+  useEffect(() => {
+  if (!game || !isAuthenticated || !user) return;
+
+  // ✅ ✅ ✅ THIS LINE BLOCKS OLD OVERRIDE
+  if (userRating !== null) return;
+
+  let rating = null;
+
   const uRate = game.ratings?.find(
     (r) =>
       String(r.user?._id || r.user) ===
       String(user.id || user._id)
   );
   if (uRate) rating = uRate.stars;
-}
 
-if (!rating && user?.ratedGames) {
-  const fromUser = user.ratedGames.find(
-    (x) => String(x.game) === String(game?._id)
-  );
-  if (fromUser) rating = fromUser.stars;
-}
+  if (!rating && user?.ratedGames) {
+    const fromUser = user.ratedGames.find(
+      (x) => String(x.game) === String(game._id)
+    );
+    if (fromUser) rating = fromUser.stars;
+  }
 
-setUserRating(rating ?? null);
+  setUserRating(rating ?? null);
+}, [game, isAuthenticated, user, userRating]);
 
-  }, [slug]);
 
   if (!game) return null;
 
+const playBackSound = () => {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+  const osc1 = ctx.createOscillator();
+  const osc2 = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc1.type = "triangle";
+  osc2.type = "sine";
+
+  osc1.frequency.value = 420;
+  osc2.frequency.value = 160;
+
+  gain.gain.value = 0.18;
+
+  osc1.connect(gain);
+  osc2.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc1.start();
+  osc2.start();
+
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+  osc1.stop(ctx.currentTime + 0.35);
+  osc2.stop(ctx.currentTime + 0.35);
+};
 
 
   return (
@@ -129,7 +180,10 @@ setUserRating(rating ?? null);
       {/* ✅ BACK */}
       <button
         className="kids-player-back"
-        onClick={() => navigate("/kids/brain-lab")}
+        onClick={() => {
+          playBackSound();
+          setTimeout(() => navigate("/kids/brain-lab"), 200);
+        }}
       >
         ⬅ Back to Kids World
       </button>

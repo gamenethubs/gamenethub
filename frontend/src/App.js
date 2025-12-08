@@ -44,6 +44,9 @@ import AnalyticsTracker from "./components/AnalyticsTracker";
 
 import KidsThemeParkHub from "./pages/KidsThemeParkHub.jsx"; // ⭐ ADDED
 import BrainLab from "./pages/worlds/BrainLabWorld.jsx";
+import SkillCircusWorld from "./pages/worlds/SkillCircusWorld.jsx";
+import MathLandWorld from "./pages/worlds/MathLandWorld.jsx";
+import RacingCityWorld from "./pages/worlds/RacingCityWorld.jsx";
 
 import KidsGamePlayer from "./pages/kids/KidsGamePlayer";
 import PublicProfile from "./pages/PublicProfile.jsx";
@@ -194,6 +197,11 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/kids" element={<KidsThemeParkHub />} />
             <Route path="/kids/brain-lab" element={<BrainLab />} />
+            <Route path="/kids/skill-circus" element={<SkillCircusWorld />} />
+             <Route path="/kids/racing-city" element={<RacingCityWorld />} />
+              <Route path="/kids/math-land" element={<MathLandWorld/>} />
+
+
             <Route path="/kids/game/:slug" element={<KidsGamePlayer />} />
 
             {/* Admin Routes */}

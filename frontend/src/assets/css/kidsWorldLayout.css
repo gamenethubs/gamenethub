@@ -41,8 +41,8 @@
 }
 
 .kids-world-mascot img:hover {
-  transform: scale(1.1) rotate(-3deg);
-  filter: drop-shadow(0 0 45px gold);
+  transform: scale(1.12) rotate(-3deg);
+  filter: drop-shadow(0 0 65px gold) drop-shadow(0 0 35px hotpink);
 }
 
 @keyframes float {
@@ -54,21 +54,39 @@
 /* 🧠 TITLE */
 .kids-world-title {
   color: white;
-  font-size: 36px;
+  font-size: 38px;
   font-weight: 900;
-  margin-top: 18px;
+  margin-top: 20px;
   text-align: center;
-  text-shadow: 0 0 22px cyan;
-  z-index: 2;
+  text-shadow:
+    0 0 8px cyan,
+    0 0 22px cyan,
+    0 0 42px deepskyblue;
+  z-index: 3;
+  animation: glowPulse 2.5s infinite alternate;
 }
 
 .kids-world-title span {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: #ffe066;
   display: block;
-  margin-top: 4px;
+  margin-top: 6px;
+  letter-spacing: 1px;
+  animation: trainGlow 2s infinite alternate;
 }
+
+/* ✨ TITLE ANIMATIONS */
+@keyframes glowPulse {
+  from { text-shadow: 0 0 12px cyan; }
+  to   { text-shadow: 0 0 35px deepskyblue; }
+}
+
+@keyframes trainGlow {
+  from { color: #ffe066; text-shadow: 0 0 10px gold; }
+  to   { color: #fff2b2; text-shadow: 0 0 22px orange; }
+}
+
 
 /* 🎮 GAME GRID */
 .kids-world-grid {
@@ -85,26 +103,53 @@
   position: relative;
   cursor: pointer;
   transition: 0.25s ease;
+  
 }
 
 .world-game-wrap:hover {
   transform: scale(1.06);
   z-index: 5;
+  
 }
 
 /* 🔙 BACK BUTTON */
 .kids-world-back-btn {
   position: fixed;
-  top: 25px;
+  top: 18px;
   left: 18px;
-  z-index: 100000;
-  background: linear-gradient(135deg, #ffdd55, #ff99cc);
-  color: #000;
-  padding: 12px 22px;
+
+  background: linear-gradient(135deg, #22d3ee, #a855f7, #f472b6);
+  color: black;
+  box-shadow:
+    0 0 30px rgba(34,211,238,0.7),
+    0 0 60px rgba(168,85,247,0.6);
+  transition: 0.4s ease;
+  border: none;
+  padding: 12px 26px;
   border-radius: 999px;
   font-weight: 900;
-  text-decoration: none;
-  box-shadow: 0 0 25px gold;
+  cursor: pointer;
+
+   z-index: 10;
+}
+.kids-world-back-btn:hover {
+  background: linear-gradient(135deg, #facc15, #fb7185, #8b5cf6);
+  color: #000;
+
+  box-shadow:
+    0 0 20px rgba(250,204,21,0.9),
+    0 0 45px rgba(251,113,133,0.7),
+    0 0 75px rgba(139,92,246,0.8);
+
+  transform: scale(1.08) translateY(-2px);
+}
+
+/* ✅ Click / Press effect */
+.kids-world-back-btn:active {
+  transform: scale(0.95);
+  box-shadow:
+    0 0 10px rgba(250,204,21,0.6),
+    0 0 25px rgba(139,92,246,0.6);
 }
 
 /* 📱 MOBILE */
@@ -184,5 +229,48 @@
     gap: 8px;
   }
 
+}
+
+/* ✨ SPARK BURST EFFECT */
+.spark-burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.spark {
+  position: absolute;
+  width: 14px;              /* ✅ BIG SIZE */
+  height: 14px;             /* ✅ BIG SIZE */
+  background: radial-gradient(
+    circle,
+    #ffffff,
+    #fde047,
+    #f472b6,
+    #a855f7
+  );
+  border-radius: 50%;
+  animation: sparkExplosion 800ms ease-out forwards;
+  box-shadow:
+    0 0 14px #fff,
+    0 0 28px #facc15,
+    0 0 45px #f472b6,
+    0 0 60px #a855f7;
+}
+
+@keyframes sparkExplosion {
+  0% {
+    transform: translate(0, 0) scale(1.1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x), var(--y)) scale(0.25);
+    opacity: 0;
+  }
 }
 
