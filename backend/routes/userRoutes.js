@@ -29,6 +29,6 @@ router.get("/search", protect, searchUsers);
 /************************************
  * 🔹 GET PUBLIC PROFILE BY USERNAME
  ************************************/
-router.get("/:username", getPublicProfile);
+router.get("/:username", protect, getPublicProfile);
 
 export default router;
