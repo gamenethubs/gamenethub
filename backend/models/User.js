@@ -137,6 +137,7 @@ const userSchema = new mongoose.Schema(
       sparse: true,
       trim: true,
       lowercase: true,
+      index: true,
       match: /^[a-zA-Z0-9_]{3,30}$/,
     },
 
