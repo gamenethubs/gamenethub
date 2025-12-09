@@ -27,8 +27,21 @@ export default function ProfileBadges({ badges = [], badgeProgress = [] }) {
   }
 
   return (
+     <>
+    <style>
+      {`
+        @keyframes pulseSlow {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
+        }
+      `}
+    </style>
     <div style={styles.wrap}>
-      <h3 style={styles.title}>🏅 Your Badges</h3>
+      <div style={styles.weeklyHeader}>
+  <span style={styles.weeklyIcon}>🏅</span>
+  <span style={styles.weeklyTitle}>Your Badges</span>
+</div>
+
 
       <div style={styles.grid} className="badge-grid">
         {finalList.map((b, i) => (
@@ -43,12 +56,15 @@ export default function ProfileBadges({ badges = [], badgeProgress = [] }) {
               boxShadow: b.unlocked
                 ? "0 0 12px rgba(255,215,0,0.35)"
                 : "none",
+                 background: "rgba(0,0,0,0.3)",
+
             }}
           >
             <img
               src={b.icon || "/badges/default.png"}
               alt={b.name}
               style={styles.icon}
+              
             />
 
             <div style={styles.info}>
@@ -80,6 +96,7 @@ export default function ProfileBadges({ badges = [], badgeProgress = [] }) {
         ))}
       </div>
     </div>
+      </>
   );
 }
 
@@ -105,6 +122,7 @@ const styles = {
     display: "grid",
     gap: 16,
     gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+    background: "rgba(0,0,0,0.3)",
   },
 
   card: {
@@ -123,7 +141,10 @@ const styles = {
     height: 60,
     marginBottom: 10,
     objectFit: "contain",
+    animation: "pulseSlow 2s ease-in-out infinite",
+
   },
+ 
 
   info: { color: "#cfe8ff" },
 
@@ -163,4 +184,22 @@ const styles = {
     fontSize: 12,
     color: "#e6f0ff",
   },
+  weeklyHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    position: "relative",
+    zIndex: 1,
+  },
+  weeklyIcon: {
+    fontSize: 20,
+    filter: "drop-shadow(0 0 8px rgba(250, 204, 21, 0.6))",
+  },
+  weeklyTitle: {
+    fontSize: 16,
+    fontWeight: 700,
+    color: "#fff",
+    letterSpacing: "0.5px",
+  }
 };
+

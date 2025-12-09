@@ -1050,7 +1050,7 @@ export default function Profile() {
 
               <button
                 style={styles.secondaryButton}
-                className="glass-btn"
+                className="share-glass-btn"
                 onClick={() => setShareOpen(true)}
               >
                 <span>Share Profile</span>
@@ -1081,7 +1081,7 @@ export default function Profile() {
                     target="_blank"
                     rel="noreferrer"
                     style={styles.socialLink}
-                    className="social-hover"
+                    className="social-tech-hover"
                   >
                     <span style={styles.socialIconWrapper}>{s.icon}</span>
                     <span style={styles.socialLabel}>{s.label}</span>
@@ -1124,6 +1124,7 @@ export default function Profile() {
             <div style={styles.glassSection} className="glass-panel weekly-shimmer-container">
                 <div className="shimmer-anim" style={styles.shimmerOverlay}></div>
                 <ProfileBadges
+                  
                   badges={xpStats.badges}
                   badgeProgress={xpStats.badgeProgress}
                 />
@@ -1570,6 +1571,7 @@ const styles = {
     marginTop: 12,
     transition: "all 0.3s ease",
   },
+  
   btnIcon: {
     opacity: 0.8,
   },
@@ -1613,7 +1615,11 @@ const styles = {
   glassSection: {
     borderRadius: 24,
     padding: 24,
-    border: "1px solid rgba(255,255,255,0.08)",
+    border: "1px solid rgba(56, 189, 248, 0.2)", // Cyan tint
+    background: "rgba(15, 23, 42, 0.4)",
+
+    backdropFilter: "blur(12px)",
+    boxShadow: "0 0 20px rgba(56, 189, 248, 0.05)",
   },
   // --- NEW WEEKLY CHALLENGE CARD ---
   weeklyCard: {
@@ -2021,6 +2027,7 @@ const modalStyles = {
     padding: 12,
     borderRadius: 8,
   },
+  
 };
 
 // ------------------- GLOBAL RESPONSIVE STYLES -------------------
@@ -2057,6 +2064,7 @@ const responsiveStyles = `
 .glass-btn:hover {
   background: rgba(255,255,255,0.08);
   border-color: rgba(255,255,255,0.2);
+  
 }
 
 .danger-btn:hover {
@@ -2117,6 +2125,241 @@ input:focus, textarea:focus {
   .fav-grid { grid-template-columns: 1fr !important; }
   .header-row { flex-direction: column; align-items: flex-start; gap: 10px; }
 }
+  /* --- 1. PREMIUM BUTTON (Edit Profile) --- */
+/* Liquid Shimmer & Lift */
+.premium-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.premium-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transition: 0.5s;
+}
+.premium-btn:hover::after {
+  left: 100%;
+}
+.premium-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.6), inset 0 1px 0 rgba(255,255,255,0.3);
+  letter-spacing: 0.5px; /* Premium expansion */
+}
+.premium-btn:active { transform: scale(0.98); }
+
+/* ============================= */
+/* 🔥 UNIVERSAL PREMIUM HOVER FX */
+/* ============================= */
+
+.premium-btn,
+.share-glass-btn,
+.danger-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ---- SHIMMER SWEEP FOR ALL MAIN BUTTONS ---- */
+.premium-btn::after,
+.share-glass-btn::after,
+.danger-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 120%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transition: 0.6s ease;
+}
+
+.premium-btn:hover::after,
+.share-glass-btn:hover::after,
+.danger-btn:hover::after {
+  left: 120%;
+}
+
+/* ---- LIFT + GLOW ---- */
+.premium-btn:hover,
+.share-glass-btn:hover,
+.danger-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* ============================= */
+/* ✅ EDIT PROFILE (Already Good) */
+/* ============================= */
+.premium-btn:hover {
+  box-shadow: 
+    0 10px 30px rgba(37, 99, 235, 0.55),
+    inset 0 1px 0 rgba(255,255,255,0.35);
+  letter-spacing: 0.6px;
+}
+
+.premium-btn:active {
+  transform: scale(0.96);
+}
+
+/* ============================= */
+/* ✅ SHARE PROFILE — SAME POWER */
+/* ============================= */
+.share-glass-btn:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.25),
+    rgba(139, 92, 246, 0.25)
+  ) !important;
+
+  border-color: rgba(139, 92, 246, 0.6) !important;
+
+  box-shadow: 
+    0 0 28px rgba(139, 92, 246, 0.55),
+    inset 0 1px 0 rgba(255,255,255,0.35);
+
+  color: #fff !important;
+  letter-spacing: 0.6px;
+}
+
+.share-glass-btn:active {
+  transform: scale(0.96);
+}
+
+/* ============================= */
+/* ✅ DISCONNECT — NUCLEAR MODE */
+/* ============================= */
+.danger-btn:hover {
+  background: linear-gradient(
+    135deg,
+    #dc2626,
+    #991b1b
+  ) !important;
+
+  border-color: #ef4444 !important;
+
+  box-shadow: 
+    0 0 35px rgba(220, 38, 38, 0.75),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+
+  color: #fff !important;
+  letter-spacing: 0.8px;
+}
+
+.danger-btn:active {
+  transform: scale(0.95);
+}
+
+/* ============================= */
+/* 🔥 CONNECTIVITY / SOCIAL BTNS */
+/* ============================= */
+.social-tech-hover {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.social-tech-hover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(56, 189, 248, 0.18),
+    transparent
+  );
+  opacity: 0;
+  transition: 0.4s ease;
+}
+
+.social-tech-hover:hover::before {
+  opacity: 1;
+}
+
+.social-tech-hover:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.96),
+    rgba(15, 23, 42, 0.75)
+  );
+
+  border-color: rgba(56, 189, 248, 0.5);
+  border-left-color: #38bdf8;
+  border-left-width: 4px;
+
+  padding-left: 20px;
+  transform: translateX(6px);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.18);
+}
+
+.social-tech-hover:hover .social-label {
+  color: #fff;
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+}
+
+.social-tech-hover .social-icon-wrapper {
+  transition: transform 0.3s ease;
+}
+
+.social-tech-hover:hover .social-icon-wrapper {
+  transform: scale(1.15) rotate(-5deg);
+}
+  /* 🔥 XP CARD FLOAT ANIMATION */
+@keyframes xpFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* 🔥 XP PROGRESS BAR PREMIUM GLOW */
+.xp-progress-bar {
+  background: linear-gradient(
+    90deg,
+    #22d3ee,
+    #3b82f6,
+    #8b5cf6
+  ) !important;
+  box-shadow:
+    0 0 10px rgba(56, 189, 248, 0.8),
+    0 0 20px rgba(139, 92, 246, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.xp-progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.35),
+    transparent
+  );
+  animation: xpShine 3s infinite linear;
+}
+
+@keyframes xpShine {
+  100% { left: 120%; }
+}
+
+
 `;
 
 const styleElement = document.createElement("style");
