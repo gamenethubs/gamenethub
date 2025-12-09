@@ -33,6 +33,20 @@ export default function FriendsModal({ visible, onClose, user }) {
 
   const PAGE_SIZE = 6;
   const norm = (id) => (id === undefined || id === null ? id : id.toString());
+  const extractId = (obj) =>
+  norm(
+    obj?.id ||
+    obj?._id ||
+    obj?.from?.id ||
+    obj?.from?._id ||
+    obj?.fromId ||
+    obj?.user?.id ||
+    obj?.user?._id ||
+    obj?.to?.id ||
+    obj?.to?._id ||
+    obj?.toId
+  );
+
 
   const loadFriendsList = async () => {
     setLoadingFriends(true);
@@ -54,9 +68,19 @@ export default function FriendsModal({ visible, onClose, user }) {
       if (!isMountedRef.current) return;
       const me = res.data?.user || res.data;
 
+      // const inc = new Set(
+      //   (me?.incomingRequests || []).map((r) => norm(r.from || r.fromId || r.from?._id)).filter(Boolean)
+      // );
       const inc = new Set(
-        (me?.incomingRequests || []).map((r) => norm(r.from || r.fromId || r.from?._id)).filter(Boolean)
-      );
+  (me?.incomingRequests || []).map((r) =>
+    norm(
+      r.fromId ||
+      r.from?._id ||
+      r.from?.id
+    )
+  ).filter(Boolean)
+);
+
       const out = new Set(
         (me?.outgoingRequests || []).map((r) => norm(r.to || r.toId || r.to?._id)).filter(Boolean)
       );
@@ -408,7 +432,8 @@ const onFriendRequestReceived = (e) => {
     const from = payload?.from;
     
     // 1. Check if 'from' is a mini-user object and get its ID
-    const id = norm(from?.id || from?._id); 
+    // const id = norm(from?.id || from?._id); 
+    const id = extractId(from);
 
     if (!id) {
         // 🛑 LOG 2: If ID is missing, we need to know why
@@ -430,7 +455,9 @@ const onFriendRequestAccepted = (e) => {
   
   const payload = e.detail || e;
   const user = payload?.user; 
-  const id = norm(user?.id || user?._id); 
+//   const id = norm(user?.id || user?._id); 
+const id = extractId(user);
+
 
   if (!id) {
     console.warn("FR Accepted: ID missing in payload:", payload);
@@ -454,7 +481,10 @@ const onFriendRequestRejected = (e) => {
 
   const payload = e.detail || e;
   // Rejected event usually sends a simple fromId or id
-  const id = norm(payload?.fromId || payload?.id); 
+//   const id = norm(payload?.fromId || payload?.id); 
+const id = extractId(payload.fromId || payload);
+
+
 
   if (!id) {
     console.warn("FR Rejected: ID missing in payload:", payload);
@@ -562,15 +592,43 @@ const onFriendRequestRejected = (e) => {
           return true;
         });
 
+        // const annotated = list.map((u) => {
+        //   const id = norm(u._id);
+        //   let status = "none";
+        //   if (id && friendIds.has(id)) status = "friend";
+        //   else if (id && incomingIds.has(id)) status = "incoming";
+        //   else if (id && outgoingIds.has(id)) status = "outgoing";
+        //   if (id && optimisticSent.has(id)) status = "outgoing";
+        //   return { ...u, _status: status };
+        // });
+
         const annotated = list.map((u) => {
-          const id = norm(u._id);
-          let status = "none";
-          if (id && friendIds.has(id)) status = "friend";
-          else if (id && incomingIds.has(id)) status = "incoming";
-          else if (id && outgoingIds.has(id)) status = "outgoing";
-          if (id && optimisticSent.has(id)) status = "outgoing";
-          return { ...u, _status: status };
-        });
+  const id = extractId(u);
+ // ⭐ DEBUG LOG — add this
+  console.log("CHECK USER STATUS:", {
+    username: u.username, 
+    id,
+    incomingIds: Array.from(incomingIds),
+    incoming: incomingIds.has(id),
+    outgoing: outgoingIds.has(id),
+    friend: friendIds.has(id),
+  });
+
+  let status = "none";
+
+  if (friendIds.has(id)) {
+    status = "friend";
+  } 
+  else if (incomingIds.has(id)) {
+    status = "incoming";  // ⭐ Receiver will now properly see ACCEPT / REJECT
+  } 
+  else if (outgoingIds.has(id) || optimisticSent.has(id)) {
+    status = "outgoing";  // Sent / Cancel
+  }
+
+  return { ...u, _status: status };
+});
+
 
         setSearchResults(annotated);
       } catch (err) {
