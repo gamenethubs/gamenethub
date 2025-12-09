@@ -12,7 +12,7 @@ export default function ProfileXPCard({ xp, level, xpNeeded, progress }) {
       </div>
 
       <div style={progressWrapper}>
-        <div style={{ ...progressFill, width: `${rounded}%` }}></div>
+        <div  className="xp-progress-bar" style={{ ...progressFill, width: `${rounded}%` }}></div>
       </div>
 
       <div style={percentText}>{rounded}% Complete</div>
