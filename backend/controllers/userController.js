@@ -737,8 +737,13 @@ export const getPublicProfile = async (req, res) => {
       const targetId = user._id.toString();
 
       if (myFriendIds.includes(targetId)) relationship = "friend";
-      else if ((me?.outgoingRequests || []).some(r => r.to?.toString() === targetId)) relationship = "outgoing";
-      else if ((me?.incomingRequests || []).some(r => r.from?.toString() === targetId)) relationship = "incoming";
+      else if ((me?.outgoingRequests || []).some(r => r.to?._id?.toString() === targetId)) {
+    relationship = "outgoing";
+}
+else if ((me?.incomingRequests || []).some(r => r.from?._id?.toString() === targetId)) {
+    relationship = "incoming";
+}
+
 
       // mutual friends: intersection of viewer's friends and target's friends
       mutualFriends = (user.friends || [])
