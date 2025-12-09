@@ -729,20 +729,32 @@ export const getPublicProfile = async (req, res) => {
     let mutualFriends = [];
 
     if (viewerId) {
-      const me = await User.findById(viewerId)
-        .select("friends incomingRequests outgoingRequests")
-        .lean();
+  const me = await User.findById(viewerId)
+    .select("friends incomingRequests outgoingRequests")
+    .lean();
 
-      const myFriendIds = (me?.friends || []).map(f => f.toString());
-      const targetId = user._id.toString();
+  const myFriendIds = (me?.friends || []).map(f => f.toString());
+  const targetId = user._id.toString();
 
-      if (myFriendIds.includes(targetId)) relationship = "friend";
-      else if ((me?.outgoingRequests || []).some(r => r.to?._id?.toString() === targetId)) {
+  // FRIEND
+  if (myFriendIds.includes(targetId)) {
+    relationship = "friend";
+  }
+
+  // OUTGOING (YOU sent request to them)
+  else if ((me?.outgoingRequests || []).some(r =>
+    r.to?.toString() === targetId
+  )) {
     relationship = "outgoing";
-}
-else if ((me?.incomingRequests || []).some(r => r.from?._id?.toString() === targetId)) {
+  }
+
+  // INCOMING (THEY sent request to YOU)
+  else if ((me?.incomingRequests || []).some(r =>
+    r.from?.toString() === targetId
+  )) {
     relationship = "incoming";
-}
+  }
+
 
 
       // mutual friends: intersection of viewer's friends and target's friends
