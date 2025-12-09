@@ -730,30 +730,30 @@ export const getPublicProfile = async (req, res) => {
 
     if (viewerId) {
   const me = await User.findById(viewerId)
-    .select("friends incomingRequests outgoingRequests")
-    .lean();
+  .select("friends incomingRequests outgoingRequests")
+  .lean();
 
-  const myFriendIds = (me?.friends || []).map(f => f.toString());
-  const targetId = user._id.toString();
+// Friends are ObjectIds, but lean() gives plain objects
+const myFriendIds = (me?.friends || []).map(f => {
+  if (!f) return null;
 
-  // FRIEND
-  if (myFriendIds.includes(targetId)) {
-    relationship = "friend";
-  }
+  // If f is populated → f._id exists
+  if (f._id) return f._id.toString();
 
-  // OUTGOING (YOU sent request to them)
-  else if ((me?.outgoingRequests || []).some(r =>
-    r.to?.toString() === targetId
-  )) {
-    relationship = "outgoing";
-  }
+  // If f is plain ObjectId → f.toString()
+  return f.toString();
+});
 
-  // INCOMING (THEY sent request to YOU)
-  else if ((me?.incomingRequests || []).some(r =>
-    r.from?.toString() === targetId
-  )) {
-    relationship = "incoming";
-  }
+const outgoingIds = (me?.outgoingRequests || []).map(r => {
+  if (!r?.to) return null;
+  return r.to._id?.toString?.() || r.to.toString();
+});
+
+const incomingIds = (me?.incomingRequests || []).map(r => {
+  if (!r?.from) return null;
+  return r.from._id?.toString?.() || r.from.toString();
+});
+
 
 
 
