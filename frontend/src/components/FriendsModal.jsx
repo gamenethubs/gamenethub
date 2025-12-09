@@ -1,33 +1,10 @@
+
 // src/components/FriendsModal.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../services/api"; // your axios instance
+import API from "../services/api";
 import ShareProfileModal from "./ShareProfileModal";
-import { useSocket } from "../context/SocketContext"; // <-- use global socketRef
-
-/**
- * FriendsModal (upgraded)
- *
- * Props:
- * - visible (bool)
- * - onClose (fn)
- * - user (object) current user from auth context
- *
- * Notes:
- * - Relies on backend routes you already have:
- *    GET  /api/friends/list           -> { online: [], offline: [] }
- *    GET  /api/users/me               -> { user: ... } (to get incoming/outgoing/friends easily)
- *    GET  /api/users/search?q=...
- *    POST /api/friends/request        -> { message }
- *    POST /api/friends/request/cancel
- *    POST /api/friends/request/accept
- *    POST /api/friends/request/reject
- *    POST /api/friends/remove
- *
- * - SocketContext (global) provides a socketRef (React ref) via useSocket()
- * - We attach listeners to socketRef.current when available — but we DON'T create or disconnect the socket here.
- * - We also listen to window CustomEvents (emitted by SocketProvider) as a safe fallback.
- */
+import { useSocket } from "../context/SocketContext";
 
 export default function FriendsModal({ visible, onClose, user }) {
   const navigate = useNavigate();
@@ -41,37 +18,23 @@ export default function FriendsModal({ visible, onClose, user }) {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchPage, setSearchPage] = useState(1);
 
-  // track incoming/outgoing for current user (ids)
   const [incomingIds, setIncomingIds] = useState(new Set());
   const [outgoingIds, setOutgoingIds] = useState(new Set());
   const [friendIds, setFriendIds] = useState(new Set());
 
-  // optimistic sent requests set (for immediate UI)
   const [optimisticSent, setOptimisticSent] = useState(new Set());
-
   const [showShare, setShowShare] = useState(false);
 
-  // use global socketRef from context (value is a ref)
-  const socketRef = useSocket(); // this is a React ref object (provided by SocketProvider)
-  // note: socketRef.current may be null initially
+  const socketRef = useSocket();
 
   const containerRef = useRef(null);
-
-  // used to prevent setting state after unmount
   const isMountedRef = useRef(true);
-
-  // used to abort previous search requests
   const searchAbortRef = useRef(null);
 
   const PAGE_SIZE = 6;
-
-  // Helper to normalize id to string (safe)
   const norm = (id) => (id === undefined || id === null ? id : id.toString());
 
-  // ---------- Helpers to refresh server state ----------
   const loadFriendsList = async () => {
-    // Do not clear the current lists here to avoid UI flicker.
-    // Show loading indicator but keep previous lists until fresh data arrives.
     setLoadingFriends(true);
     try {
       const res = await API.get("/friends/list");
@@ -80,28 +43,22 @@ export default function FriendsModal({ visible, onClose, user }) {
       setOffline(res.data.offline || []);
     } catch (err) {
       console.error("Failed to load friends list:", err);
-      // Do not aggressively clear lists on error — keep previous to avoid flicker.
     } finally {
       if (isMountedRef.current) setLoadingFriends(false);
     }
   };
 
   const loadMyRequestsAndFriends = async () => {
-    // GET /api/users/me returns req.user from backend (without password)
     try {
       const res = await API.get("/users/me");
       if (!isMountedRef.current) return;
       const me = res.data?.user || res.data;
-      // normalize arrays to sets of strings
+
       const inc = new Set(
-        (me?.incomingRequests || [])
-          .map((r) => norm(r.from || r.fromId || r.from?._id))
-          .filter(Boolean)
+        (me?.incomingRequests || []).map((r) => norm(r.from || r.fromId || r.from?._id)).filter(Boolean)
       );
       const out = new Set(
-        (me?.outgoingRequests || [])
-          .map((r) => norm(r.to || r.toId || r.to?._id))
-          .filter(Boolean)
+        (me?.outgoingRequests || []).map((r) => norm(r.to || r.toId || r.to?._id)).filter(Boolean)
       );
       const frs = new Set((me?.friends || []).map((f) => norm(f)).filter(Boolean));
 
@@ -110,33 +67,26 @@ export default function FriendsModal({ visible, onClose, user }) {
       setFriendIds(frs);
     } catch (err) {
       console.error("Failed to load my profile data:", err);
-      // keep previous sets instead of clearing — safer UX
     }
   };
 
-  // Reset modal-local state when opened or when user changes.
   useEffect(() => {
     if (!visible) return;
 
-    // Clear search + optimistic to avoid showing previous user's data after logout/login.
     setSearchTerm("");
     setSearchResults([]);
     setSearchPage(1);
     setSearchLoading(false);
     setOptimisticSent(new Set());
-
-    // Reset request/friend tracking and reload fresh state.
     setIncomingIds(new Set());
     setOutgoingIds(new Set());
     setFriendIds(new Set());
 
     loadFriendsList();
     loadMyRequestsAndFriends();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, user?._id]);
 
-  // Keep isMountedRef updated
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
@@ -144,105 +94,448 @@ export default function FriendsModal({ visible, onClose, user }) {
     };
   }, []);
 
-  // --------- Realtime: listen to global socketRef.current and window events ----------
-  // --------- Realtime: listen to global socketRef.current and window events ----------
+  // Realtime listeners
+//   useEffect(() => {
+//     if (!visible) return;
+
+//     const main = socketRef?.current?.main || null;
+//     const presence = socketRef?.current?.presence || null;
+
+//     const onFriendRequestReceived = (payload) => {
+//       const data = payload?.detail ?? payload;
+//       const from = data?.from || data;
+//       const id = norm(from?._id || from?.id || from);
+//       if (!id) return;
+
+//       setIncomingIds((prev) => {
+//         const clone = new Set(Array.from(prev));
+//         clone.add(id);
+//         return clone;
+//       });
+//     };
+
+//     const onFriendRequestAccepted = (payload) => {
+//       const data = payload?.detail ?? payload;
+//       const u = data?.user || data;
+//       const id = norm(u?._id || u?.id || u);
+//       if (!id) return;
+
+//       setOutgoingIds((prev) => {
+//         const clone = new Set(Array.from(prev));
+//         clone.delete(id);
+//         return clone;
+//       });
+//       setFriendIds((prev) => {
+//         const clone = new Set(Array.from(prev));
+//         clone.add(id);
+//         return clone;
+//       });
+
+//       // Keep lists correct
+//       loadFriendsList();
+//       loadMyRequestsAndFriends();
+//       // Also remove optimistic
+//       setOptimisticSent((s) => {
+//         const clone = new Set(Array.from(s));
+//         clone.delete(id);
+//         return clone;
+//       });
+//     };
+
+//     const onFriendRequestRejected = (payload) => {
+//       const data = payload?.detail ?? payload;
+//       const id = norm(data?.fromId || data?.id || data);
+//       if (!id) return;
+
+//       setOutgoingIds((prev) => {
+//         const clone = new Set(Array.from(prev));
+//         clone.delete(id);
+//         return clone;
+//       });
+//       setOptimisticSent((prev) => {
+//         const clone = new Set(Array.from(prev));
+//         clone.delete(id);
+//         return clone;
+//       });
+
+//       loadMyRequestsAndFriends();
+//     };
+
+//     const onRelationshipUpdate = (payload) => {
+//       // relationship might have changed — refresh sets & friends lists
+//       try {
+//         loadMyRequestsAndFriends();
+//         loadFriendsList();
+//       } catch (e) {
+//         console.warn("REL UPDATE", e);
+//       }
+//     };
+
+//     const onFriendsUpdated = () => {
+//       loadFriendsList();
+//       loadMyRequestsAndFriends();
+//     };
+
+//     const onFriendOnline = () => loadFriendsList();
+//     const onFriendOffline = () => loadFriendsList();
+
+//     if (main) {
+//       main.on("friend_request_received", onFriendRequestReceived);
+//       main.on("friend_request_accepted", onFriendRequestAccepted);
+//       main.on("friend_request_rejected", onFriendRequestRejected);
+//       main.on("relationship_update", onRelationshipUpdate);
+//       main.on("friends_updated", onFriendsUpdated);
+//     }
+
+//     if (presence) {
+//       presence.on("friend_online", onFriendOnline);
+//       presence.on("friend_offline", onFriendOffline);
+
+//       // presence also mirrors friend_request events
+//       presence.on("friend_request_received", onFriendRequestReceived);
+//       presence.on("friend_request_accepted", onFriendRequestAccepted);
+//       presence.on("friend_request_rejected", onFriendRequestRejected);
+//     }
+
+//     // window fallback
+//     window.addEventListener("friend_request_received", onFriendRequestReceived);
+//     window.addEventListener("friend_request_accepted", onFriendRequestAccepted);
+//     window.addEventListener("friend_request_rejected", onFriendRequestRejected);
+//     window.addEventListener("relationship_update", onRelationshipUpdate);
+//     window.addEventListener("friends_updated", onFriendsUpdated);
+//     window.addEventListener("friend-online", onFriendOnline);
+//     window.addEventListener("friend-offline", onFriendOffline);
+
+//     return () => {
+//       if (main) {
+//         main.off("friend_request_received", onFriendRequestReceived);
+//         main.off("friend_request_accepted", onFriendRequestAccepted);
+//         main.off("friend_request_rejected", onFriendRequestRejected);
+//         main.off("relationship_update", onRelationshipUpdate);
+//         main.off("friends_updated", onFriendsUpdated);
+//       }
+//       if (presence) {
+//         presence.off("friend_online", onFriendOnline);
+//         presence.off("friend_offline", onFriendOffline);
+//         presence.off("friend_request_received", onFriendRequestReceived);
+//         presence.off("friend_request_accepted", onFriendRequestAccepted);
+//         presence.off("friend_request_rejected", onFriendRequestRejected);
+//       }
+
+//       window.removeEventListener("friend_request_received", onFriendRequestReceived);
+//       window.removeEventListener("friend_request_accepted", onFriendRequestAccepted);
+//       window.removeEventListener("friend_request_rejected", onFriendRequestRejected);
+//       window.removeEventListener("relationship_update", onRelationshipUpdate);
+//       window.removeEventListener("friends_updated", onFriendsUpdated);
+//       window.removeEventListener("friend-online", onFriendOnline);
+//       window.removeEventListener("friend-offline", onFriendOffline);
+//     };
+//   }, [visible, socketRef, user?._id]);
+// Realtime listeners
+// useEffect(() => {
+//   if (!visible) return;
+
+//   const main = socketRef?.current?.main || null;
+//   const presence = socketRef?.current?.presence || null;
+
+// //   const onFriendRequestReceived = (payload) => {
+// //     console.log("🔵 FR Received:", payload);
+
+// //     const data = payload?.detail ?? payload;
+// //     const from = data?.from;
+// //     const id = norm(from?.id);
+
+// //     if (!id) return;
+
+// //     setIncomingIds((prev) => new Set([...prev, id]));
+// //   };
+// const onFriendRequestReceived = (payload) => {
+//   console.log("🔵 FR Received:", payload);
+
+//   const from = payload?.from;
+//   const id = norm(from?.id); // ✔ backend sends {id}
+
+//   if (!id) return;
+
+//   setIncomingIds(prev => new Set([...prev, id]));
+// };
+
+
+// //   const onFriendRequestAccepted = (payload) => {
+// //     console.log("🟢 FR Accepted:", payload);
+
+// //     const data = payload?.detail ?? payload;
+// //     const user = data?.user;
+// //     const id = norm(user?.id);
+
+// //     if (!id) return;
+
+// //     setOutgoingIds((prev) => {
+// //       const next = new Set(prev);
+// //       next.delete(id);
+// //       return next;
+// //     });
+
+// //     setFriendIds((prev) => new Set([...prev, id]));
+
+// //     loadFriendsList();
+// //     loadMyRequestsAndFriends();
+// //   };
+// const onFriendRequestAccepted = (payload) => {
+//   console.log("🟢 FR Accepted:", payload);
+
+//   const user = payload?.user;  // miniUser(user)
+//   const id = norm(user?.id);   // ✔ backend sends {id}
+
+//   if (!id) return;
+
+//   setOutgoingIds(prev => {
+//     const next = new Set(prev);
+//     next.delete(id);
+//     return next;
+//   });
+
+//   setFriendIds(prev => new Set([...prev, id]));
+  
+//   loadFriendsList();
+//   loadMyRequestsAndFriends();
+// };
+
+// //   const onFriendRequestRejected = (payload) => {
+// //     console.log("🔴 FR Rejected:", payload);
+
+// //     const data = payload?.detail ?? payload;
+// //     const id = norm(data?.fromId);
+
+// //     if (!id) return;
+// //     setOutgoingIds((prev) => {
+// //       const next = new Set(prev);
+// //       next.delete(id);
+// //       return next;
+// //     });
+// //   };
+// const onFriendRequestRejected = (payload) => {
+//   console.log("🔴 FR Rejected:", payload);
+
+//   const id = norm(payload?.fromId); // ✔ backend sends fromId
+
+//   if (!id) return;
+
+//   setOutgoingIds(prev => {
+//     const next = new Set(prev);
+//     next.delete(id);
+//     return next;
+//   });
+// };
+
+
+//   const onRelationshipUpdate = () => {
+//     console.log("🟠 Relationship update");
+//     loadFriendsList();
+//     loadMyRequestsAndFriends();
+//   };
+
+//   const onFriendsUpdated = () => {
+//     console.log("🟣 Friends Updated");
+//     loadFriendsList();
+//     loadMyRequestsAndFriends();
+//   };
+
+//   const onFriendOnline = () => loadFriendsList();
+//   const onFriendOffline = () => loadFriendsList();
+
+//   if (main) {
+//     main.on("friend_request_received", onFriendRequestReceived);
+//     main.on("friend_request_accepted", onFriendRequestAccepted);
+//     main.on("friend_request_rejected", onFriendRequestRejected);
+//     main.on("relationship_update", onRelationshipUpdate);
+//     main.on("friends_updated", onFriendsUpdated);
+//   }
+
+//   if (presence) {
+//     presence.on("friend_online", onFriendOnline);
+//     presence.on("friend_offline", onFriendOffline);
+
+//     presence.on("friend_request_received", onFriendRequestReceived);
+//     presence.on("friend_request_accepted", onFriendRequestAccepted);
+//     presence.on("friend_request_rejected", onFriendRequestRejected);
+//   }
+
+//   return () => {
+//     if (main) {
+//       main.off("friend_request_received", onFriendRequestReceived);
+//       main.off("friend_request_accepted", onFriendRequestAccepted);
+//       main.off("friend_request_rejected", onFriendRequestRejected);
+//       main.off("relationship_update", onRelationshipUpdate);
+//       main.off("friends_updated", onFriendsUpdated);
+//     }
+//     if (presence) {
+//       presence.off("friend_online", onFriendOnline);
+//       presence.off("friend_offline", onFriendOffline);
+//       presence.off("friend_request_received", onFriendRequestReceived);
+//       presence.off("friend_request_accepted", onFriendRequestAccepted);
+//       presence.off("friend_request_rejected", onFriendRequestRejected);
+//     }
+//   };
+// }, [visible, socketRef, user?._id]);
+
+// src/components/FriendsModal.jsx
+
+// ... (पुराना कोड)
+
+// Realtime listeners (FIXED: Use window listeners)
 useEffect(() => {
-  if (!visible) return;
+  if (!visible) return;
 
-    const main = socketRef?.current?.main || null;
-  const presence = socketRef?.current?.presence || null;
+  const norm = (id) => (id === undefined || id === null ? id : id.toString());
 
+  // ----------------------------------------------------
+  // HANDLERS (Adjusted to get payload from e.detail)
+  // ----------------------------------------------------
 
+  // This handler is complex because it updates local state (incomingIds, etc.)
+  // src/components/FriendsModal.jsx
 
-  const onFriendRequestReceived = (payload) => {
-    const data = payload?.detail ?? payload;
-    const from = data?.from || data;
-    const id = norm(from?._id || from?.id || from);
+// FriendsModal.jsx (Inside the Realtime listeners useEffect)
 
-    if (!id) return;
-    setIncomingIds((prev) => new Set([...prev, id]));
-  };
+// src/components/FriendsModal.jsx (Inside the Realtime listeners useEffect)
 
-  const onFriendRequestAccepted = (payload) => {
-    const data = payload?.detail ?? payload;
-    const u = data?.user || data;
-    const id = norm(u?._id || u?.id || u);
+const onFriendRequestReceived = (e) => {
+    // 🛑 LOG 1: Check the RAW Event and its structure
+    console.log("🚨 FR_RECEIVED RAW EVENT:", e);
+    
+    const payload = e.detail || e; // Get payload from custom event
+    const from = payload?.from;
+    
+    // 1. Check if 'from' is a mini-user object and get its ID
+    const id = norm(from?.id || from?._id); 
 
-    if (!id) return;
-
-    setOutgoingIds((prev) => new Set([...prev].filter((x) => x !== id)));
-    setFriendIds((prev) => new Set([...prev, id]));
-
-    loadFriendsList();
-  };
-
-  const onFriendRequestRejected = (payload) => {
-    const data = payload?.detail ?? payload;
-    const id = norm(data?.fromId || data?.id || data);
-
-    if (!id) return;
-
-    setOutgoingIds((prev) => new Set([...prev].filter((x) => x !== id)));
-    setOptimisticSent((prev) => new Set([...prev].filter((x) => x !== id)));
-  };
-
-  const onFriendOnline = () => loadFriendsList();
-  const onFriendOffline = () => loadFriendsList();
-
-  // MAIN SOCKET LISTENERS
-  if (main) {
-    main.on("friend_request_received", onFriendRequestReceived);
-    main.on("friend_request_accepted", onFriendRequestAccepted);
-    main.on("friend_request_rejected", onFriendRequestRejected);
-  }
-
-  // PRESENCE SOCKET LISTENERS
-  if (presence) {
-    presence.on("friend_online", onFriendOnline);
-    presence.on("friend_offline", onFriendOffline);
-  }
-
-  // Window fallback
-  window.addEventListener("friend_request_received", onFriendRequestReceived);
-  window.addEventListener("friend_request_accepted", onFriendRequestAccepted);
-  window.addEventListener("friend_request_rejected", onFriendRequestRejected);
-  window.addEventListener("friend-online", onFriendOnline);
-  window.addEventListener("friend-offline", onFriendOffline);
-
-  return () => {
-    if (main) {
-      main.off("friend_request_received", onFriendRequestReceived);
-      main.off("friend_request_accepted", onFriendRequestAccepted);
-      main.off("friend_request_rejected", onFriendRequestRejected);
+    if (!id) {
+        // 🛑 LOG 2: If ID is missing, we need to know why
+        console.warn("❌ FR Received: ID missing in payload:", payload);
+        return;
     }
 
-    if (presence) {
-      presence.off("friend_online", onFriendOnline);
-      presence.off("friend_offline", onFriendOffline);
-    }
-
-    window.removeEventListener("friend_request_received", onFriendRequestReceived);
-    window.removeEventListener("friend_request_accepted", onFriendRequestAccepted);
-    window.removeEventListener("friend_request_rejected", onFriendRequestRejected);
-    window.removeEventListener("friend-online", onFriendOnline);
-    window.removeEventListener("friend-offline", onFriendOffline);
-  };
-}, [visible, socketRef, user?._id]);
+    setIncomingIds(prev => new Set([...prev, id]));
+    loadFriendsList(); 
+    
+    // 🛑 LOG 3: Confirm which ID was successfully added
+    console.log(`✅ FR Received: ID ${id} added to IncomingIds.`);
+};
 
 
 
-  // ---------- Search users (debounced) ----------
+const onFriendRequestAccepted = (e) => {
+  console.log("🟢 FR Accepted:", e);
+  
+  const payload = e.detail || e;
+  const user = payload?.user; 
+  const id = norm(user?.id || user?._id); 
+
+  if (!id) {
+    console.warn("FR Accepted: ID missing in payload:", payload);
+    return;
+  }
+
+  setOutgoingIds(prev => {
+    const next = new Set(prev);
+    next.delete(id);
+    return next;
+  });
+
+  setFriendIds(prev => new Set([...prev, id]));
+  
+  loadFriendsList();
+  loadMyRequestsAndFriends();
+};
+
+const onFriendRequestRejected = (e) => {
+  console.log("🔴 FR Rejected:", e);
+
+  const payload = e.detail || e;
+  // Rejected event usually sends a simple fromId or id
+  const id = norm(payload?.fromId || payload?.id); 
+
+  if (!id) {
+    console.warn("FR Rejected: ID missing in payload:", payload);
+    return;
+  }
+
+  setOutgoingIds(prev => {
+    const next = new Set(prev);
+    next.delete(id);
+    return next;
+  });
+  setOptimisticSent(prev => {
+    const next = new Set(prev);
+    next.delete(id);
+    return next;
+  });
+  
+  loadMyRequestsAndFriends();
+};
+
+
+  const onRelationshipUpdate = () => {
+    console.log("🟠 Relationship update (Window)");
+    loadFriendsList();
+    loadMyRequestsAndFriends();
+  };
+
+  const onFriendsUpdated = () => {
+    console.log("🟣 Friends Updated (Window)");
+    loadFriendsList();
+    loadMyRequestsAndFriends();
+  };
+  
+  // For online/offline, a full list reload is the simplest approach
+  const onPresenceUpdate = () => {
+    loadFriendsList();
+  };
+
+
+  // ----------------------------------------------------
+  // ⭐ THE FIX: Attach Window Listeners ⭐
+  // ----------------------------------------------------
+  window.addEventListener("friend_request_received", onFriendRequestReceived);
+  window.addEventListener("friend_request_accepted", onFriendRequestAccepted);
+  window.addEventListener("friend_request_rejected", onFriendRequestRejected);
+  
+  window.addEventListener("relationship_update", onRelationshipUpdate);
+  window.addEventListener("friends_updated", onFriendsUpdated);
+  
+  // Presence Events (friend-online / friend-offline are the names dispatched by SocketContext)
+  window.addEventListener("friend-online", onPresenceUpdate);
+  window.addEventListener("friend-offline", onPresenceUpdate);
+
+
+  return () => {
+    // ----------------------------------------------------
+    // ⭐ CLEANUP Window Listeners ⭐
+    // ----------------------------------------------------
+    window.removeEventListener("friend_request_received", onFriendRequestReceived);
+    window.removeEventListener("friend_request_accepted", onFriendRequestAccepted);
+    window.removeEventListener("friend_request_rejected", onFriendRequestRejected);
+    
+    window.removeEventListener("relationship_update", onRelationshipUpdate);
+    window.removeEventListener("friends_updated", onFriendsUpdated);
+
+    window.removeEventListener("friend-online", onPresenceUpdate);
+    window.removeEventListener("friend-offline", onPresenceUpdate);
+  };
+}, [visible, user?._id]); // Dependencies remain the same
+
+
+
+  // Search users (debounced)
   useEffect(() => {
     if (!visible) return;
     setSearchPage(1);
 
-    // Clear previous abort if any
     if (searchAbortRef.current) {
       try {
         searchAbortRef.current.abort();
-      } catch (e) {
-        // ignore
-      }
+      } catch {}
       searchAbortRef.current = null;
     }
 
@@ -259,27 +552,22 @@ useEffect(() => {
     const t = setTimeout(async () => {
       try {
         const q = encodeURIComponent(searchTerm.trim());
-        // Include signal to abort if needed
         const res = await API.get(`/users/search?q=${q}`, { signal: controller.signal });
 
         if (!isMountedRef.current) return;
         const list = (res.data || []).filter((u) => {
-          // exclude logged-in user by _id OR username (extra safety)
           if (!u) return false;
           if (user?._id && u._id && u._id.toString() === user._id.toString()) return false;
           if (user?.username && u.username && u.username === user.username) return false;
           return true;
         });
 
-        // Mark each result with computed "status" to simplify UI:
-        // "friend" | "incoming" | "outgoing" | "none"
         const annotated = list.map((u) => {
           const id = norm(u._id);
           let status = "none";
           if (id && friendIds.has(id)) status = "friend";
           else if (id && incomingIds.has(id)) status = "incoming";
           else if (id && outgoingIds.has(id)) status = "outgoing";
-          // optimisticSent overrides outgoing for immediate feedback
           if (id && optimisticSent.has(id)) status = "outgoing";
           return { ...u, _status: status };
         });
@@ -287,7 +575,6 @@ useEffect(() => {
         setSearchResults(annotated);
       } catch (err) {
         if (err?.name === "CanceledError" || err?.name === "AbortError") {
-          // aborted — ignore
         } else {
           console.error("Search failed", err);
           if (isMountedRef.current) setSearchResults([]);
@@ -299,18 +586,14 @@ useEffect(() => {
 
     return () => {
       clearTimeout(t);
-      // abort pending fetch
       try {
         controller.abort();
-      } catch (e) {
-        // ignore
-      }
+      } catch {}
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [searchTerm, incomingIds, outgoingIds, friendIds, optimisticSent, visible]);
 
-  // ---------- Action handlers to call backend and update UI ----------
-
+  // Actions
   const optimisticAddOutgoing = (id) => {
     const sid = norm(id);
     setOptimisticSent((s) => new Set(Array.from(s).concat([sid])));
@@ -332,12 +615,16 @@ useEffect(() => {
   };
 
   const handleSendRequest = async (toUserId) => {
-    if (!toUserId) return;
+    if (!toUserId) {
+         console.error("❌ Send Request Failed: toUserId is missing!"); // <<-- NEW LOG
+         return;
+    }
     const sid = norm(toUserId);
+    console.log("⚠️ SEND REQUEST PAYLOAD:", { toUserId: sid });
     try {
       optimisticAddOutgoing(sid);
       await API.post("/friends/request", { toUserId: sid });
-      // backend will notify receiver via socket — keep outgoing
+      // server will emit and UI will refresh via relationship_update/friends_updated
     } catch (err) {
       console.error("Send request failed:", err);
       removeOptimistic(sid);
@@ -349,15 +636,11 @@ useEffect(() => {
     if (!toUserId) return;
     const sid = norm(toUserId);
     try {
-      // optimistic remove
       removeOptimistic(sid);
       await API.post("/friends/request/cancel", { toUserId: sid });
-      // server removes outgoing/incoming on both sides
-      // refresh my requests to be safe
       await loadMyRequestsAndFriends();
     } catch (err) {
       console.error("Cancel request failed:", err);
-      // revert by reloading my requests
       await loadMyRequestsAndFriends();
       alert(err.response?.data?.message || "Failed to cancel request");
     }
@@ -368,7 +651,6 @@ useEffect(() => {
     const sid = norm(fromUserId);
     try {
       await API.post("/friends/request/accept", { fromUserId: sid });
-      // update sets
       setIncomingIds((s) => {
         const clone = new Set(Array.from(s));
         clone.delete(sid);
@@ -379,8 +661,8 @@ useEffect(() => {
         clone.add(sid);
         return clone;
       });
-      // Refresh friends lists
       await loadFriendsList();
+      await loadMyRequestsAndFriends();
     } catch (err) {
       console.error("Accept request failed:", err);
       alert(err.response?.data?.message || "Failed to accept request");
@@ -397,7 +679,7 @@ useEffect(() => {
         clone.delete(sid);
         return clone;
       });
-      // Also ensure outgoing removed on their side; server handles that
+      await loadMyRequestsAndFriends();
     } catch (err) {
       console.error("Reject request failed:", err);
       alert(err.response?.data?.message || "Failed to reject request");
@@ -414,15 +696,14 @@ useEffect(() => {
         clone.delete(sid);
         return clone;
       });
-      // Refresh displayed friends
       await loadFriendsList();
+      await loadMyRequestsAndFriends();
     } catch (err) {
       console.error("Remove friend failed:", err);
       alert(err.response?.data?.message || "Failed to remove friend");
     }
   };
 
-  // ---------- UI helpers ----------
   const searchActive = searchTerm && searchTerm.trim().length > 0;
   const pagedResults = searchResults.slice(0, searchPage * PAGE_SIZE);
 
@@ -435,19 +716,11 @@ useEffect(() => {
           <div style={{ fontWeight: 800, fontSize: 18, color: "#e6f0ff" }}>Friends</div>
 
           <div style={{ display: "flex", gap: 8 }}>
-            <button
-              style={styles.iconBtn}
-              onClick={() => setShowShare(true)}
-              title="Share profile"
-            >
+            <button style={styles.iconBtn} onClick={() => setShowShare(true)} title="Share profile">
               ↗
             </button>
 
-            <button
-              style={styles.closeBtn}
-              onClick={() => onClose && onClose()}
-              aria-label="Close"
-            >
+            <button style={styles.closeBtn} onClick={() => onClose && onClose()} aria-label="Close">
               ✕
             </button>
           </div>
@@ -456,12 +729,7 @@ useEffect(() => {
         <div style={{ marginTop: 12 }}>
           {/* Search */}
           <div style={styles.searchRow}>
-            <input
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search new or existing friends"
-              style={styles.searchInput}
-            />
+            <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search new or existing friends" style={styles.searchInput} />
             {searchTerm ? (
               <button onClick={() => setSearchTerm("")} style={styles.clearBtn} aria-label="Clear search">
                 ✕
@@ -471,12 +739,7 @@ useEffect(() => {
 
           {/* CTA */}
           <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
-            <button
-              style={styles.playBtn}
-              onClick={() => {
-                window.location.href = "/online-multiplayer";
-              }}
-            >
+            <button style={styles.playBtn} onClick={() => (window.location.href = "/online-multiplayer")}>
               🕹️ Play with friends
             </button>
 
@@ -504,24 +767,9 @@ useEffect(() => {
                       return (
                         <div key={id || u.username} style={styles.listItem}>
                           <div style={styles.listLeft}>
-                            <img
-                              src={u.avatar || "/avatars/default.png"}
-                              alt={u.username}
-                              style={styles.smallAvatar}
-                              onError={(e) => (e.currentTarget.src = "/avatars/default.png")}
-                              onClick={() => {
-  onClose && onClose();
-  navigate(`/user/${encodeURIComponent(u.username)}`);
-}}
-                            />
+                            <img src={u.avatar || "/avatars/default.png"} alt={u.username} style={styles.smallAvatar} onError={(e) => (e.currentTarget.src = "/avatars/default.png")} onClick={() => { onClose && onClose(); navigate(`/user/${encodeURIComponent(u.username)}`); }} />
                             <div>
-                              <div
-                                style={{ fontWeight: 800, color: "#fff", cursor: "pointer" }}
-                                onClick={() => {
-  onClose && onClose();
-  navigate(`/user/${encodeURIComponent(u.username)}`);
-}}
-                              >
+                              <div style={{ fontWeight: 800, color: "#fff", cursor: "pointer" }} onClick={() => { onClose && onClose(); navigate(`/user/${encodeURIComponent(u.username)}`); }}>
                                 {u.username}
                               </div>
                               <div style={{ fontSize: 12, color: "#9fb7d9" }}>{u.name}</div>
@@ -529,45 +777,28 @@ useEffect(() => {
                           </div>
 
                           <div>
-                            {/* Option A: inline actions */}
                             {status === "friend" && (
-                              <button
-                                style={styles.viewBtn}
-                                onClick={() => {
-  onClose && onClose();
-  navigate(`/user/${encodeURIComponent(u.username)}`);
-}}
-                              >
+                              <button style={styles.viewBtn} onClick={() => { onClose && onClose(); navigate(`/user/${encodeURIComponent(u.username)}`); }}>
                                 View
                               </button>
                             )}
 
                             {status === "incoming" && (
                               <div style={{ display: "flex", gap: 8 }}>
-                                <button style={styles.acceptBtn} onClick={() => handleAcceptRequest(id)}>
-                                  Accept
-                                </button>
-                                <button style={styles.rejectBtn} onClick={() => handleRejectRequest(id)}>
-                                  Reject
-                                </button>
+                                <button style={styles.acceptBtn} onClick={() => handleAcceptRequest(id)}>Accept</button>
+                                <button style={styles.rejectBtn} onClick={() => handleRejectRequest(id)}>Reject</button>
                               </div>
                             )}
 
                             {status === "outgoing" && (
                               <div style={{ display: "flex", gap: 8 }}>
-                                <button style={styles.sentBtn} disabled>
-                                  Sent
-                                </button>
-                                <button style={styles.cancelBtn} onClick={() => handleCancelRequest(id)}>
-                                  Cancel
-                                </button>
+                                <button style={styles.sentBtn} disabled>Sent</button>
+                                <button style={styles.cancelBtn} onClick={() => handleCancelRequest(id)}>Cancel</button>
                               </div>
                             )}
 
                             {status === "none" && (
-                              <button style={styles.addBtn} onClick={() => handleSendRequest(id)}>
-                                Add
-                              </button>
+                              <button style={styles.addBtn} onClick={() => handleSendRequest(id)}>Add</button>
                             )}
                           </div>
                         </div>
@@ -576,12 +807,9 @@ useEffect(() => {
                   </div>
                 )}
 
-                {/* Show more */}
                 {pagedResults.length > 0 && pagedResults.length < searchResults.length && (
                   <div style={{ marginTop: 12, textAlign: "center" }}>
-                    <button style={styles.showMoreBtn} onClick={() => setSearchPage((p) => p + 1)}>
-                      Show more
-                    </button>
+                    <button style={styles.showMoreBtn} onClick={() => setSearchPage((p) => p + 1)}>Show more</button>
                   </div>
                 )}
               </>
@@ -603,26 +831,11 @@ useEffect(() => {
                       <div key={norm(f.id)} style={styles.friendRow}>
                         <div style={styles.listLeft}>
                           <div style={{ position: "relative" }}>
-                            <img
-                              src={f.avatar || "/avatars/default.png"}
-                              alt={f.username}
-                              style={styles.smallAvatar}
-                              onError={(e) => (e.currentTarget.src = "/avatars/default.png")}
-                             onClick={() => {
-  onClose && onClose();
-  navigate(`/user/${encodeURIComponent(f.username)}`);
-}}
-                            />
+                            <img src={f.avatar || "/avatars/default.png"} alt={f.username} style={styles.smallAvatar} onError={(e) => (e.currentTarget.src = "/avatars/default.png")} onClick={() => { onClose && onClose(); navigate(`/user/${encodeURIComponent(f.username)}`); }} />
                             <span style={styles.onlineDot} />
                           </div>
                           <div>
-                            <div
-                              style={{ fontWeight: 800, color: "#fff", cursor: "pointer" }}
-                              onClick={() => {
-  onClose && onClose();
-  navigate(`/user/${encodeURIComponent(f.username)}`);
-}}
-                            >
+                            <div style={{ fontWeight: 800, color: "#fff", cursor: "pointer" }} onClick={() => { onClose && onClose(); navigate(`/user/${encodeURIComponent(f.username)}`); }}>
                               {f.username || f.name}
                             </div>
                             <div style={{ fontSize: 12, color: "#9fb7d9" }}>{f.name}</div>
@@ -630,16 +843,10 @@ useEffect(() => {
                         </div>
 
                         <div style={{ display: "flex", gap: 8 }}>
-                          <button style={styles.viewProfileBtn} onClick={() => {
-  onClose && onClose();
-  navigate(`/user/${encodeURIComponent(f.username)}`);
-}}
->
+                          <button style={styles.viewProfileBtn} onClick={() => { onClose && onClose(); navigate(`/user/${encodeURIComponent(f.username)}`); }}>
                             View
                           </button>
-                          <button style={styles.removeFriendBtn} onClick={() => handleRemoveFriend(f.id)}>
-                            Unfriend
-                          </button>
+                          <button style={styles.removeFriendBtn} onClick={() => handleRemoveFriend(f.id)}>Unfriend</button>
                         </div>
                       </div>
                     ))}
@@ -658,22 +865,9 @@ useEffect(() => {
                     {offline.map((f) => (
                       <div key={norm(f.id)} style={styles.friendRow}>
                         <div style={styles.listLeft}>
-                          <img
-                            src={f.avatar || "/avatars/default.png"}
-                            alt={f.username}
-                            style={styles.smallAvatar}
-                            onError={(e) => (e.currentTarget.src = "/avatars/default.png")}
-                            onClick={() => {
-  onClose && onClose();
-  navigate(`/user/${encodeURIComponent(f.username)}`);
-}}
-                          />
+                          <img src={f.avatar || "/avatars/default.png"} alt={f.username} style={styles.smallAvatar} onError={(e) => (e.currentTarget.src = "/avatars/default.png")} onClick={() => { onClose && onClose(); navigate(`/user/${encodeURIComponent(f.username)}`); }} />
                           <div>
-                            <div style={{ fontWeight: 800, color: "#fff", cursor: "pointer" }} onClick={() => {
-  onClose && onClose();
-  navigate(`/user/${encodeURIComponent(f.username)}`);
-}}
->
+                            <div style={{ fontWeight: 800, color: "#fff", cursor: "pointer" }} onClick={() => { onClose && onClose(); navigate(`/user/${encodeURIComponent(f.username)}`); }}>
                               {f.username || f.name}
                             </div>
                             <div style={{ fontSize: 12, color: "#9fb7d9" }}>{f.name}</div>
@@ -681,16 +875,10 @@ useEffect(() => {
                         </div>
 
                         <div style={{ display: "flex", gap: 8 }}>
-                          <button style={styles.viewProfileBtn} onClick={() => {
-  onClose && onClose();
-  navigate(`/user/${encodeURIComponent(f.username)}`);
-}}
->
-    View
+                          <button style={styles.viewProfileBtn} onClick={() => { onClose && onClose(); navigate(`/user/${encodeURIComponent(f.username)}`); }}>
+                            View
                           </button>
-                          <button style={styles.removeFriendBtn} onClick={() => handleRemoveFriend(f.id)}>
-                            Unfriend
-                          </button>
+                          <button style={styles.removeFriendBtn} onClick={() => handleRemoveFriend(f.id)}>Unfriend</button>
                         </div>
                       </div>
                     ))}
@@ -702,14 +890,12 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* Share modal */}
       {showShare && <ShareProfileModal visible={showShare} onClose={() => setShowShare(false)} user={user} />}
     </div>
   );
 }
 
-/* --------------------- styles ---------------------- */
-/* Keep nearly identical to your theme; added a few new button styles */
+/* styles: reuse your original styles — keep same as the code you already had */
 const styles = {
   backdrop: {
     position: "fixed",

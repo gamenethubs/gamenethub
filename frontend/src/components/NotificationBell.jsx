@@ -127,8 +127,21 @@ export default function NotificationBell() {
       });
     }
 
-    // 3. Navigate to the game detail page
-    navigate(`/game/${notification.slug}`);
+    // ⭐ NEW LOGIC → FRIEND NOTIFICATION
+  if (notification.slug === "friends") {
+    if (notification.username) {
+      return navigate(`/user/${notification.username}`);
+    }
+    if (notification.userId) {
+      return navigate(`/user/${notification.userId}`);
+    }
+    return; // fallback
+  }
+
+  // ⭐ OLD LOGIC → GAME NOTIFICATION (unchanged)
+  if (notification.slug) {
+    return navigate(`/game/${notification.slug}`);
+  }
   };
 
   const handleDismiss = (id, e) => {
