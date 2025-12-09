@@ -717,10 +717,13 @@ export const getPublicProfile = async (req, res) => {
     const username = rawUsername.toLowerCase();
 
     const user = await User.findOne({ username })
-      .select("-password -email -googleId -ratedGames")
-      .populate("favorites", "title slug thumbnail genre")
-      .populate("friends", "name username avatar lastSeen _id")
-      .lean();
+  .select("-password -email -googleId -ratedGames")
+  .populate("favorites", "title slug thumbnail genre")
+  .populate("friends", "name username avatar lastSeen _id")
+  .populate("incomingRequests.from", "_id")   // ⭐ ADD THIS
+  .populate("outgoingRequests.to", "_id")     // ⭐ ADD THIS
+  .lean(); 
+
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -728,31 +731,47 @@ export const getPublicProfile = async (req, res) => {
     let relationship = "none";
     let mutualFriends = [];
 
+    console.log("🔵 VIEWER ID:", viewerId);
+
+const meFull = await User.findById(viewerId);
+console.log("🔥 FULL ME FROM DB:", JSON.stringify(meFull, null, 2));
+
+const targetFull = await User.findOne({ username });
+console.log("🔥 FULL TARGET USER:", JSON.stringify(targetFull, null, 2));
+
     if (viewerId) {
   const me = await User.findById(viewerId)
   .select("friends incomingRequests outgoingRequests")
+  .populate("incomingRequests.from", "_id")
+  .populate("outgoingRequests.to", "_id")
   .lean();
 
-// Friends are ObjectIds, but lean() gives plain objects
-const myFriendIds = (me?.friends || []).map(f => {
-  if (!f) return null;
 
-  // If f is populated → f._id exists
-  if (f._id) return f._id.toString();
+  const targetId = user._id.toString();
 
-  // If f is plain ObjectId → f.toString()
-  return f.toString();
-});
+  // FRIEND CHECK
+  const myFriendIds = (me.friends || []).map(f =>
+    f._id?.toString?.() || f.toString()
+  );
+  if (myFriendIds.includes(targetId)) {
+    relationship = "friend";
+  }
 
-const outgoingIds = (me?.outgoingRequests || []).map(r => {
-  if (!r?.to) return null;
-  return r.to._id?.toString?.() || r.to.toString();
-});
+  // OUTGOING CHECK (you sent request)
+  const outgoingIds = (me.outgoingRequests || []).map(r =>
+    r.to?._id?.toString?.() || r.to?.toString()
+  );
+  if (outgoingIds.includes(targetId)) {
+    relationship = "outgoing";
+  }
 
-const incomingIds = (me?.incomingRequests || []).map(r => {
-  if (!r?.from) return null;
-  return r.from._id?.toString?.() || r.from.toString();
-});
+  // INCOMING CHECK (they sent request)
+  const incomingIds = (me.incomingRequests || []).map(r =>
+    r.from?._id?.toString?.() || r.from?.toString()
+  );
+  if (incomingIds.includes(targetId)) {
+    relationship = "incoming";
+  }
 
 
 
