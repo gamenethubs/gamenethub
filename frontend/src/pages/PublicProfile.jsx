@@ -1,9 +1,10 @@
+
 // src/pages/PublicProfile.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import { useSocket } from "../context/SocketContext"; // safe if exported
+import { useSocket } from "../context/SocketContext";
 
 const API_BASE = process.env.REACT_APP_API_BASE;
 
@@ -12,7 +13,6 @@ export default function PublicProfile() {
   const navigate = useNavigate();
   const { user: me, isAuthenticated } = useAuth();
 
-  // FIXED SOCKET EXTRACTION
   const socketRef = useSocket();
   const mainSocket = socketRef?.current?.main || null;
   const presenceSocket = socketRef?.current?.presence || null;
@@ -23,24 +23,26 @@ export default function PublicProfile() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
-  /* ------------------------------------
-      Fetch Public Profile Data
-  ------------------------------------ */
+  const norm = (id) => (id ? id.toString() : "");
+
+  // -----------------------------------------
+  // Load profile from backend
+  // -----------------------------------------
   const loadProfile = async () => {
     try {
       setLoading(true);
-      const res = await API.get(`/users/${username}`);
-      const p = res.data?.user ?? res.data;
-
-      const normalized = {
-        ...p,
-        id: p.id || p._id,
-      };
+      const res = await API.get(`/users/${encodeURIComponent(username)}`);
+      const p = res.data?.user;
 
       if (!mountedRef.current) return;
-      setProfile(normalized);
+      // 🛑 LOG 4: Check the incoming relationship status from backend
+      console.log("🟢 LOAD_PROFILE: Backend Relationship Status:", p?.relationship);
+      setProfile(p ? { ...p, id: p._id } : null);
+      // 🛑 LOG 5: Check the relationship status *after* setProfile call
+      // NOTE: The actual state change won't reflect immediately here, but it confirms the data went in.
+      console.log("🔵 LOAD_PROFILE: New profile data set.");
     } catch (err) {
-      console.error("PUBLIC PROFILE ERROR:", err);
+      console.error("LOAD PROFILE ERROR:", err);
       if (mountedRef.current) setProfile(null);
     } finally {
       if (mountedRef.current) setLoading(false);
@@ -51,306 +53,303 @@ export default function PublicProfile() {
     mountedRef.current = true;
     window.scrollTo(0, 0);
     loadProfile();
-    return () => {
-      mountedRef.current = false;
-    };
-    // eslint-disable-next-line
+    return () => (mountedRef.current = false);
   }, [username]);
 
-  const safeSetProfile = (updater) => {
-    setProfile((prev) => {
-      if (!prev) return prev;
-      const next =
-        typeof updater === "function" ? updater(prev) : { ...prev, ...updater };
-      return next;
-    });
+  const safeSetProfile = (partial) => {
+    setProfile((prev) => (prev ? { ...prev, ...partial } : prev));
   };
 
-  /* ------------------------------------
-     Realtime handlers
-  ------------------------------------ */
-  useEffect(() => {
-    if (!profile) return;
-    if (!mountedRef.current) return;
+  // -----------------------------------------
+  // REALTIME SOCKET SYNC (PERFECT)
+  // -----------------------------------------
+//   useEffect(() => {
+//     if (!profile) return;
+//     const pid = norm(profile.id);
 
-    const onFriendRequestAccepted = (payload) => {
-      try {
-        const userObj =
-          payload?.user ?? payload?.acceptedBy ?? payload;
-        const id =
-          (userObj?.id ||
-            userObj?._id ||
-            userObj?.toString)?.toString?.() ?? null;
+//     const reload = () => loadProfile();
 
-        if (id && id === profile.id?.toString()) {
-          loadProfile();
-        }
-      } catch (e) {
-        console.warn("ACCEPT HANDLER ERR", e);
-      }
-    };
+//     const onRelationshipUpdate = ({ userId }) => {
+//       if (norm(userId) === pid) reload();
+//     };
 
-    const onFriendRequestRejected = (payload) => {
-      try {
-        const fromId =
-          payload?.fromId ||
-          payload?.from?.id ||
-          payload?.from?._id;
+//     const onFriendsUpdated = () => reload();
 
-        if (fromId && fromId.toString() === profile.id?.toString()) {
-          loadProfile();
-        }
-      } catch (e) {
-        console.warn("REJECT HANDLER ERR", e);
-      }
-    };
+//     // const onFriendRequestReceived = (payload) => {
+//     //   const fromId = norm(payload?.from?.id);
+//     //   const toId = norm(payload?.toUserId);
+//     //   if (toId === pid || fromId === pid) reload();
+//     // };
+// //     const onFriendRequestReceived = (payload) => {
+// //   const fromId = norm(payload?.from?.id);
+// //   if (fromId === pid) loadProfile();  // correct condition
+// // };
+// const onFriendRequestReceived = () => {
+//   loadProfile();   // Always reload — relationship may have changed
+// };
 
-    const onFriendRequestReceived = (payload) => {
-      try {
-        const fromId = payload?.from?.id || payload?.from?._id;
-        const toId =
-          payload?.to ||
-          payload?.toUserId ||
-          payload?.targetId ||
-          null;
 
-        if (
-          me?._id &&
-          fromId &&
-          me._id.toString() === fromId.toString() &&
-          profile.id?.toString() === toId?.toString()
-        ) {
-          loadProfile();
-        }
 
-        if (profile.id && toId && profile.id.toString() === toId.toString()) {
-          loadProfile();
-        }
-      } catch (e) {
-        console.warn("RECEIVE HANDLER ERR", e);
-      }
-    };
+//     const onFriendRequestAccepted = (payload) => {
+//       const id = norm(payload?.user?.id);
+//       if (id === pid) reload();
+//     };
 
-    const onFriendOnline = ({ userId } = {}) => {
-      try {
-        if (!userId) return;
-        if (profile.id && userId.toString() === profile.id.toString()) {
-          safeSetProfile({ online: true });
-        }
-      } catch (e) {
-        console.warn("FRIEND ONLINE HANDLER ERR", e);
-      }
-    };
+//     const onFriendRequestRejected = (payload) => {
+//       const id = norm(payload?.fromId);
+//       if (id === pid) reload();
+//     };
 
-    const onFriendOffline = ({ userId } = {}) => {
-      try {
-        if (!userId) return;
-        if (profile.id && userId.toString() === profile.id.toString()) {
-          safeSetProfile({ online: false });
-        }
-      } catch (e) {
-        console.warn("FRIEND OFFLINE HANDLER ERR", e);
-      }
-    };
+//     const onFriendOnline = ({ userId }) => {
+//       if (norm(userId) === pid) safeSetProfile({ online: true });
+//     };
 
-    // MAIN SOCKET
-    if (mainSocket) {
-      mainSocket.on("friend_request_accepted", onFriendRequestAccepted);
-      mainSocket.on("friend_request_rejected", onFriendRequestRejected);
-      mainSocket.on("friend_request_received", onFriendRequestReceived);
-    }
+//     const onFriendOffline = ({ userId }) => {
+//       if (norm(userId) === pid) safeSetProfile({ online: false });
+//     };
 
-    // PRESENCE SOCKET
-    if (presenceSocket) {
-      presenceSocket.on("friend_online", onFriendOnline);
-      presenceSocket.on("friend_offline", onFriendOffline);
-    }
+//     // MAIN SOCKET
+//     if (mainSocket) {
+//       mainSocket.on("relationship_update", onRelationshipUpdate);
+//       mainSocket.on("friends_updated", onFriendsUpdated);
+//       mainSocket.on("friend_request_received", onFriendRequestReceived);
+//       mainSocket.on("friend_request_accepted", onFriendRequestAccepted);
+//       mainSocket.on("friend_request_rejected", onFriendRequestRejected);
+//     }
 
-    // WINDOW FALLBACK
-    const winAccepted = (e) => onFriendRequestAccepted(e?.detail || {});
-    const winRejected = (e) => onFriendRequestRejected(e?.detail || {});
-    const winReceived = (e) => onFriendRequestReceived(e?.detail || {});
-    const winOnline = (e) => onFriendOnline(e?.detail || {});
-    const winOffline = (e) => onFriendOffline(e?.detail || {});
+//     // PRESENCE SOCKET
+//     if (presenceSocket) {
+//       presenceSocket.on("friend_online", onFriendOnline);
+//       presenceSocket.on("friend_offline", onFriendOffline);
 
-    window.addEventListener("friend_request_accepted", winAccepted);
-    window.addEventListener("friend_request_rejected", winRejected);
-    window.addEventListener("friend_request_received", winReceived);
-    window.addEventListener("friend-online", winOnline);
-    window.addEventListener("friend-offline", winOffline);
+//       presenceSocket.on("friend_request_received", onFriendRequestReceived);
+//       presenceSocket.on("friend_request_accepted", onFriendRequestAccepted);
+//       presenceSocket.on("friend_request_rejected", onFriendRequestRejected);
+//     }
 
-    return () => {
-      if (mainSocket) {
-        mainSocket.off("friend_request_accepted", onFriendRequestAccepted);
-        mainSocket.off("friend_request_rejected", onFriendRequestRejected);
-        mainSocket.off("friend_request_received", onFriendRequestReceived);
-      }
+//     return () => {
+//       if (mainSocket) {
+//         mainSocket.off("relationship_update", onRelationshipUpdate);
+//         mainSocket.off("friends_updated", onFriendsUpdated);
+//         mainSocket.off("friend_request_received", onFriendRequestReceived);
+//         mainSocket.off("friend_request_accepted", onFriendRequestAccepted);
+//         mainSocket.off("friend_request_rejected", onFriendRequestRejected);
+//       }
+//       if (presenceSocket) {
+//         presenceSocket.off("friend_online", onFriendOnline);
+//         presenceSocket.off("friend_offline", onFriendOffline);
+//         presenceSocket.off("friend_request_received", onFriendRequestReceived);
+//         presenceSocket.off("friend_request_accepted", onFriendRequestAccepted);
+//         presenceSocket.off("friend_request_rejected", onFriendRequestRejected);
+//       }
+//     };
+//   }, [profile, mainSocket, presenceSocket]);
 
-      if (presenceSocket) {
-        presenceSocket.off("friend_online", onFriendOnline);
-        presenceSocket.off("friend_offline", onFriendOffline);
-      }
+// src/pages/PublicProfile.jsx
 
-      window.removeEventListener("friend_request_accepted", winAccepted);
-      window.removeEventListener("friend_request_rejected", winRejected);
-      window.removeEventListener("friend_request_received", winReceived);
-      window.removeEventListener("friend-online", winOnline);
-      window.removeEventListener("friend-offline", winOffline);
-    };
-    // eslint-disable-next-line
-  }, [profile?.id, me?._id]);
+// ... (पुराना कोड)
 
-  /* ------------------------------------
-      Action Handlers 
-  ------------------------------------ */
-  const handleAdd = async () => {
-    setActionLoading(true);
-    try {
-      await API.post("/friends/request", { toUserId: profile.id });
-      await loadProfile();
-    } catch (e) {
-      console.error(e);
-    }
-    setActionLoading(false);
-  };
+// -----------------------------------------
+// REALTIME SOCKET SYNC (FINAL FIX)
+// -----------------------------------------
+useEffect(() => {
+  const reload = async () => {
+    try {
+      const res = await API.get(`/users/${encodeURIComponent(username)}`);
+      const p = res.data?.user;
+      if (mountedRef.current) setProfile(p ? { ...p, id: p._id } : null);
+    } catch (err) {
+      console.error("RELOAD PROFILE ERROR:", err);
+    }
+  };  
+  if (!profile) return;
 
-  const handleCancel = async () => {
-    setActionLoading(true);
-    try {
-      await API.post("/friends/request/cancel", { toUserId: profile.id });
-      await loadProfile();
-    } catch (e) {
-      console.error(e);
-    }
-    setActionLoading(false);
-  };
+  const pid = norm(profile.id);
 
-  const handleAccept = async () => {
-    setActionLoading(true);
-    try {
-      await API.post("/friends/request/accept", {
-        fromUserId: profile.id,
-      });
-      await loadProfile();
-    } catch (e) {
-      console.error(e);
-    }
-    setActionLoading(false);
-  };
+//   const reload = () => loadProfile();
 
-  const handleReject = async () => {
-    setActionLoading(true);
-    try {
-      await API.post("/friends/request/reject", {
-        fromUserId: profile.id,
-      });
-      await loadProfile();
-    } catch (e) {
-      console.error(e);
-    }
-    setActionLoading(false);
-  };
+  // --- Handlers ---
+  const onRelationshipUpdate = (e) => {
+    // e.detail contains the payload, which should have { userId }
+    if (norm(e.detail?.userId) === pid) reload();
+  };
 
-  const handleUnfriend = async () => {
-    setActionLoading(true);
-    try {
-      await API.post("/friends/remove", { friendId: profile.id });
-      await loadProfile();
-    } catch (e) {
-      console.error(e);
-    }
-    setActionLoading(false);
-  };
+  const onFriendsUpdated = () => reload();
 
-  const relationship = profile?.relationship;
-  const isFriend = relationship === "friend";
-  const isOutgoing = relationship === "outgoing";
-  const isIncoming = relationship === "incoming";
+  const onFriendOnline = (e) => {
+    if (norm(e.detail?.userId) === pid) safeSetProfile({ online: true });
+  };
+
+  const onFriendOffline = (e) => {
+    if (norm(e.detail?.userId) === pid) safeSetProfile({ online: false });
+  };
+
+  // The simple reload events (these happen when ANY action occurs)
+  const onAnyRelationshipChange = () => reload();
+
+
+  // ⭐ THE FIX: Listen to Window Custom Events (from SocketContext) ⭐
+  
+  // CORE SYNC EVENTS (Relationship & Mutual Friends)
+  window.addEventListener("relationship_update", onRelationshipUpdate);
+  window.addEventListener("friends_updated", onFriendsUpdated);
+  
+  // PRESENCE EVENTS
+  window.addEventListener("friend-online", onFriendOnline);
+  window.addEventListener("friend-offline", onFriendOffline);
+  
+  // FALLBACK FOR REQUESTS (We just need to reload if any friend action occurred)
+  window.addEventListener("friend_request_received", onAnyRelationshipChange);
+  window.addEventListener("friend_request_accepted", onAnyRelationshipChange);
+  window.addEventListener("friend_request_rejected", onAnyRelationshipChange);
+
+  return () => {
+    // ⭐ CLEANUP THE WINDOW LISTENERS ⭐
+    window.removeEventListener("relationship_update", onRelationshipUpdate);
+    window.removeEventListener("friends_updated", onFriendsUpdated);
+
+    window.removeEventListener("friend-online", onFriendOnline);
+    window.removeEventListener("friend-offline", onFriendOffline);
+
+    window.removeEventListener("friend_request_received", onAnyRelationshipChange);
+    window.removeEventListener("friend_request_accepted", onAnyRelationshipChange);
+    window.removeEventListener("friend_request_rejected", onAnyRelationshipChange);
+  };
+}, [profile, username]); 
+// 'profile' dependency is important for initial profile ID
+
+
+  // -----------------------------------------
+  // ACTIONS (Perfect sync)
+  // -----------------------------------------
+  // src/pages/PublicProfile.jsx
+
+// -----------------------------------------
+// ACTIONS (Final Fix for State Sync)
+// -----------------------------------------
+  const doAction = async (api, optimistic) => {
+    setActionLoading(true);
+    
+    // 1. Optimistic Update (Quick visual feedback)
+    if (optimistic) safeSetProfile(optimistic);
+    
+    try {
+      // 2. Perform the API action (Accept, Unfriend, etc.)
+      await api();
+      
+      // 3. Fetch the new data from the server
+      await loadProfile();
+      
+    } catch (err) {
+      console.error("DO ACTION ERROR:", err);
+      
+      await loadProfile();
+    }
+    
+    
+    setActionLoading(false);
+  };
+
+  // PublicProfile.jsx
+
+  const handleAdd = () => {
+    const targetId = profile.id || profile._id;
+    console.log("⚠️ ADD FRIEND PAYLOAD:", { toUserId: targetId }); // <<-- NEW LOG
+    return doAction(
+      () => API.post("/friends/request", { toUserId: targetId }),
+      { relationship: "outgoing" }
+    );
+  };
+  const handleCancel = () =>
+    doAction(
+      () => API.post("/friends/request/cancel", { toUserId: profile.id || profile._id }),
+      { relationship: "none" }
+    );
+
+  const handleAccept = () =>
+    doAction(
+      () => API.post("/friends/request/accept", { fromUserId: profile.id || profile._id }),
+      { relationship: "friend" }
+    );
+
+  const handleReject = () =>
+    doAction(
+      () => API.post("/friends/request/reject", { fromUserId: profile.id || profile._id }),
+      { relationship: "none" }
+    );
+
+  const handleUnfriend = () =>
+    doAction(
+      () => API.post("/friends/remove", { friendId: profile.id || profile._id }),
+      { relationship: "none" }
+    );
+
+  // STATUS
+  const rel = profile?.relationship;
+  const isFriend = rel === "friend";
+  const isOutgoing = rel === "outgoing";
+  const isIncoming = rel === "incoming";
   const isMe = me?.username === profile?.username;
 
   const renderFriendButton = () => {
     if (!isAuthenticated || isMe) return null;
 
-    if (isFriend) {
+    if (isFriend)
       return (
         <div style={{ display: "flex", gap: 10 }}>
           <button style={styles.primaryBtn}>Friend ✓</button>
-
-          <button
-            style={styles.unfriendBtn}
-            onClick={handleUnfriend}
-            disabled={actionLoading}
-          >
+          <button style={styles.unfriendBtn} onClick={handleUnfriend} disabled={actionLoading}>
             Unfriend
           </button>
         </div>
       );
-    }
 
-    if (isOutgoing) {
+    if (isOutgoing)
       return (
         <div style={{ display: "flex", gap: 10 }}>
           <button style={styles.sentBtn}>Sent</button>
-          <button
-            style={styles.cancelBtn}
-            onClick={handleCancel}
-            disabled={actionLoading}
-          >
+          <button style={styles.cancelBtn} onClick={handleCancel} disabled={actionLoading}>
             Cancel
           </button>
         </div>
       );
-    }
 
-    if (isIncoming) {
+    if (isIncoming)
       return (
         <div style={{ display: "flex", gap: 10 }}>
-          <button
-            style={styles.acceptBtn}
-            onClick={handleAccept}
-            disabled={actionLoading}
-          >
+          <button style={styles.acceptBtn} onClick={handleAccept} disabled={actionLoading}>
             Accept
           </button>
-
-          <button
-            style={styles.rejectBtn}
-            onClick={handleReject}
-            disabled={actionLoading}
-          >
+          <button style={styles.rejectBtn} onClick={handleReject} disabled={actionLoading}>
             Reject
           </button>
         </div>
       );
-    }
 
     return (
-      <button
-        style={styles.addBtn}
-        onClick={handleAdd}
-        disabled={actionLoading}
-      >
+      <button style={styles.addBtn} onClick={handleAdd} disabled={actionLoading}>
         Add Friend
       </button>
     );
   };
 
-  if (loading) {
+  if (loading)
     return (
       <div style={screenCenter}>
         <div style={{ color: "#9fb7d9" }}>Loading profile...</div>
       </div>
     );
-  }
 
-  if (!profile) {
+  if (!profile)
     return (
       <div style={screenCenter}>
         <div style={{ color: "#ff7b7b" }}>User not found.</div>
       </div>
     );
-  }
 
+  // -----------------------------------------
+  // UI
+  // -----------------------------------------
   return (
     <div style={styles.wrapper}>
       <div style={styles.card}>
@@ -362,56 +361,48 @@ export default function PublicProfile() {
               alt="avatar"
               onError={(e) => (e.currentTarget.src = "/avatars/default.png")}
             />
-            {profile.relationship === "friend" && (
-              <div
-                style={profile.online ? styles.onlineDot : styles.offlineDot}
-              />
+
+            {isFriend && (
+              <div style={profile.online ? styles.onlineDot : styles.offlineDot} />
             )}
           </div>
 
           <div>
             <div style={styles.name}>{profile.name}</div>
             <div style={styles.username}>@{profile.username}</div>
-
             {profile.bio && <div style={styles.bio}>{profile.bio}</div>}
 
             <div style={{ marginTop: 12 }}>{renderFriendButton()}</div>
           </div>
         </div>
 
-        {/* Favorite Games */}
+        {/* Favorites */}
         <h3 style={styles.sectionTitle}>❤️ Favorite Games</h3>
 
-        {!profile.favorites || profile.favorites.length === 0 ? (
+        {!profile.favorites?.length ? (
           <div style={{ color: "#9fb7d9" }}>No favorites.</div>
         ) : (
-          <div style={styles.favGrid} className="fav-grid">
+          <div style={styles.favGrid}>
             {profile.favorites.map((g) => (
               <div key={g._id} style={styles.favCard}>
-                <div style={styles.favImgWrap}>
-                  <img
-                    src={
-                      g.thumbnail?.startsWith("/uploads")
-                        ? `${API_BASE}${g.thumbnail}`
-                        : g.thumbnail
-                    }
-                    alt={g.title}
-                    style={styles.favImg}
-                  />
-                </div>
-
+                <img
+                  src={
+                    g.thumbnail?.startsWith("/uploads")
+                      ? `${API_BASE}${g.thumbnail}`
+                      : g.thumbnail
+                  }
+                  alt={g.title}
+                  style={styles.favImg}
+                />
                 <div style={styles.favInfo}>
                   <div style={styles.favTitle}>{g.title}</div>
                   <div style={styles.favGenre}>{g.genre}</div>
-
-                  <div style={styles.favBtns}>
-                    <button
-                      onClick={() => navigate(`/game/${g.slug}`)}
-                      style={styles.viewBtn}
-                    >
-                      View
-                    </button>
-                  </div>
+                  <button
+                    style={styles.viewBtn}
+                    onClick={() => navigate(`/game/${g.slug}`)}
+                  >
+                    View
+                  </button>
                 </div>
               </div>
             ))}
@@ -423,20 +414,20 @@ export default function PublicProfile() {
           👥 Mutual Friends ({profile.mutualFriends?.length || 0})
         </h3>
 
-        {!profile.mutualFriends || profile.mutualFriends.length === 0 ? (
+        {!profile.mutualFriends?.length ? (
           <div style={{ color: "#9fb7d9" }}>No mutual friends.</div>
         ) : (
-          <div style={styles.mutualGrid} className="mutual-grid">
+          <div style={styles.mutualGrid}>
             {profile.mutualFriends.map((m) => (
               <div
-                key={m._id || m.id} // FIXED
+                key={m._id}
                 style={styles.mutualCard}
                 onClick={() => navigate(`/user/${m.username}`)}
               >
                 <img
                   src={m.avatar || "/avatars/default.png"}
-                  style={styles.mutualAvatar}
                   alt={m.username}
+                  style={styles.mutualAvatar}
                 />
                 <div style={styles.mutualName}>{m.username}</div>
               </div>
@@ -448,8 +439,7 @@ export default function PublicProfile() {
   );
 }
 
-/* original styles unchanged */
-
+// --- styles remain same as before (unchanged) ---
 const styles = {
   wrapper: {
     minHeight: "100vh",
