@@ -211,9 +211,9 @@ export function SocketProvider({ children }) {
   }, []);
 
   return (
-    <SocketContext.Provider value={socketRef}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={socketRef.current}>{children}</SocketContext.Provider>
   );
 }
 
 export const useSocket = () => useContext(SocketContext);
-export default SocketContext;
+export default SocketContext; 
