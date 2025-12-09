@@ -661,6 +661,7 @@
  * backend/controllers/friendsController.js
  *****************************************/
 import User from "../models/User.js";
+import mongoose, { Types } from "mongoose";
 
 /**************************************
  * Helper → format minimal user object
@@ -728,8 +729,8 @@ export const sendRequest = async (req, res) => {
     }
 
     // Send request
-    from.outgoingRequests.push({ to: toUserId });
-    to.incomingRequests.push({ from: fromId });
+    from.outgoingRequests.push({ to: new mongoose.ObjectId(toUserId) }); // <-- CHANGE 3
+    to.incomingRequests.push({ from: new mongoose.ObjectId(fromId) });
 
     await from.save();
     await to.save();
@@ -841,8 +842,8 @@ export const acceptRequest = async (req, res) => {
 
     // Mutual friendship
     if (!user.friends.map(String).includes(fromUserId))
-      user.friends.push(fromUserId);
-    if (!from.friends.map(String).includes(userId)) from.friends.push(userId);
+      user.friends.push(new mongoose.ObjectId(fromUserId));
+    if (!from.friends.map(String).includes(userId)) from.friends.push(new mongoose.ObjectId(userId));
 
     await user.save();
     await from.save();
