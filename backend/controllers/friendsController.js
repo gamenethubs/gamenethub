@@ -725,42 +725,40 @@ export const sendRequest = async (req, res) => {
         // Check if 'to' user has already sent a request to 'from' user.
         // We use 'to.incomingRequests' because 'to' is the original sender (fromUserId)
         // when the request was sent earlier.
-        const existingIncomingReq = from.incomingRequests.find((r) => r.from.toString() === toUserId);
-        
-        if (existingIncomingReq) {
-            
-            // 1. Remove pending requests
-            from.incomingRequests = from.incomingRequests.filter(
-                (r) => r.from.toString() !== toUserId
-            );
-            to.outgoingRequests = to.outgoingRequests.filter(
-                (r) => r.to.toString() !== fromId // Note: to.outgoing to fromId
-            );
+       // Check if 'to' user already sent a request to 'from' user
+const existingIncomingReq = to.incomingRequests.find(
+    (r) => r.from.toString() === fromId
+);
 
-            // 2. Mutual friendship (Corrected Logic)
-            const mToId = new Types.ObjectId(toUserId);
-            const mFromId = new Types.ObjectId(fromId);
-            
-            if (!from.friends.map(String).includes(toUserId)) {
-                from.friends.push(mToId);
-            }
-            if (!to.friends.map(String).includes(fromId)) {
-                to.friends.push(mFromId);
-            }
+if (existingIncomingReq) {
+    // 1. Remove pending requests from both sides
+    to.incomingRequests = to.incomingRequests.filter(
+        (r) => r.from.toString() !== fromId
+    );
+    from.outgoingRequests = from.outgoingRequests.filter(
+        (r) => r.to.toString() !== toUserId
+    );
 
-            await from.save();
-            await to.save();
+    // 2. Add both as friends
+    if (!from.friends.map(String).includes(toUserId)) {
+        from.friends.push(new Types.ObjectId(toUserId));
+    }
+    if (!to.friends.map(String).includes(fromId)) {
+        to.friends.push(new Types.ObjectId(fromId));
+    }
 
-            // SOCKET notify original sender (toUser) → emit on both namespaces
-            emitToUser(req.io, toUserId, "friend_request_accepted", { user: miniUser(from) });
+    await from.save();
+    await to.save();
 
-            // Relationship update for both parties
-            emitToUser(req.io, toUserId, "relationship_update", { userId: fromId });
-            emitToUser(req.io, fromId, "relationship_update", { userId: toUserId });
+    // Notify the original sender
+    emitToUser(req.io, toUserId, "friend_request_accepted", { user: miniUser(from) });
 
-            // FRIENDS UPDATED 
-            emitToUser(req.io, toUserId, "friends_updated", {});
-            emitToUser(req.io, fromId, "friends_updated", {});
+    // Sync relationship
+    emitToUser(req.io, toUserId, "relationship_update", { userId: fromId });
+    emitToUser(req.io, fromId, "relationship_update", { userId: toUserId });
+
+    emitToUser(req.io, toUserId, "friends_updated", {});
+    emitToUser(req.io, fromId, "friends_updated", {});
 
             // NOTIFICATION (for original sender 'toUser')
             emitToUser(req.io, toUserId, "notify-user", {
