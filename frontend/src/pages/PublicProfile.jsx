@@ -34,13 +34,11 @@ export default function PublicProfile() {
       const res = await API.get(`/users/${encodeURIComponent(username)}`);
       const p = res.data?.user;
 
+
       if (!mountedRef.current) return;
-      // 🛑 LOG 4: Check the incoming relationship status from backend
-      console.log("🟢 LOAD_PROFILE: Backend Relationship Status:", p?.relationship);
       setProfile(p ? { ...p, id: p._id } : null);
-      // 🛑 LOG 5: Check the relationship status *after* setProfile call
-      // NOTE: The actual state change won't reflect immediately here, but it confirms the data went in.
-      console.log("🔵 LOAD_PROFILE: New profile data set.");
+
+
     } catch (err) {
       console.error("LOAD PROFILE ERROR:", err);
       if (mountedRef.current) setProfile(null);
@@ -60,94 +58,7 @@ export default function PublicProfile() {
     setProfile((prev) => (prev ? { ...prev, ...partial } : prev));
   };
 
-  // -----------------------------------------
-  // REALTIME SOCKET SYNC (PERFECT)
-  // -----------------------------------------
-//   useEffect(() => {
-//     if (!profile) return;
-//     const pid = norm(profile.id);
-
-//     const reload = () => loadProfile();
-
-//     const onRelationshipUpdate = ({ userId }) => {
-//       if (norm(userId) === pid) reload();
-//     };
-
-//     const onFriendsUpdated = () => reload();
-
-//     // const onFriendRequestReceived = (payload) => {
-//     //   const fromId = norm(payload?.from?.id);
-//     //   const toId = norm(payload?.toUserId);
-//     //   if (toId === pid || fromId === pid) reload();
-//     // };
-// //     const onFriendRequestReceived = (payload) => {
-// //   const fromId = norm(payload?.from?.id);
-// //   if (fromId === pid) loadProfile();  // correct condition
-// // };
-// const onFriendRequestReceived = () => {
-//   loadProfile();   // Always reload — relationship may have changed
-// };
-
-
-
-//     const onFriendRequestAccepted = (payload) => {
-//       const id = norm(payload?.user?.id);
-//       if (id === pid) reload();
-//     };
-
-//     const onFriendRequestRejected = (payload) => {
-//       const id = norm(payload?.fromId);
-//       if (id === pid) reload();
-//     };
-
-//     const onFriendOnline = ({ userId }) => {
-//       if (norm(userId) === pid) safeSetProfile({ online: true });
-//     };
-
-//     const onFriendOffline = ({ userId }) => {
-//       if (norm(userId) === pid) safeSetProfile({ online: false });
-//     };
-
-//     // MAIN SOCKET
-//     if (mainSocket) {
-//       mainSocket.on("relationship_update", onRelationshipUpdate);
-//       mainSocket.on("friends_updated", onFriendsUpdated);
-//       mainSocket.on("friend_request_received", onFriendRequestReceived);
-//       mainSocket.on("friend_request_accepted", onFriendRequestAccepted);
-//       mainSocket.on("friend_request_rejected", onFriendRequestRejected);
-//     }
-
-//     // PRESENCE SOCKET
-//     if (presenceSocket) {
-//       presenceSocket.on("friend_online", onFriendOnline);
-//       presenceSocket.on("friend_offline", onFriendOffline);
-
-//       presenceSocket.on("friend_request_received", onFriendRequestReceived);
-//       presenceSocket.on("friend_request_accepted", onFriendRequestAccepted);
-//       presenceSocket.on("friend_request_rejected", onFriendRequestRejected);
-//     }
-
-//     return () => {
-//       if (mainSocket) {
-//         mainSocket.off("relationship_update", onRelationshipUpdate);
-//         mainSocket.off("friends_updated", onFriendsUpdated);
-//         mainSocket.off("friend_request_received", onFriendRequestReceived);
-//         mainSocket.off("friend_request_accepted", onFriendRequestAccepted);
-//         mainSocket.off("friend_request_rejected", onFriendRequestRejected);
-//       }
-//       if (presenceSocket) {
-//         presenceSocket.off("friend_online", onFriendOnline);
-//         presenceSocket.off("friend_offline", onFriendOffline);
-//         presenceSocket.off("friend_request_received", onFriendRequestReceived);
-//         presenceSocket.off("friend_request_accepted", onFriendRequestAccepted);
-//         presenceSocket.off("friend_request_rejected", onFriendRequestRejected);
-//       }
-//     };
-//   }, [profile, mainSocket, presenceSocket]);
-
-// src/pages/PublicProfile.jsx
-
-// ... (पुराना कोड)
+ 
 
 // -----------------------------------------
 // REALTIME SOCKET SYNC (FINAL FIX)
@@ -174,7 +85,11 @@ useEffect(() => {
     if (norm(e.detail?.userId) === pid) reload();
   };
 
-  const onFriendsUpdated = () => reload();
+  const onFriendsUpdated = () => {
+  console.log("🔵 SOCKET friends_updated RECEIVED");
+  reload();
+};
+
 
   const onFriendOnline = (e) => {
     if (norm(e.detail?.userId) === pid) safeSetProfile({ online: true });
@@ -185,7 +100,10 @@ useEffect(() => {
   };
 
   // The simple reload events (these happen when ANY action occurs)
-  const onAnyRelationshipChange = () => reload();
+  const onAnyRelationshipChange = (e) => {
+  reload();
+};
+
 
 
   // ⭐ THE FIX: Listen to Window Custom Events (from SocketContext) ⭐
@@ -239,6 +157,8 @@ useEffect(() => {
       
       // 3. Fetch the new data from the server
       await loadProfile();
+// ⭐ DEBUG: Check final relationship after server updates
+
       
     } catch (err) {
       console.error("DO ACTION ERROR:", err);
@@ -254,7 +174,6 @@ useEffect(() => {
 
   const handleAdd = () => {
     const targetId = profile.id || profile._id;
-    console.log("⚠️ ADD FRIEND PAYLOAD:", { toUserId: targetId }); // <<-- NEW LOG
     return doAction(
       () => API.post("/friends/request", { toUserId: targetId }),
       { relationship: "outgoing" }
@@ -332,6 +251,7 @@ useEffect(() => {
       </button>
     );
   };
+
 
   if (loading)
     return (
