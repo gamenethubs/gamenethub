@@ -25,7 +25,7 @@ if (GA_MEASUREMENT_ID) {
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <React.StrictMode>
+ 
     <GoogleOAuthProvider clientId={clientId}>
       <BrowserRouter>
         <AuthProvider>
@@ -33,5 +33,5 @@ root.render(
         </AuthProvider>
       </BrowserRouter>
     </GoogleOAuthProvider>
-  </React.StrictMode>
+ 
 );
