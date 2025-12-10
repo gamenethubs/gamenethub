@@ -902,9 +902,17 @@ export default function PublicProfile() {
               <div className="pp-badge-slot empty-slot"></div>
             </div>
 
-            <div className="pp-action-area">{renderFriendButton()}
-              {isFriend && <ChatButton friend={profile} />}
-            </div>
+            <div className="pp-action-area">
+                <div className="pp-action-row">
+                  {renderFriendButton()}
+                  {isFriend && (
+                    <div className="pp-chat-btn-wrap">
+                      <ChatButton friend={profile} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
           </div>
         </div>
 
@@ -912,7 +920,7 @@ export default function PublicProfile() {
 
         {/* === FAVORITES SECTION === */}
         <h3 className="pp-section-title">
-          <span>❤️ FAVORITE GAMES</span>
+          <span>❤️{profile.name?.toUpperCase()} FAVORITE GAMES</span>
         </h3>
 
         {!profile.favorites?.length ? (
@@ -1534,6 +1542,54 @@ const premiumStyles = `
   background: #050b14;
   color: #fff;
 }
+
+/* ACTION AREA LAYOUT FIX */
+.pp-action-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+
+
+/* MOBILE FIX — Chat button moves below */
+@media (max-width: 768px) {
+  .pp-action-row {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .pp-chat-btn-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .pp-chat-btn-wrap button {
+    width: 100%;
+  }
+}
+
+/* SUPER SMALL DEVICES FIX (<380px) */
+@media (max-width: 380px) {
+  .pp-btn-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .pp-btn-group .pp-btn {
+    width: 100%;
+    font-size: 0.8rem;
+    padding: 10px 14px;
+  }
+
+  /* Chat button also full width */
+  .pp-chat-btn-wrap button {
+    width: 100%;
+  }
+}
+
 
 /* Animations */
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
