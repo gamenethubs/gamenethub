@@ -1,3 +1,5 @@
+///////socket/chathandler.js///////////
+
 import mongoose from "mongoose";
 import ChatMessage from "../models/ChatMessage.js";
 
@@ -34,12 +36,21 @@ export default function chatHandler(io) {
     for (const s of set) s.emit(event, payload);
   }
 
-  io.on("connection", (socket) => {
-    const userId = getUserIdFromSocket(socket);
-    if (!userId) return;
+ io.on("connection", (socket) => {
+  console.log("🟡 RAW HANDSHAKE:", socket.handshake.auth);
 
-    const uidStr = userId.toString();
-    addSocket(uidStr, socket);
+  const userId = getUserIdFromSocket(socket);
+
+  console.log("🟢 CHAT USER ID:", userId);
+
+  if (!userId) {
+    console.error("❌ CHAT SOCKET BLOCKED DUE TO MISSING USER ID");
+    return;
+  }
+
+  const uidStr = userId.toString();
+  addSocket(uidStr, socket);
+
 
     socket.on("chat:send", async (payload, cb) => {
       try {
