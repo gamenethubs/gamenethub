@@ -36,7 +36,9 @@ import friendsRoutes from "./routes/friendsRoutes.js";
 
 //xp system imports
 import xpRoutes from "./routes/xpRoutes.js";
-
+// ⭐ NEW — CHAT ROUTES
+import chatRoutes from "./routes/chatRoutes.js";
+import chatHandler from "./socket/chatHandler.js";
 
 dotenv.config();
 
@@ -155,6 +157,8 @@ app.use("/api/users", userRoutes);      // GET /api/users/me, /api/users/search,
 app.use("/api/friends", friendsRoutes); // POST /api/friends/request, /list, accept, reject, remove etc.
 
 app.use("/api/xp", xpRoutes);
+// ⭐ NEW — CHAT API
+app.use("/api/chat", chatRoutes);
 
 
 /********************************************
@@ -191,6 +195,9 @@ app.get("/test", (req, res) => {
  ********************************************/
 multiplayerHandler(io);
 presenceHandler(io);
+// ⭐ NEW — CHAT SOCKET HANDLER
+
+chatHandler(io);
 
 
 async function fixMissingAvatars() {

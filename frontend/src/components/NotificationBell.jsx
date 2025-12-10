@@ -3,6 +3,11 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Bell } from "lucide-react"; // Assuming 'lucide-react' for icons
 
+const notificationSound = typeof Audio !== "undefined"
+  ? new Audio("/notification.mp3")
+  : null;
+
+
 // Key for localStorage
 const STORAGE_KEY = "gamenethub_notifications";
 
@@ -45,6 +50,11 @@ export default function NotificationBell() {
    * 🔔 Listener for 'notify-user' event from App.js
    ********************************************/
   const handleNewNotification = useCallback((event) => {
+    if (notificationSound) {
+  notificationSound.currentTime = 0;
+  notificationSound.play().catch(() => {});
+}
+
     const newNotification = { ...event.detail, seen: false };
 
     setNotifications((prev) => {
