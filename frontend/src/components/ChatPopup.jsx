@@ -33,14 +33,15 @@ const chatStyles = `
   margin: 16px;
   width: 360px;
   max-width: 100vw;
-  max-height: 520px;
+  height:auto;
+  max-height: 90vw;
   background: rgba(15,23,42,0.95);
   border-radius: 18px;
   border: 1px solid rgba(148,163,184,0.4);
   box-shadow: 0 18px 45px rgba(0,0,0,0.6);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+   overflow: visible !important;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
 }
 
@@ -121,6 +122,7 @@ const chatStyles = `
   flex-direction: column;
   gap: 4px;
   scroll-behavior: smooth;
+  max-height: calc(90vh-220px); 
 }
 
 /* rows */
@@ -300,7 +302,7 @@ export default function ChatPopup({ friend, onClose }) {
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [isFriendTyping, setIsFriendTyping] = useState(false);
-  const [showEmoji, setShowEmoji] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false); 
 
   const scrollRef = useRef(null);
   const typingTimeoutRef = useRef(null);
@@ -550,7 +552,6 @@ export default function ChatPopup({ friend, onClose }) {
                   lazyLoadEmojis
                   onEmojiClick={handleEmojiClick}
                   width="100%"
-                  height={260}
                 />
               </div>
             )}
