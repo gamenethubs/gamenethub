@@ -585,6 +585,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
+// src/pages/PublicProfile.jsx
+import ChatButton from "../components/ChatButton";
+
 
 const API_BASE = process.env.REACT_APP_API_BASE;
 
@@ -899,7 +902,9 @@ export default function PublicProfile() {
               <div className="pp-badge-slot empty-slot"></div>
             </div>
 
-            <div className="pp-action-area">{renderFriendButton()}</div>
+            <div className="pp-action-area">{renderFriendButton()}
+              {isFriend && <ChatButton friend={profile} />}
+            </div>
           </div>
         </div>
 

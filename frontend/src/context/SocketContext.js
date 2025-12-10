@@ -26,14 +26,43 @@ export function SocketProvider({ children }) {
     // ======================================================
     // MAIN SOCKET (/)
     // ======================================================
+const USER = JSON.parse(localStorage.getItem("user") || "null")
     const mainSocket = io(SERVER, {
       transports: ["polling", "websocket"],
       withCredentials: true,
-      auth: { token: TOKEN },
+      auth: {
+    token: TOKEN,
+    userId: USER?._id || USER?.id,   // ✅ THIS IS MANDATORY
+  },
       reconnection: true,
       reconnectionAttempts: 15,
       reconnectionDelayMax: 4000,
     });
+    // ======================================================
+// ✅ CHAT EVENTS (NEW — SAFE ADDITION)
+// ======================================================
+
+// Incoming chat message (popup + sound handled in ChatPopup)
+mainSocket.on("chat:new_message", (message) => {
+  dispatch("chat:new_message", message);
+});
+
+// Typing indicator
+mainSocket.on("chat:typing", (payload) => {
+  dispatch("chat:typing", payload);
+});
+
+// Chat notification → NotificationBell system
+mainSocket.on("chat:notify", (payload) => {
+  dispatch("notify-user", {
+    id: Date.now(),
+    title: "New Message",
+    text: payload?.textPreview || "New chat message",
+    slug: "friends",
+    time: new Date().toLocaleTimeString(),
+  });
+});
+
 
     socketRef.current.main = mainSocket;
 
@@ -114,7 +143,10 @@ export function SocketProvider({ children }) {
     if (TOKEN) {
       const presenceSocket = io(`${SERVER}/presence`, {
         transports: ["polling", "websocket"],
-        auth: { token: TOKEN },
+        auth: {
+    token: TOKEN,
+    userId: USER?._id || USER?.id,   // ✅ ADD THIS ALSO
+  },
         withCredentials: true,
       });
 

@@ -11,6 +11,7 @@
     "ajv": "^8.0.0",
     "ajv-keywords": "^5.0.0",
     "axios": "^1.13.2",
+    "emoji-picker-react": "^4.16.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.555.0",
     "react": "^19.2.0",
