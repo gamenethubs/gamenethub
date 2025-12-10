@@ -1048,6 +1048,7 @@ const premiumStyles = `
   box-shadow: 
     0 25px 50px -12px rgba(0, 0, 0, 0.5),
     inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    
 }
 
 /* --- HEADER SECTION --- */
@@ -1567,7 +1568,7 @@ const premiumStyles = `
   }
 
   .pp-chat-btn-wrap button {
-    width: 100%;
+    width: 26%;
   }
 }
 
@@ -1586,8 +1587,9 @@ const premiumStyles = `
 
   /* Chat button also full width */
   .pp-chat-btn-wrap button {
-    width: 100%;
+    width: 30%;
   }
+    
 }
 
 

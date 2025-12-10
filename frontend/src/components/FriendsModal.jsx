@@ -955,35 +955,50 @@ const id = extractId(payload.fromId || payload);
 
 /* styles: reuse your original styles — keep same as the code you already had */
 const styles = {
-  backdrop: {
-    position: "fixed",
-    inset: 0,
-    zIndex: 3200,
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "center",
-    background: "rgba(0,0,0,0.6)",
-    paddingTop: "80px",
-    paddingLeft: 18,
-    paddingRight: 18,
-    paddingBottom: 18,
-  },
-  modal: {
-    width: "min(560px, 96vw)",
-    maxHeight: "85vh",
-    overflowY: "auto",
-    background: "#071224",
-    borderRadius: 16,
-    padding: 20,
-    border: "1px solid rgba(255,255,255,0.04)",
-    boxShadow: "0 30px 80px rgba(0,0,0,0.45)",
-    alignSelf: "flex-start",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+backdrop: {
+  position: "fixed",
+  inset: 0,
+  zIndex: 3200,
+  display: "flex",
+  alignItems: "flex-start",
+  justifyContent: "center",
+  background: "rgba(0,0,0,0.6)",
+  paddingTop: "80px",
+  paddingLeft: 12,
+  paddingRight: 12,
+  paddingBottom: 12,
+},
+
+modal: {
+  width: "min(560px, 100%)",
+  maxHeight: "86vh",
+  overflowY: "auto",
+  background: "#071224",
+  borderRadius: 16,
+  padding: 16,
+  border: "1px solid rgba(255,255,255,0.04)",
+  boxShadow: "0 30px 80px rgba(0,0,0,0.45)",
+  alignSelf: "flex-start",
+},
+
+ header: {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  gap: 8,
+},
+
+searchInput: {
+  flex: 1,
+  padding: "10px 12px",
+  borderRadius: 12,
+  background: "rgba(255,255,255,0.03)",
+  border: "1px solid rgba(255,255,255,0.04)",
+  color: "#fff",
+  outline: "none",
+  fontSize: 14,
+},
+
   closeBtn: {
     background: "transparent",
     border: "none",
@@ -1004,15 +1019,7 @@ const styles = {
     gap: 8,
     alignItems: "center",
   },
-  searchInput: {
-    flex: 1,
-    padding: "10px 12px",
-    borderRadius: 999,
-    background: "rgba(255,255,255,0.03)",
-    border: "1px solid rgba(255,255,255,0.04)",
-    color: "#fff",
-    outline: "none",
-  },
+
   clearBtn: {
     padding: "8px 10px",
     background: "#2f2f3f",
@@ -1022,26 +1029,27 @@ const styles = {
     cursor: "pointer",
   },
 
-  playBtn: {
-    flex: 1,
-    padding: "12px 14px",
-    borderRadius: 12,
-    border: "none",
-    fontWeight: 800,
-    background: "linear-gradient(90deg,#34d399,#10b981)",
-    color: "#052014",
-    cursor: "pointer",
-  },
-
-  shareBtn: {
-    padding: "12px 14px",
-    borderRadius: 12,
-    border: "none",
-    fontWeight: 800,
-    background: "#2b2b3a",
-    color: "#fff",
-    cursor: "pointer",
-  },
+playBtn: {
+  flex: 1,
+  padding: "12px 10px",
+  borderRadius: 12,
+  border: "none",
+  fontWeight: 800,
+  background: "linear-gradient(90deg,#34d399,#10b981)",
+  color: "#052014",
+  cursor: "pointer",
+  fontSize: 13,
+},
+shareBtn: {
+  padding: "12px 10px",
+  borderRadius: 12,
+  border: "none",
+  fontWeight: 800,
+  background: "#2b2b3a",
+  color: "#fff",
+  cursor: "pointer",
+  fontSize: 13,
+},
 
   emptyCard: {
     padding: 18,
@@ -1076,13 +1084,13 @@ const styles = {
   },
 
   smallAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
-    objectFit: "cover",
-    background: "#0b1220",
-    cursor: "pointer",
-  },
+  width: 40,
+  height: 40,
+  borderRadius: 10,
+  objectFit: "cover",
+  background: "#0b1220",
+  cursor: "pointer",
+},
 
   addBtn: {
     padding: "8px 12px",
@@ -1143,14 +1151,17 @@ const styles = {
     fontWeight: 800,
   },
 
-  friendRow: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "10px 12px",
-    borderRadius: 12,
-    background: "rgba(255,255,255,0.02)",
-  },
+ friendRow: {
+  display: "flex",
+  flexWrap: "wrap",
+  alignItems: "center",
+  justifyContent: "space-between",
+  padding: "10px 12px",
+  borderRadius: 12,
+  background: "rgba(255,255,255,0.02)",
+  gap: 8,
+},
+
 
   onlineDot: {
     position: "absolute",

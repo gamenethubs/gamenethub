@@ -57,7 +57,7 @@ mainSocket.on("chat:notify", (payload) => {
   dispatch("notify-user", {
     id: Date.now(),
     title: "New Message",
-    text: payload?.textPreview || "New chat message",
+    text: `${payload?.from?.username || ""}: ${payload?.textPreview || ""}`,
     slug: "friends",
     username: payload?.from?.username,
     userId: payload?.from?._id,
