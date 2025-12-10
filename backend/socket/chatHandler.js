@@ -2,18 +2,30 @@
 
 import mongoose from "mongoose";
 import ChatMessage from "../models/ChatMessage.js";
+import jwt from "jsonwebtoken";
+
 
 function getUserIdFromSocket(socket) {
-  const u = socket.user || socket.decoded || {};
-  return (
-    u.id ||
-    u._id ||
-    socket.userId ||
-    socket.handshake?.auth?.userId ||
-    socket.handshake?.query?.userId ||
-    null
-  );
+  const auth = socket.handshake?.auth || {};
+  const token = auth.token;
+
+  // ✅ 1. Direct userId agar frontend ne bhej diya
+  if (auth.userId) return auth.userId;
+
+  // ✅ 2. JWT se userId nikaalo (FINAL BACKUP)
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      return decoded.id || decoded._id || null;
+    } catch (err) {
+      console.error("❌ Invalid socket token");
+      return null;
+    }
+  }
+
+  return null;
 }
+
 
 export default function chatHandler(io) {
   const userSockets = new Map();
