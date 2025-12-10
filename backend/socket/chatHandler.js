@@ -1,0 +1,90 @@
+import mongoose from "mongoose";
+import ChatMessage from "../models/ChatMessage.js";
+
+function getUserIdFromSocket(socket) {
+  const u = socket.user || socket.decoded || {};
+  return (
+    u.id ||
+    u._id ||
+    socket.userId ||
+    socket.handshake?.auth?.userId ||
+    socket.handshake?.query?.userId ||
+    null
+  );
+}
+
+export default function chatHandler(io) {
+  const userSockets = new Map();
+
+  function addSocket(userId, socket) {
+    if (!userSockets.has(userId)) userSockets.set(userId, new Set());
+    userSockets.get(userId).add(socket);
+  }
+
+  function removeSocket(userId, socket) {
+    const set = userSockets.get(userId);
+    if (!set) return;
+    set.delete(socket);
+    if (!set.size) userSockets.delete(userId);
+  }
+
+  function emitToUser(userId, event, payload) {
+    const set = userSockets.get(userId?.toString());
+    if (!set) return;
+    for (const s of set) s.emit(event, payload);
+  }
+
+  io.on("connection", (socket) => {
+    const userId = getUserIdFromSocket(socket);
+    if (!userId) return;
+
+    const uidStr = userId.toString();
+    addSocket(uidStr, socket);
+
+    socket.on("chat:send", async (payload, cb) => {
+      try {
+        const { toUserId, text } = payload || {};
+        if (!toUserId || !text?.trim()) return;
+
+        const msg = await ChatMessage.create({
+          from: uidStr,
+          to: toUserId,
+          text: text.trim(),
+          participants: [uidStr, toUserId],
+        });
+
+        const msgData = {
+          _id: msg._id,
+          from: msg.from,
+          to: msg.to,
+          text: msg.text,
+          createdAt: msg.createdAt,
+          expiresAt: msg.expiresAt,
+        };
+
+        socket.emit("chat:new_message", msgData);
+        emitToUser(toUserId, "chat:new_message", msgData);
+
+        emitToUser(toUserId, "chat:notify", {
+          fromUserId: uidStr,
+          textPreview: msg.text.slice(0, 80),
+          createdAt: msg.createdAt,
+        });
+
+        if (cb) cb({ ok: true });
+      } catch (err) {
+        console.error("chat:send error", err);
+        if (cb) cb({ ok: false });
+      }
+    });
+
+    socket.on("chat:typing", ({ toUserId, isTyping }) => {
+      emitToUser(toUserId, "chat:typing", {
+        fromUserId: uidStr,
+        isTyping: !!isTyping,
+      });
+    });
+
+    socket.on("disconnect", () => removeSocket(uidStr, socket));
+  });
+}
