@@ -122,7 +122,7 @@ const chatStyles = `
   flex-direction: column;
   gap: 4px;
   scroll-behavior: smooth;
-  max-height: calc(90vh-220px); 
+  max-height: 350px;
 }
 
 /* rows */
@@ -290,6 +290,15 @@ const chatStyles = `
 .chat-banner span {
   color: #fbbf24;
 }
+ 
+  @media (max-width: 768px) {
+  .chat-icon-btn {
+    display: none !important;   /* ✅ Emoji button hide */
+  }
+}
+
+
+
 `;
 
 export default function ChatPopup({ friend, onClose }) {
