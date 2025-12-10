@@ -2,6 +2,7 @@
 
 import mongoose from "mongoose";
 import ChatMessage from "../models/ChatMessage.js";
+import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
 

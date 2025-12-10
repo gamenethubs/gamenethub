@@ -59,6 +59,9 @@ mainSocket.on("chat:notify", (payload) => {
     title: "New Message",
     text: payload?.textPreview || "New chat message",
     slug: "friends",
+    username: payload?.from?.username,
+    userId: payload?.from?._id,
+    thumbnail: payload?.from?.avatar,
     time: new Date().toLocaleTimeString(),
   });
 });
