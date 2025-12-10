@@ -88,11 +88,18 @@ export default function chatHandler(io) {
         socket.emit("chat:new_message", msgData);
         emitToUser(toUserId, "chat:new_message", msgData);
 
+         // ⭐ GET SENDER INFO
+    const sender = await User.findById(uidStr).select("username avatar");
         emitToUser(toUserId, "chat:notify", {
-          fromUserId: uidStr,
-          textPreview: msg.text.slice(0, 80),
-          createdAt: msg.createdAt,
-        });
+  textPreview: msg.text.slice(0, 80),
+  from: {
+    username: sender.username,
+    _id: sender._id,
+    avatar: sender.avatar
+  },
+  createdAt: msg.createdAt,
+});
+
 
         if (cb) cb({ ok: true });
       } catch (err) {
