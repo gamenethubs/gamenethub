@@ -14,11 +14,19 @@ const chatStyles = `
   inset: 0;
   background: rgba(0,0,0,0.35);
   display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
+
+  /* ❌ OLD */
+  /* justify-content: flex-end;
+     align-items: flex-end; */
+
+  /* ✅ NEW CENTER */
+  justify-content: center;
+  align-items: start;
+
   z-index: 5000;
   pointer-events: none;
 }
+
 
 .chat-popup {
   pointer-events: auto;
