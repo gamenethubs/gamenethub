@@ -14,12 +14,17 @@ import friendsGif from "../assets/friends.gif";
 import localVideo from "../assets/localVideo.mp4";
 import onlineVideo from "../assets/onlineVideo.mp4";
 
+import AdComponent from "../components/AdComponent"; 
+import { useLocation } from "react-router-dom";
+
 export default function Home() {
   
   const [games, setGames] = useState([]);
   const [selectedGame, setSelectedGame] = useState(null);
   const [animate, setAnimate] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const location = useLocation();
 
   // NEW → Arrow auto-hide
   const [showArrow, setShowArrow] = useState(true);
@@ -228,6 +233,15 @@ const isSecretTyping = SECRET_COMMANDS.some(cmd =>
           </div>
         </div>
       </section>
+
+      {/* 🎯 MANUAL ADSENSE UNIT AFTER TRENDING 🎯 */}
+      <div style={{ margin: '40px auto', maxWidth: '468px', textAlign: 'center' }}>
+        <AdComponent 
+          adSlot="6463199437" // ⬅️ Replace with your desired ad slot ID (e.g., your Home Page slot)
+          refreshKey={location.pathname} // ⬅️ Forces reload on route change
+        />
+      </div>
+      {/* END ADSENSE UNIT */}
 
       {/* FRIENDS MULTIPLAYER BANNER */}
       <section style={styles.friendsSection}>
