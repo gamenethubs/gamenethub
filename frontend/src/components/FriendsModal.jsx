@@ -426,7 +426,7 @@ useEffect(() => {
 
 const onFriendRequestReceived = (e) => {
     // 🛑 LOG 1: Check the RAW Event and its structure
-    console.log("🚨 FR_RECEIVED RAW EVENT:", e);
+    // console.log("🚨 FR_RECEIVED RAW EVENT:", e);
     
     const payload = e.detail || e; // Get payload from custom event
     const from = payload?.from;
@@ -445,13 +445,13 @@ const onFriendRequestReceived = (e) => {
     loadFriendsList(); 
     
     // 🛑 LOG 3: Confirm which ID was successfully added
-    console.log(`✅ FR Received: ID ${id} added to IncomingIds.`);
+    // console.log(`✅ FR Received: ID ${id} added to IncomingIds.`);
 };
 
 
 
 const onFriendRequestAccepted = (e) => {
-  console.log("🟢 FR Accepted:", e);
+//   console.log("🟢 FR Accepted:", e);
   
   const payload = e.detail || e;
   const user = payload?.user; 
@@ -477,7 +477,7 @@ const id = extractId(user);
 };
 
 const onFriendRequestRejected = (e) => {
-  console.log("🔴 FR Rejected:", e);
+//   console.log("🔴 FR Rejected:", e);
 
   const payload = e.detail || e;
   // Rejected event usually sends a simple fromId or id
@@ -507,13 +507,13 @@ const id = extractId(payload.fromId || payload);
 
 
   const onRelationshipUpdate = () => {
-    console.log("🟠 Relationship update (Window)");
+//     console.log("🟠 Relationship update (Window)");
     loadFriendsList();
     loadMyRequestsAndFriends();
   };
 
   const onFriendsUpdated = () => {
-    console.log("🟣 Friends Updated (Window)");
+//     console.log("🟣 Friends Updated (Window)");
     loadFriendsList();
     loadMyRequestsAndFriends();
   };
@@ -605,14 +605,14 @@ const id = extractId(payload.fromId || payload);
         const annotated = list.map((u) => {
   const id = extractId(u);
  // ⭐ DEBUG LOG — add this
-  console.log("CHECK USER STATUS:", {
-    username: u.username, 
-    id,
-    incomingIds: Array.from(incomingIds),
-    incoming: incomingIds.has(id),
-    outgoing: outgoingIds.has(id),
-    friend: friendIds.has(id),
-  });
+  // console.log("CHECK USER STATUS:", {
+  //   username: u.username, 
+  //   id,
+  //   incomingIds: Array.from(incomingIds),
+  //   incoming: incomingIds.has(id),
+  //   outgoing: outgoingIds.has(id),
+  //   friend: friendIds.has(id),
+  // });
 
   let status = "none";
 
@@ -674,11 +674,11 @@ const id = extractId(payload.fromId || payload);
 
   const handleSendRequest = async (toUserId) => {
     if (!toUserId) {
-         console.error("❌ Send Request Failed: toUserId is missing!"); // <<-- NEW LOG
+        //  console.error("❌ Send Request Failed: toUserId is missing!"); // <<-- NEW LOG
          return;
     }
     const sid = norm(toUserId);
-    console.log("⚠️ SEND REQUEST PAYLOAD:", { toUserId: sid });
+    // console.log("⚠️ SEND REQUEST PAYLOAD:", { toUserId: sid });
     try {
       optimisticAddOutgoing(sid);
       await API.post("/friends/request", { toUserId: sid });

@@ -403,7 +403,7 @@ export default function ChatPopup({ friend, onClose }) {
     };
   }, [mainSocket, myId, friendId]);
     useEffect(() => {
-  console.log("✅ SOCKET CHECK:", mainSocket);
+  // console.log("✅ SOCKET CHECK:", mainSocket);
 }, [mainSocket]);
 
 

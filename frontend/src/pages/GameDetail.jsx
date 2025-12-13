@@ -26,9 +26,7 @@ export default function GameDetail() {
   const [loading, setLoading] = useState(true);
   const [recommended, setRecommended] = useState([]);
 
-  console.log("API_BASE_IN_COMPONENT:", apiBaseURL);
-  console.log("USER OBJECT:", user);
-  console.log("USER ID:", user?._id);
+  
 
 
 

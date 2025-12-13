@@ -664,7 +664,7 @@ export default function PublicProfile() {
     };
 
     const onFriendsUpdated = () => {
-      console.log("🔵 SOCKET friends_updated RECEIVED");
+      // console.log("🔵 SOCKET friends_updated RECEIVED");
       reload();
     };
 
