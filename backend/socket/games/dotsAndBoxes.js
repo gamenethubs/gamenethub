@@ -51,6 +51,8 @@ export default function dotsAndBoxes(socket, io) {
       vLines: data.vLines,
       boxes: data.boxes,
       currentPlayer: data.currentPlayer,
+      scores: data.scores,    // 👈 Ye add kiya
+      gameOver: data.gameOver
     });
   });
 
