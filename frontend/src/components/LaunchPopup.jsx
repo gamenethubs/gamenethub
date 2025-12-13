@@ -293,6 +293,12 @@ export default function LaunchPopup({
               <li style={S.tcItem}>
                 Team will reach out within 24 hours after verification.
               </li>
+              <li style={S.tcItem}>
+                One person, one reward. 
+              </li>
+              <li style={S.tcItem}>
+                Try to win maximum by reaching the maximum possible level.
+              </li>
             </ul>
           </details>
 
