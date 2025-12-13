@@ -134,7 +134,7 @@ const isSecretTyping = SECRET_COMMANDS.some(cmd =>
 
       {/* 🔥 Launch popup — shows only on the specific date you set */}
     <LaunchPopup
-      launchDate={"2025-12-13"}
+      launchDate={"2025-12-14"}
       showWeeklyIfSunday={false}
       gameOffer={{
         title: "Play level of MineQuest and win ₹10 ! on every level completion",
