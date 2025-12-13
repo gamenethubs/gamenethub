@@ -17,9 +17,16 @@ export default function LaunchPopup({
     const checkShouldShow = () => {
       if (localStorage.getItem("launchPopupSeen") === "true") return false;
 
-      const now = new Date();
-      const todayISO = now.toISOString().slice(0, 10);
-      const isSunday = now.getDay() === 0;
+     const now = new Date();
+
+const IST_OFFSET = 5.5 * 60 * 60 * 1000;
+const istTime = new Date(
+  now.getTime() + IST_OFFSET - now.getTimezoneOffset() * 60000
+);
+
+const todayISO = istTime.toISOString().slice(0, 10);
+const isSunday = istTime.getUTCDay() === 0;
+ 
 
       const dismissedUntil = localStorage.getItem(localStorageKey);
       if (dismissedUntil) {

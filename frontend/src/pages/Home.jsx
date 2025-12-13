@@ -250,14 +250,7 @@ const isSecretTyping = SECRET_COMMANDS.some(cmd =>
         </div>
       </section>
 
-      {/* 🎯 MANUAL ADSENSE UNIT AFTER TRENDING 🎯 */}
-      <div style={{ margin: '40px auto', maxWidth: '468px', textAlign: 'center' }}>
-        <AdComponent 
-          adSlot="6463199437" // ⬅️ Replace with your desired ad slot ID (e.g., your Home Page slot)
-          refreshKey={location.pathname} // ⬅️ Forces reload on route change
-        />
-      </div>
-      {/* END ADSENSE UNIT */}
+      
 
       {/* FRIENDS MULTIPLAYER BANNER */}
       <section style={styles.friendsSection}>
@@ -428,6 +421,15 @@ const isSecretTyping = SECRET_COMMANDS.some(cmd =>
 
         </div>
       </section>
+
+      {/* 🎯 MANUAL ADSENSE UNIT AFTER TRENDING 🎯 */}
+      <div style={{ margin: '40px auto', maxWidth: '468px', textAlign: 'center' }}>
+        <AdComponent 
+          adSlot="6463199437" // ⬅️ Replace with your desired ad slot ID (e.g., your Home Page slot)
+          refreshKey={location.pathname} // ⬅️ Forces reload on route change
+        />
+      </div>
+      {/* END ADSENSE UNIT */}
 
       {/* POPULAR */}
       <section style={styles.section}>
