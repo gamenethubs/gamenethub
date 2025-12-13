@@ -17,7 +17,6 @@ export function SocketProvider({ children }) {
       (process.env.REACT_APP_API_BASE ||
         "https://gamenethub.onrender.com").replace(/\/+$/, "");
 
-    console.log("🔥 INIT SOCKETS on:", SERVER);
 
     const dispatch = (name, detail) => {
       window.dispatchEvent(new CustomEvent(name, { detail }));
@@ -70,11 +69,11 @@ mainSocket.on("chat:notify", (payload) => {
     socketRef.current.main = mainSocket;
 
     mainSocket.on("connect", () => {
-      console.log("🟢 MAIN CONNECTED:", mainSocket.id);
+//       console.log("🟢 MAIN CONNECTED:", mainSocket.id);
     });
 
     mainSocket.on("disconnect", (reason) => {
-      console.log("🔴 MAIN DISCONNECTED:", reason);
+//       console.log("🔴 MAIN DISCONNECTED:", reason);
     });
 
     // --- GAME NOTIFICATIONS ---
@@ -156,11 +155,11 @@ mainSocket.on("chat:notify", (payload) => {
       socketRef.current.presence = presenceSocket;
 
       presenceSocket.on("connect", () => {
-        console.log("🟢 PRESENCE CONNECTED:", presenceSocket.id);
+//         console.log("🟢 PRESENCE CONNECTED:", presenceSocket.id);
       });
 
       presenceSocket.on("disconnect", (reason) => {
-        console.log("🔴 PRESENCE DISCONNECTED:", reason);
+//         console.log("🔴 PRESENCE DISCONNECTED:", reason);
       });
 
       // --- ONLINE / OFFLINE EVENTS ---

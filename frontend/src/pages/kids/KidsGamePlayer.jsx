@@ -35,7 +35,7 @@ const worldRef = useRef(null);
 useEffect(() => {
   const w = search.get("world");
   if (w) {
-    console.log("INITIAL WORLD:", w);
+    // console.log("INITIAL WORLD:", w);
     worldRef.current = w;   // store forever
   }
 }, []); // only ONCE — URL change won't matter
@@ -195,7 +195,7 @@ const backPath =
         onClick={() => {
           playBackSound();
           setTimeout(() => navigate(backPath), 200);
-          console.log("BackPath : ", backPath);
+          // console.log("BackPath : ", backPath);
         }}
       >
         ⬅ Back to Kids World
