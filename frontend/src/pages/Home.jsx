@@ -132,20 +132,7 @@ const isSecretTyping = SECRET_COMMANDS.some(cmd =>
   return (
     <div style={styles.wrapper}>
 
-      {/* 🔥 Launch popup — shows only on the specific date you set */}
-    <LaunchPopup
-      launchDate={"2025-12-14"}
-      showWeeklyIfSunday={false}
-      gameOffer={{
-        title: "Play level of MineQuest and win ₹10 ! on every level completion",
-        discount: "₹10 ",
-        ctaText: "Play & Win",
-        gameUrl: "/game/minequest?autoPlay=true",
-        imageUrl: "Gamenethub.png",
-        promoCode: "LAUNCH10"
-      }}
-      localStorageKey="gamenethub_launch_popup_dismissed"
-    />
+   
       {/* HERO */}
       <section
         data-hero-box     // ✅ ADD THIS
