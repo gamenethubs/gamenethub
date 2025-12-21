@@ -53,6 +53,20 @@ export default function GameCard({ game }) {
         localStorage.setItem(`play_${game._id}`, Date.now());
       } catch {}
     }
+
+     // ✅ GOOGLE ADS CONVERSION (Play Game)
+  const firedKey = `conv_${game._id}`;
+    if (!sessionStorage.getItem(firedKey)) {
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "conversion", {
+          send_to: "AW-17821384433/HdDrCOzMitUbEPH98rFC",
+          value: 1.0,
+          currency: "INR",
+        });
+      }
+      sessionStorage.setItem(firedKey, "1");
+}
+
  
     
   const isKidsPage = location.pathname.includes("/kids");
