@@ -45,40 +45,79 @@ export default function GameCard({ game }) {
     return Date.now() - Number(last) > 3000;
   };
   const location = useLocation();
-
   const handleCardClick = async () => {
-    if (canPlay()) {
-      try {
-        await apiIncreasePlay(game._id);
-        localStorage.setItem(`play_${game._id}`, Date.now());
-      } catch {}
-    }
+  if (canPlay()) {
+    try {
+      await apiIncreasePlay(game._id);
+      localStorage.setItem(`play_${game._id}`, Date.now());
+    } catch {}
+  }
 
-     // ✅ GOOGLE ADS CONVERSION (Play Game)
+  const isKidsPage = location.pathname.includes("/kids");
+  const targetUrl =
+    game.isKids && isKidsPage
+      ? `/kids/game/${game.slug}?autoPlay=true`
+      : `/game/${game.slug}?autoPlay=true`;
+
   const firedKey = `conv_${game._id}`;
-    if (!sessionStorage.getItem(firedKey)) {
-      if (typeof window.gtag === "function") {
-        window.gtag("event", "conversion", {
-          send_to: "AW-17821384433/HdDrCOzMitUbEPH98rFC",
-          value: 1.0,
-          currency: "INR",
-        });
-      }
-      sessionStorage.setItem(firedKey, "1");
-}
+
+  if (
+    typeof window.gtag === "function" &&
+    !sessionStorage.getItem(firedKey)
+  ) {
+    window.gtag("event", "conversion", {
+      send_to: "AW-17821384433/HdDrCOzMitUbEPH98rFC",
+      value: 1.0,
+      currency: "INR",
+      event_callback: () => {
+        navigate(targetUrl);
+      },
+    });
+
+    sessionStorage.setItem(firedKey, "1");
+
+    // 🛡 safety fallback (Google recommends this)
+    setTimeout(() => navigate(targetUrl), 800);
+  } else {
+    navigate(targetUrl);
+  }
+};
+
+
+//   const handleCardClick = async () => {
+//     if (canPlay()) {
+//       try {
+//         await apiIncreasePlay(game._id);
+//         localStorage.setItem(`play_${game._id}`, Date.now());
+//       } catch {}
+//     }
+
+
 
  
     
-  const isKidsPage = location.pathname.includes("/kids");
+//   const isKidsPage = location.pathname.includes("/kids");
 
-  navigate(
-    game.isKids && isKidsPage
-      ? `/kids/game/${game.slug}?autoPlay=true`
-      : `/game/${game.slug}?autoPlay=true`
-  );
+//   navigate(
+//     game.isKids && isKidsPage
+//       ? `/kids/game/${game.slug}?autoPlay=true`
+//       : `/game/${game.slug}?autoPlay=true`
+//   );
+//        // ✅ GOOGLE ADS CONVERSION (Play Game)
+//   const firedKey = `conv_${game._id}`;
+//     if (!sessionStorage.getItem(firedKey)) {
+//       if (typeof window.gtag === "function") {
+//         window.gtag("event", "conversion", {
+//           send_to: "AW-17821384433/HdDrCOzMitUbEPH98rFC",
+//           value: 1.0,
+//           currency: "INR",
+//         });
+//       }
+//       sessionStorage.setItem(firedKey, "1");
+// }
 
   
-  };
+//   };
  
 
   //Added
