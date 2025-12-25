@@ -16,6 +16,8 @@ import mobileIcon from "../assets/mobileIcon.png";
 import desktopIcon from "../assets/desktopIcon.png";
 import { useLocation } from "react-router-dom";
 
+import ReactGA from "react-ga4";
+
 
 export default function GameCard({ game }) {
   const navigate = useNavigate();
@@ -60,6 +62,33 @@ export default function GameCard({ game }) {
       : `/game/${game.slug}?autoPlay=true`;
 
   const firedKey = `conv_${game._id}`;
+  const gaKey = `ga_play_${game._id}`;
+
+  // ✅ GA4 (once per session per game)
+  if (!sessionStorage.getItem(gaKey)) {
+    ReactGA.event({
+      category: "engagement",
+      action: "play_game",
+      label: game.slug,
+      value: 1,
+    });
+    sessionStorage.setItem(gaKey, "1");
+  }
+
+  const metaKey = `meta_view_${game._id}`;
+
+if (
+  typeof window.fbq === "function" &&
+  !sessionStorage.getItem(metaKey)
+) {
+  window.fbq("track", "ViewContent", {
+    content_name: game.title,
+    content_category: game.genre,
+  });
+  sessionStorage.setItem(metaKey, "1");
+}
+
+
 
   if (
     typeof window.gtag === "function" &&
