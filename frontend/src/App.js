@@ -54,6 +54,9 @@ import PublicProfile from "./pages/PublicProfile.jsx";
 // ⭐ NEW — GLOBAL SOCKET PROVIDER
 import { SocketProvider } from "./context/SocketContext";
 
+// Meta Pixel
+import MetaPixelTracker from "./components/MetaPixelTracker";
+
 // ⭐ ADD SOCKET.IO
 // (no longer needed locally — handled by SocketContext)
 // import { io } from "socket.io-client";
@@ -111,6 +114,7 @@ function App() {
     <SocketProvider>
       <div style={styles.appWrapper}>
         <AnalyticsTracker />
+        <MetaPixelTracker /> 
 
         {!isAdminRoute && !isKidsRoute && (
           <Navbar
